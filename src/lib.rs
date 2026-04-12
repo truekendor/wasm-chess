@@ -1,16 +1,17 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, result};
 
 use serde::{Deserialize, Serialize};
-use shakmaty::{
-    Chess, Color, Move, Position, Square, fen::Fen, san::San, uci::UciMove, zobrist::Zobrist64,
-};
+use shakmaty::{Chess, Color, Move, Position, Square, fen::Fen, san::San, zobrist::Zobrist64};
 
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
-use crate::{get_legal_moves::StrictMove, parsing::MovesAndError};
+use crate::{
+    get_legal_moves::StrictMove, parsing::MovesAndError, pgn_loader::pgn_reader::parse_pgn,
+};
 
 mod get_legal_moves;
 mod parsing;
+mod pgn_loader;
 mod tests;
 
 #[wasm_bindgen]
@@ -85,38 +86,27 @@ impl WasmChess {
         })
     }
 
+    #[wasm_bindgen(js_name = "move")]
     pub fn make_move(&mut self, move_str: &str) -> Result<(), String> {
         let internal_move = parsing::str_to_move(move_str, &self.chess).map_err(|err| {
             return err.to_string();
         })?;
 
-        if self.chess.is_legal(internal_move) {
-            self.push_history_entry(internal_move);
-        } else {
+        if !self.chess.is_legal(internal_move) {
             return Err(format!("Illegal move: {}\nFEN: {}", move_str, self.fen()));
         }
 
-        match self.chess.clone().play(internal_move) {
-            Ok(val) => {
-                self.chess = val;
+        self.push_history_entry(internal_move);
 
-                self.hash = self.chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
-                *self.position_count.entry(self.hash).or_insert(0) += 1;
+        self.chess.play_unchecked(internal_move);
 
-                return Ok(());
-            }
-            Err(err) => {
-                return Err(format!(
-                    "Error: {}\nMove attempted: {}\nFEN: {}",
-                    err.to_string(),
-                    move_str,
-                    self.fen()
-                ));
-            }
-        }
+        self.hash = self.chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
+        *self.position_count.entry(self.hash).or_insert(0) += 1;
+
+        return Ok(());
     }
 
-    pub fn make_move_from_obj(&mut self, move_obj: JsValue) -> Result<(), String> {
+    fn make_move_from_obj(&mut self, move_obj: JsValue) -> Result<(), String> {
         if !move_obj.is_object() {
             return Err("Input is not an object".to_string());
         }
@@ -133,7 +123,8 @@ impl WasmChess {
         self.make_move(&uci)
     }
 
-    pub fn reset(&mut self) {
+    // TODO redo/remove this function.
+    pub fn reset_to(&mut self, _fen: Option<String>) {
         let chess = Chess::default();
         self.hash = chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
 
@@ -180,6 +171,7 @@ impl WasmChess {
 
     // as for now the api of this is strange since
     // without any moves played it will return `None`
+    #[wasm_bindgen(js_name = "fenAt")]
     pub fn fen_at(&self, index: usize) -> Option<String> {
         if index >= self.history.len() {
             return None;
@@ -211,10 +203,12 @@ impl WasmChess {
         Ok(last.internal_move.to_string())
     }
 
+    #[wasm_bindgen(js_name = "legalMovesUCI")]
     pub fn legal_moves_uci(&self) -> Vec<String> {
         get_legal_moves::uci(&self.chess)
     }
 
+    #[wasm_bindgen(js_name = "legalMovesSAN")]
     pub fn legal_moves_san(&self) -> Vec<String> {
         get_legal_moves::san(&self.chess)
     }
@@ -237,26 +231,32 @@ impl WasmChess {
         self.chess.halfmoves()
     }
 
+    #[wasm_bindgen(js_name = "isGameOver")]
     pub fn is_game_over(&self) -> bool {
         self.chess.is_game_over() || self.is_draw_by_fifty_moves() || self.is_threefold_repetition()
     }
 
+    #[wasm_bindgen(js_name = "isCheck")]
     pub fn is_check(&self) -> bool {
         self.chess.is_check()
     }
 
+    #[wasm_bindgen(js_name = "isCheckmate")]
     pub fn is_checkmate(&self) -> bool {
         self.chess.is_checkmate()
     }
 
+    #[wasm_bindgen(js_name = "isDrawByFiftyMoves")]
     pub fn is_draw_by_fifty_moves(&self) -> bool {
         self.chess.halfmoves() >= 100
     }
 
+    #[wasm_bindgen(js_name = "isInsufficientMaterial")]
     pub fn is_insufficient_material(&self) -> bool {
         self.chess.is_insufficient_material()
     }
 
+    #[wasm_bindgen(js_name = "isThreefoldRepetition")]
     pub fn is_threefold_repetition(&self) -> bool {
         match self.position_count.get(&self.hash) {
             Some(val) => {
@@ -266,6 +266,7 @@ impl WasmChess {
         }
     }
 
+    #[wasm_bindgen(js_name = "isDraw")]
     pub fn is_draw(&self) -> bool {
         self.chess.is_stalemate()
             || self.chess.is_insufficient_material()
@@ -314,6 +315,7 @@ impl WasmChess {
         todo!()
     }
 
+    #[wasm_bindgen(js_name = "historySAN")]
     pub fn history_san(&self) -> Result<Vec<String>, String> {
         Ok(self
             .history
@@ -326,6 +328,7 @@ impl WasmChess {
             .collect())
     }
 
+    #[wasm_bindgen(js_name = "historyUCI")]
     pub fn history_uci(&self) -> Result<Vec<String>, String> {
         Ok(self
             .history
@@ -368,6 +371,7 @@ impl WasmChess {
     }
 
     /// converts Vec of UCI moves `Vec<["e2e4", "e7e5", ...]>`, into Vec of SAN moves
+    #[wasm_bindgen(js_name = "uciToSan")]
     pub fn uci_to_san(
         &self,
         uci_moves: Vec<String>,
@@ -377,6 +381,7 @@ impl WasmChess {
     }
 
     /// converts Vec of SAN moves `Vec<["e4", "e5", "Nf3", ...]>`, into Vec of UCI moves
+    #[wasm_bindgen(js_name = "sanToUci")]
     pub fn san_to_uci(
         &self,
         san_moves: Vec<String>,
@@ -385,8 +390,47 @@ impl WasmChess {
         parsing::san_to_uci(san_moves, starting_fen)
     }
 
-    fn load_pgn() {
-        todo!()
+    fn set_fen(&mut self, fen: Fen) -> Result<(), String> {
+        let chess: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(format!(
+                    "Error converting FEN into chess position\nError message: {}\nFEN: {}",
+                    err,
+                    fen.to_string()
+                ));
+            }
+        };
+
+        let zobrist_hash: Zobrist64 = chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
+        let position_count: HashMap<Zobrist64, i32> = HashMap::from([(zobrist_hash, 1)]);
+
+        self.position_count = position_count;
+        self.hash = zobrist_hash;
+        self.chess = chess;
+
+        Ok(())
+    }
+
+    fn load_pgn(&mut self, pgn: String) -> Result<(), String> {
+        let pgn_headers = parse_pgn(pgn);
+
+        if let Err(pgn_error) = pgn_headers {
+            return Err(format!("something something {}", pgn_error));
+        }
+
+        let pgn_headers = pgn_headers.unwrap();
+
+        let starting_fen = pgn_headers.starting_fen;
+        let moves_list = pgn_headers.move_list.iter();
+
+        self.set_fen(starting_fen)?;
+
+        for san_move in moves_list {
+            self.make_move(san_move)?;
+        }
+
+        return Ok(());
     }
 
     fn get_headers() {

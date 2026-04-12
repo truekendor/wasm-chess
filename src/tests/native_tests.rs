@@ -186,7 +186,7 @@ pub mod test {
         .unwrap();
         chess.make_move("a2a3").unwrap_or(());
 
-        chess.reset();
+        chess.reset_to(None);
 
         assert_eq!(
             chess.fen(),
