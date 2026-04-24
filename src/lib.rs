@@ -1,9 +1,9 @@
-use std::{collections::HashMap, default, str::FromStr};
+use std::{collections::HashMap, str::FromStr};
 
 use serde::{Deserialize, Serialize};
-use shakmaty::{Chess, Color, Move, Position, Square, fen::Fen, san::San, uci, zobrist::Zobrist64};
+use shakmaty::{Chess, Color, Move, Position, Square, fen::Fen, san::San, zobrist::Zobrist64};
 
-use wasm_bindgen::{JsError, JsValue, prelude::wasm_bindgen};
+use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::helpers::pgn_reader::PGNResult;
 
@@ -22,11 +22,15 @@ struct MoveObject {
 #[derive(tsify::Tsify, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 enum AttackedBySide {
-    w,
-    b,
-    White,
-    Black,
+    W,
+    B,
     Both,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+struct HeadersObj {
+    headers_data: HashMap<String, String>,
 }
 
 struct History {
@@ -146,6 +150,7 @@ impl WasmChess {
     pub fn reset(&mut self) {
         self.chess = Chess::default();
         self.hash = self.chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
+        self.pgn_result = None;
 
         self.history.clear();
         self.position_count = HashMap::from([(self.hash, 1)]);
@@ -319,6 +324,7 @@ impl WasmChess {
         result
     }
 
+    // TODO:
     fn ascii(&self) -> String {
         todo!()
     }
@@ -383,10 +389,10 @@ impl WasmChess {
             }
         } else {
             match attacked_by_side.unwrap() {
-                AttackedBySide::White | AttackedBySide::w => {
+                AttackedBySide::W => {
                     squares.append(&mut w_attackers);
                 }
-                AttackedBySide::b | AttackedBySide::Black => {
+                AttackedBySide::B => {
                     squares.append(&mut b_attackers);
                 }
                 AttackedBySide::Both => {
@@ -478,6 +484,7 @@ impl WasmChess {
         helpers::parsing::san_to_uci(san_moves, starting_fen)
     }
 
+    // TODO: add Optional<PreserveHeaders> ??
     fn set_fen(&mut self, fen: Fen) -> Result<(), String> {
         let chess: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
             Ok(val) => val,
@@ -493,6 +500,7 @@ impl WasmChess {
         let zobrist_hash: Zobrist64 = chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
         self.position_count.clear();
         self.position_count.insert(zobrist_hash, 1);
+        self.pgn_result = None;
 
         self.hash = zobrist_hash;
         self.chess = chess;
@@ -526,22 +534,16 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "getHeaders")]
-    pub fn get_headers(&self) -> JsValue {
+    pub fn get_headers(&self) -> HeadersObj {
         if self.pgn_result.is_none() {
-            return js_sys::Map::new().into();
+            return HeadersObj {
+                headers_data: HashMap::new(),
+            };
         }
 
-        let headers = self.pgn_result.clone().unwrap().headers;
-
-        match serde_wasm_bindgen::to_value(&headers) {
-            Ok(val) => val,
-            // we cannot recover from this I think so just return undefined
-            Err(err) => {
-                web_sys::console::log_1(&format!("{}", err).into());
-
-                return js_sys::Map::new().into();
-            }
-        }
+        return HeadersObj {
+            headers_data: self.pgn_result.clone().unwrap().headers,
+        };
     }
 
     #[wasm_bindgen(js_name = "getComments")]
@@ -570,21 +572,17 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "setHeader")]
-    pub fn set_header(&mut self, key: String, value: String) -> JsValue {
+    pub fn set_header(&mut self, key: String, value: String) -> HeadersObj {
         if self.pgn_result.is_none() {
             self.pgn_result = Some(PGNResult::default());
         };
 
         match self.pgn_result.as_mut() {
             Some(val) => {
-                println!("Value is some");
-
                 val.headers = HashMap::new();
                 val.headers.insert(key, value);
             }
-            None => {
-                println!("Value is none")
-            }
+            None => (),
         }
 
         self.get_headers()

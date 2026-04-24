@@ -53,19 +53,15 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
     "#;
 
     use pgn_reader::Reader;
-    use wasm_bindgen_test::wasm_bindgen_test;
 
-    use crate::{WasmChess, helpers::pgn_reader::PGNResult, tests::native_tests::test};
+    use crate::{WasmChess, helpers::pgn_reader::PGNResult};
 
     use std::{
-        collections::HashMap,
         fs::{self},
         io,
-        ops::Deref,
     };
 
     #[test]
-    // TODO: make an actual test
     fn headers() {
         let mut reader = Reader::new(io::Cursor::new(TEST_PGN_1));
         let mut pgn_parser = PGNResult::default();
@@ -159,7 +155,7 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
     }
 
     #[test]
-    fn remove_header_works() {
+    fn remove_header_ok() {
         let mut wasm_chess = WasmChess::new(None).unwrap();
         wasm_chess.load_pgn(TEST_PGN_1.to_owned()).unwrap();
 
@@ -186,10 +182,10 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
         );
     }
 
-    // #[test]
+    #[test]
     // TODO: doesn't work because we cannot test any function that returns `JsValue`
     // in this case: `set_header`
-    fn add_header_works() {
+    fn add_header_ok() {
         let mut wasm_chess = WasmChess::new(None).unwrap();
         wasm_chess.load_pgn(TEST_PGN_1.to_owned()).unwrap();
 
@@ -226,7 +222,7 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
         assert!(comments.len() == 12);
     }
 
-    // #[test]
+    #[test]
     fn nags_ok() {
         let pgn = r#"1. c4 {English Opening} e5!? {Aggressive}
         2. Nf3!! {Best Move} Nc6?? {Blunder} *
@@ -239,8 +235,8 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
 
         assert_eq!(nags.len(), 3);
 
-        nags.iter().for_each(|nag| {
-            println!("nag: {}", nag);
-        });
+        // nags.iter().for_each(|nag| {
+        //     println!("nag: {}", nag);
+        // });
     }
 }
