@@ -16,7 +16,7 @@ pub struct MoveVerbose {
     pub after: String,
 
     pub captured: Option<String>,
-    pub color: String,
+    pub color: AttackedBySide,
 
     pub piece: String,
     pub from: String,
@@ -25,6 +25,11 @@ pub struct MoveVerbose {
 
     pub san: String,
     pub lan: String,
+
+    pub is_en_passant: bool,
+
+    // for now we do not distinguish between kingside and queenside castle
+    pub is_castle: bool,
 }
 
 impl MoveVerbose {
@@ -36,28 +41,16 @@ impl MoveVerbose {
         return self.promotion.is_some();
     }
 
-    pub fn is_en_passant(&self) -> bool {
-        todo!()
-    }
+    // pub fn is_big_pawn() -> bool {
+    //     todo!()
+    // }
 
-    pub fn is_kingside_castle() -> bool {
-        todo!()
-    }
-
-    pub fn is_queenside_castle() -> bool {
-        todo!()
-    }
-
-    pub fn is_big_pawn() -> bool {
-        todo!()
-    }
-
-    pub fn is_null_move() -> bool {
-        todo!()
-    }
+    // pub fn is_null_move() -> bool {
+    //     todo!()
+    // }
 }
 
-#[derive(tsify::Tsify, Serialize, Deserialize)]
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub enum AttackedBySide {
     W,
@@ -72,4 +65,16 @@ pub struct MoveObject {
     pub to: String,
     #[tsify(optional)]
     pub promotion: Option<String>,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub struct CommentsObj {
+    pub fen: String,
+    #[tsify(optional)]
+    pub comment: Option<String>,
+    #[tsify(optional)]
+    pub suffix_annotation: Option<String>,
+    pub nags: Vec<u32>,
 }

@@ -8,7 +8,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::helpers::{
     pgn_reader::PGNResult,
-    tsify::{AttackedBySide, HeadersObj, MoveObject, MoveVerbose},
+    tsify::{AttackedBySide, CommentsObj, HeadersObj, MoveObject, MoveVerbose},
 };
 
 mod helpers;
@@ -524,23 +524,19 @@ impl WasmChess {
             .map(|history_entry| -> Result<MoveVerbose, String> {
                 let internal_move = history_entry.internal_move;
 
-                let promotion: Option<String> = match internal_move.promotion() {
-                    Some(val) => Some(val.char().to_string()),
-                    None => None,
-                };
+                let promotion: Option<String> =
+                    internal_move.promotion().map(|val| val.char().to_string());
 
-                let captured_piece: Option<String> = match internal_move.capture() {
-                    Some(val) => Some(val.char().to_string()),
-                    None => None,
-                };
+                let captured_piece: Option<String> =
+                    internal_move.capture().map(|val| val.char().to_string());
 
                 let san_move = San::from_move(&history_entry.position, internal_move);
                 chess.play_unchecked(internal_move);
 
                 let fen_after = Fen::from_position(&chess, shakmaty::EnPassantMode::Legal);
                 let color_shorthand = match history_entry.turn {
-                    Color::White => "W",
-                    Color::Black => "B",
+                    Color::White => AttackedBySide::W,
+                    Color::Black => AttackedBySide::B,
                 };
 
                 let from_sq = internal_move.from();
@@ -560,9 +556,12 @@ impl WasmChess {
                     piece: internal_move.role().char().to_string(),
                     captured: captured_piece,
 
-                    color: color_shorthand.to_owned(),
+                    color: color_shorthand,
                     before: history_entry.fen.to_string(),
                     after: fen_after.to_string(),
+
+                    is_en_passant: internal_move.is_en_passant(),
+                    is_castle: internal_move.is_castle(),
                 })
             })
             .rev()
@@ -670,14 +669,16 @@ impl WasmChess {
         };
     }
 
-    #[wasm_bindgen(js_name = "getComments")]
-    pub fn get_comments(&self) -> Option<Vec<String>> {
-        if self.pgn_result.is_none() {
-            return None;
-        }
+    // #[wasm_bindgen(js_name = "getComments")]
+    fn get_comments(&self) -> Vec<CommentsObj> {
+        // if self.pgn_result.is_none() {
+        //     return None;
+        // }
 
-        let comments = &self.pgn_result.as_ref().unwrap().comments;
-        return Some(comments.to_vec());
+        // let comments = &self.pgn_result.as_ref().unwrap().comments;
+        // return Some(comments.to_vec());
+
+        todo!()
     }
 
     #[wasm_bindgen(js_name = "removeHeader")]
