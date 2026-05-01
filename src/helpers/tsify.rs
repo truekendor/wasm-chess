@@ -12,22 +12,24 @@ pub struct HeadersObj {
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
 pub struct MoveVerbose {
-    pub before: String,
-    pub after: String,
-
-    pub captured: Option<String>,
-    pub color: AttackedBySide,
-
-    pub piece: String,
     pub from: String,
     pub to: String,
+
+    /// fen before move is played
+    pub before: String,
+    /// fen after move is played
+    pub after: String,
+
+    pub color: AttackedBySide,
+    pub piece: String,
+    pub captured: Option<String>,
+
     pub promotion: Option<String>,
 
     pub san: String,
     pub lan: String,
 
     pub is_en_passant: bool,
-
     // for now we do not distinguish between kingside and queenside castle
     pub is_castle: bool,
 }
