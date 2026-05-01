@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use strum::{Display, EnumString, IntoStaticStr};
 
 #[derive(tsify::Tsify, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
@@ -34,37 +35,28 @@ pub struct MoveVerbose {
     pub is_castle: bool,
 }
 
-impl MoveVerbose {
-    pub fn is_capture(&self) -> bool {
-        return self.captured.is_some();
-    }
-
-    pub fn is_promotion(&self) -> bool {
-        return self.promotion.is_some();
-    }
-
-    // pub fn is_big_pawn() -> bool {
-    //     todo!()
-    // }
-
-    // pub fn is_null_move() -> bool {
-    //     todo!()
-    // }
-}
-
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "lowercase")]
 pub enum AttackedBySide {
     W,
     B,
     Both,
 }
 
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "lowercase")]
+pub enum SquareColor {
+    Light,
+    Dark,
+}
+
 #[derive(tsify::Tsify, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct MoveObject {
-    pub from: String,
-    pub to: String,
+    pub from: SquareStr,
+    pub to: SquareStr,
     #[tsify(optional)]
     pub promotion: Option<String>,
 }
@@ -79,4 +71,45 @@ pub struct CommentsObj {
     #[tsify(optional)]
     pub suffix_annotation: Option<String>,
     pub nags: Vec<u32>,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+pub struct MoveAlgebraic {
+    pub from: SquareColor,
+    pub to: SquareColor,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub struct CastlingObj {
+    pub king: bool,
+    pub queen: bool,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub enum ColorChar {
+    W,
+    B,
+}
+
+// copy of a shakmaty's Square enum for tsify types
+// #[derive(tsify::Tsify, Serialize, Deserialize, Debug, EnumString, IntoStaticStr)]
+#[rustfmt::skip]
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug, Display, EnumString, IntoStaticStr)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+#[strum(serialize_all = "camelCase")]
+pub enum SquareStr {
+    A1, B1, C1, D1, E1, F1, G1, H1,
+    A2, B2, C2, D2, E2, F2, G2, H2,
+    A3, B3, C3, D3, E3, F3, G3, H3,
+    A4, B4, C4, D4, E4, F4, G4, H4,
+    A5, B5, C5, D5, E5, F5, G5, H5,
+    A6, B6, C6, D6, E6, F6, G6, H6,
+    A7, B7, C7, D7, E7, F7, G7, H7,
+    A8, B8, C8, D8, E8, F8, G8, H8,
 }
