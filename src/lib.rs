@@ -1,7 +1,7 @@
 use std::{collections::HashMap, str::FromStr};
 
 use shakmaty::{
-    Chess, Color, Move, Piece, Position, Square, fen::Fen, san::San, zobrist::Zobrist64,
+    Board, Chess, Color, Move, Piece, Position, Square, fen::Fen, san::San, zobrist::Zobrist64,
 };
 
 use wasm_bindgen::prelude::wasm_bindgen;
@@ -131,20 +131,17 @@ impl WasmChess {
     /// TODO: need to double-check what is does in chess.js
     pub fn reset(&mut self) {
         self.chess = Chess::default();
-        self.hash = self.chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
-        self.pgn_result = None;
 
-        self.history.clear();
-        self.position_count = HashMap::from([(self.hash, 1)]);
+        self.reset_all();
     }
 
     pub fn load(
         &mut self,
         starting_fen: String,
         // TODO: I don't even know if we can just skip fen validation
-        // options: JsValue
+        // {skip_validation: bool}
     ) -> Result<(), String> {
-        self.history.clear();
+        self.reset_history();
 
         let fen: Fen = starting_fen.parse::<Fen>().map_err(|err| {
             return format!(
@@ -163,10 +160,27 @@ impl WasmChess {
                 );
             })?;
 
-        self.hash = self.chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
-        self.position_count = HashMap::from([(self.hash, 1)]);
+        self.reset_pos_count_and_hash();
 
         Ok(())
+    }
+
+    fn reset_all(&mut self) {
+        self.reset_history();
+        self.reset_pos_count_and_hash();
+    }
+
+    fn reset_history(&mut self) {
+        self.pgn_result = None;
+        self.history.clear();
+    }
+
+    fn reset_pos_count_and_hash(&mut self) {
+        let zobrist_hash = self.chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
+
+        self.hash = zobrist_hash;
+        self.position_count.clear();
+        self.position_count.insert(zobrist_hash, 1);
     }
 
     pub fn fen(&self) -> String {
@@ -423,56 +437,6 @@ impl WasmChess {
         return Ok(string_result);
     }
 
-    fn put(&mut self, piece: String, square: String) -> Result<(), String> {
-        let piece = piece.trim();
-
-        if piece.len() > 1 {
-            return Err(format!("Error: unexpected piece type: {}", piece));
-        }
-
-        let sq: Square = square
-            .parse()
-            .map_err(|err| format!("Invalid square: {}. Error: {}", square, err))?;
-
-        // Validate piece type and color
-        let piece_char = piece
-            .chars()
-            .next()
-            .ok_or_else(|| format!("Empty piece string"))?;
-
-        let piece_type = match Piece::from_char(piece_char) {
-            Some(p) => p,
-            None => {
-                return Err(format!(
-                    "Error parsing piece char: \"{}\" into a valid piece type",
-                    piece
-                ));
-            }
-        };
-
-        let mut board = self.chess.board().clone();
-        board.set_piece_at(sq, piece_type);
-        let fen: Fen = board.board_fen().to_string().parse().unwrap();
-
-        self.set_fen(fen).map_err(|err| {
-            return err;
-        })?;
-
-        Ok(())
-    }
-
-    // TODO:
-    fn remove(&mut self, sq: String) -> Result<Option<String>, String> {
-        let sq: Square = sq
-            .parse()
-            .map_err(|err| format!("Invalid square: {}. Error: {}", sq, err))?;
-
-        let mut board = self.chess.board().clone();
-        let result = board.remove_piece_at(sq);
-
-        todo!()
-    }
-
     #[wasm_bindgen(js_name = "historySAN")]
     pub fn history_san(&self) -> Vec<String> {
         self.history
@@ -586,29 +550,9 @@ impl WasmChess {
         });
     }
 
-    /// converts Vec of UCI moves `Vec<["e2e4", "e7e5", ...]>`, into Vec of SAN moves
-    #[wasm_bindgen(js_name = "uciToSan")]
-    pub fn uci_to_san(
-        &self,
-        uci_moves: Vec<String>,
-        starting_fen: Option<String>,
-    ) -> helpers::parsing::MovesAndError {
-        helpers::parsing::uci_to_san(uci_moves, starting_fen)
-    }
-
-    /// converts Vec of SAN moves `Vec<["e4", "e5", "Nf3", ...]>`, into Vec of UCI moves
-    #[wasm_bindgen(js_name = "sanToUci")]
-    pub fn san_to_uci(
-        &self,
-        san_moves: Vec<String>,
-        starting_fen: Option<String>,
-    ) -> helpers::parsing::MovesAndError {
-        helpers::parsing::san_to_uci(san_moves, starting_fen)
-    }
-
     // TODO: add Optional<PreserveHeaders> ??
     fn set_fen(&mut self, fen: Fen) -> Result<(), String> {
-        let chess: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
+        self.chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
             Ok(val) => val,
             Err(err) => {
                 return Err(format!(
@@ -619,15 +563,7 @@ impl WasmChess {
             }
         };
 
-        let zobrist_hash: Zobrist64 = chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
-        self.position_count.clear();
-        self.position_count.insert(zobrist_hash, 1);
-        self.pgn_result = None;
-
-        self.hash = zobrist_hash;
-        self.history.clear();
-
-        self.chess = chess;
+        self.reset_all();
 
         Ok(())
     }
@@ -678,7 +614,7 @@ impl WasmChess {
         // let comments = &self.pgn_result.as_ref().unwrap().comments;
         // return Some(comments.to_vec());
 
-        todo!()
+        todo!("Comments API is not implemented yet");
     }
 
     #[wasm_bindgen(js_name = "removeHeader")]
