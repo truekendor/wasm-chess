@@ -10,7 +10,7 @@ use crate::helpers::{
     pgn_reader::PGNResult,
     tsify::{
         AttackedBySide, CastlingObj, ColorChar, CommentsObj, HeadersObj, MoveObject, MoveVerbose,
-        SquareColor, SquareStr,
+        PieceObj, SquareColor, SquareStr,
     },
 };
 
@@ -348,8 +348,8 @@ impl WasmChess {
         Some(square_color)
     }
 
-    #[wasm_bindgen(js_name = "findPiece")]
-    pub fn find_piece(&self, piece: String) -> Result<Vec<SquareStr>, String> {
+    #[wasm_bindgen(js_name = "findPieceFromString")]
+    pub fn find_piece_from_str(&self, piece: String) -> Result<Vec<SquareStr>, String> {
         let mut squares_with_piece: Vec<SquareStr> = vec![];
 
         let piece = piece.trim();
@@ -369,6 +369,49 @@ impl WasmChess {
                 return Err(format!(
                     "Error parsing piece char: \"{}\" into a valid piece type",
                     piece
+                ));
+            }
+        };
+
+        self.chess.board().iter().for_each(|(sq, p)| {
+            if p == piece_type {
+                squares_with_piece.push(sq.to_string().to_lowercase().parse().unwrap());
+            }
+        });
+
+        Ok(squares_with_piece)
+    }
+
+    #[wasm_bindgen(js_name = "findPieceFromPieceObject")]
+    pub fn find_piece_from_obj(&self, piece: PieceObj) -> Result<Vec<SquareStr>, String> {
+        let mut squares_with_piece: Vec<SquareStr> = vec![];
+
+        let piece_char: char = match piece.r#type {
+            helpers::tsify::PieceSymbol::P => 'p',
+            helpers::tsify::PieceSymbol::N => 'n',
+            helpers::tsify::PieceSymbol::B => 'b',
+            helpers::tsify::PieceSymbol::R => 'r',
+            helpers::tsify::PieceSymbol::Q => 'q',
+            helpers::tsify::PieceSymbol::K => 'k',
+            _ => {
+                return Err(format!(
+                    "Unknown piece type\nInput type: {:#?}\nInput color: {:#?}",
+                    piece.r#type, piece.color
+                ));
+            }
+        };
+
+        let piece_char: char = match piece.color {
+            ColorChar::W => piece_char.to_ascii_uppercase(),
+            ColorChar::B => piece_char.to_ascii_lowercase(),
+        };
+
+        let piece_type = match Piece::from_char(piece_char) {
+            Some(p) => p,
+            None => {
+                return Err(format!(
+                    "Error parsing piece char: \"{:#?}\" into a valid piece type",
+                    piece.r#type
                 ));
             }
         };
@@ -505,6 +548,7 @@ impl WasmChess {
         ascii_str
     }
 
+    // TODO: return PieceObj
     pub fn get(&self, square: String) -> Option<String> {
         let sq: shakmaty::Square = square.parse().ok()?;
         let piece = self.chess.board().piece_at(sq);

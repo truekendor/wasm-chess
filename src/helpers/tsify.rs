@@ -44,7 +44,7 @@ pub enum AttackedBySide {
     Both,
 }
 
-#[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "lowercase")]
 pub enum SquareColor {
@@ -111,4 +111,23 @@ pub enum SquareStr {
     A6, B6, C6, D6, E6, F6, G6, H6,
     A7, B7, C7, D7, E7, F7, G7, H7,
     A8, B8, C8, D8, E8, F8, G8, H8,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub enum PieceSymbol {
+    P,
+    N,
+    B,
+    R,
+    Q,
+    K,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+pub struct PieceObj {
+    pub r#type: PieceSymbol,
+    pub color: ColorChar,
 }
