@@ -1,12 +1,10 @@
-// TODO: add more tests for find_piece
-
 #[cfg(test)]
 pub mod find_piece_tests {
     use crate::WasmChess;
     use crate::helpers::tsify::*;
 
     #[test]
-    fn find_piece_from_str() {
+    fn find_pawns_from_str() {
         let chess = WasmChess::new(None).unwrap();
 
         let w_pawns = chess.find_piece_from_str("P".to_string()).unwrap();
@@ -39,7 +37,7 @@ pub mod find_piece_tests {
     }
 
     #[test]
-    fn find_piece_from_obj() {
+    fn find_pawns_from_obj() {
         let chess = WasmChess::new(None).unwrap();
 
         let w_pawns = chess
@@ -79,5 +77,31 @@ pub mod find_piece_tests {
 
         pretty_assertions::assert_eq!(w_pawns, expected_white);
         pretty_assertions::assert_eq!(b_pawns, expected_black);
+    }
+
+    #[test]
+    fn find_missing_piece_from_obj() {
+        let chess = WasmChess::new(Some(
+            "8/6p1/8/2k4p/1R3P1P/Pp2K1P1/r7/8 w - - 1 44".to_string(),
+        ))
+        .unwrap();
+
+        let w_queen = chess
+            .find_piece_from_obj(PieceObj {
+                r#type: PieceSymbol::Q,
+                color: ColorChar::W,
+            })
+            .unwrap();
+
+        pretty_assertions::assert_eq!(w_queen.len(), 0);
+    }
+
+    #[test]
+    fn errors_on_invalid_piece() {
+        let chess = WasmChess::new(None).unwrap();
+
+        let bad_piece = chess.find_piece_from_str("bad_piece".to_string());
+
+        assert!(bad_piece.is_err());
     }
 }
