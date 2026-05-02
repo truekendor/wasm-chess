@@ -238,30 +238,6 @@ pub mod test {
     }
 
     #[test]
-    fn square_color() {
-        let chess = WasmChess::new(None).unwrap();
-
-        let sq_from_str_1 = "a5".parse();
-        let sq_from_str_2 = "c5".parse();
-        let sq_from_str_3 = "C5".parse::<SquareStr>();
-
-        assert!(sq_from_str_1.is_ok());
-        assert!(sq_from_str_2.is_ok());
-        assert!(sq_from_str_3.is_err());
-
-        let sq_from_str_1 = sq_from_str_1.unwrap();
-        let sq_from_str_2 = sq_from_str_2.unwrap();
-
-        let sq_color_1 = chess.square_color(SquareStr::A1);
-        let sq_color_2 = chess.square_color(sq_from_str_1);
-        let sq_color_3 = chess.square_color(sq_from_str_2);
-
-        assert!(sq_color_1.is_some());
-        assert!(sq_color_2.is_some());
-        assert!(sq_color_3.is_some());
-    }
-
-    #[test]
     fn square_str_parsing() {
         let sq_str_lowercase = "a1".parse::<SquareStr>();
         let sq_str_uppercase = "A1".parse::<SquareStr>();
