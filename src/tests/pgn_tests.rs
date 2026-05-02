@@ -71,11 +71,11 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
         let mut pgn_parser = PGNResult::default();
         reader.read_game(&mut pgn_parser).unwrap();
 
-        assert_eq!(*pgn_parser.headers.get("Round").unwrap(), "29".to_owned());
+        pretty_assertions::assert_eq!(*pgn_parser.headers.get("Round").unwrap(), "29".to_owned());
         assert!(pgn_parser.headers.contains_key("Site"));
         assert!(pgn_parser.headers.contains_key("White"));
         assert!(pgn_parser.headers.contains_key("Black"));
-        assert_eq!(pgn_parser.move_list.len(), 85);
+        pretty_assertions::assert_eq!(pgn_parser.move_list.len(), 85);
 
         assert!(!pgn_parser.headers.contains_key("Variant"));
     }
@@ -110,7 +110,7 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
                 .expect("Unexpected panic on valid FEN");
         });
 
-        assert_eq!(
+        pretty_assertions::assert_eq!(
             starting_fen.to_string(),
             "nqbrkbrn/pppppp1p/6p1/8/7P/8/PPPPPPP1/BBNRNKRQ w KQkq - 0 2"
         );
@@ -129,7 +129,7 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
 
         wasm_chess.load_pgn(pgn.to_owned()).unwrap();
         let turn = wasm_chess.turn();
-        assert_eq!(turn, ColorChar::W);
+        pretty_assertions::assert_eq!(turn, ColorChar::W);
     }
 
     #[test]
@@ -140,7 +140,7 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
 
         wasm_chess.load_pgn(pgn.to_owned()).unwrap();
         let turn = wasm_chess.turn();
-        assert_eq!(turn, ColorChar::B);
+        pretty_assertions::assert_eq!(turn, ColorChar::B);
     }
 
     #[test]
@@ -155,7 +155,7 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
 
         wasm_chess.load_pgn(pgn.to_owned()).unwrap();
         let turn = wasm_chess.turn();
-        assert_eq!(turn, ColorChar::W);
+        pretty_assertions::assert_eq!(turn, ColorChar::W);
     }
 
     #[test]
