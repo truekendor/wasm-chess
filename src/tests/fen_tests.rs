@@ -4,6 +4,22 @@ pub mod fen_tests {
     use std::usize;
 
     #[test]
+    fn fen_loads_with_ep_square() {
+        let mut chess = WasmChess::new(None).unwrap();
+
+        let fen = "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2";
+        let fen_no_ep = "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2";
+
+        assert!(chess.load(fen.to_string()).is_ok());
+        pretty_assertions::assert_eq!(chess.fen(Some(true)), fen);
+        pretty_assertions::assert_eq!(chess.fen(Some(false)), fen_no_ep);
+
+        // Test invalid FEN
+        let result = chess.load("invalid".to_string());
+        assert!(result.is_err());
+    }
+
+    #[test]
     fn test_new_game_custom_fen() {
         let fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
         let fen_no_ep = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1";

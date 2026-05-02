@@ -201,22 +201,6 @@ pub mod test {
     }
 
     #[test]
-    fn test_load() {
-        let mut chess = WasmChess::new(None).unwrap();
-
-        let fen = "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2";
-        let fen_no_ep = "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2";
-
-        assert!(chess.load(fen.to_string()).is_ok());
-        pretty_assertions::assert_eq!(chess.fen(Some(true)), fen);
-        pretty_assertions::assert_eq!(chess.fen(Some(false)), fen_no_ep);
-
-        // Test invalid FEN
-        let result = chess.load("invalid".to_string());
-        assert!(result.is_err());
-    }
-
-    #[test]
     fn false_ambiguous_move() {
         let fen_str = String::from("8/1Q2bk2/P2p2p1/2pPp3/2P1P3/2N2n2/2KN1q2/8 w - - 1 61");
         let mut chess = WasmChess::new(Some(fen_str)).unwrap();
