@@ -2,7 +2,7 @@
 pub mod diverge_transpose_test {
     use shakmaty::{Chess, fen::Fen};
 
-    use crate::helpers::find_deviation::{DivergeData, TranspositionDataEntry, find_deviation};
+    use crate::helpers::find_divergence::{DivergeData, TranspositionDataEntry, find_divergence};
 
     #[test]
     fn immediate_diverge() {
@@ -22,7 +22,7 @@ pub mod diverge_transpose_test {
                 .map(|sss| sss.to_string())
                 .collect();
 
-        let result = find_deviation(start_pos, move_list_main, move_list_reverse);
+        let result = find_divergence(start_pos, move_list_main, move_list_reverse);
 
         assert_eq!(
             result,
@@ -64,7 +64,7 @@ pub mod diverge_transpose_test {
         .map(|sss| sss.to_string())
         .collect();
 
-        let result = find_deviation(start_pos, move_list_main, move_list_reverse);
+        let result = find_divergence(start_pos, move_list_main, move_list_reverse);
 
         assert_eq!(
             result,

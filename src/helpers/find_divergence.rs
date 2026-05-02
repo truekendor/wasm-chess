@@ -30,8 +30,8 @@ pub struct DivergeData {
     pub move_index: u32,
 }
 
-#[wasm_bindgen(js_name = "findDeviation")]
-pub fn find_deviation(
+#[wasm_bindgen(js_name = "findDivergence")]
+pub fn find_divergence(
     starting_fen: String,
     move_list_current: Vec<String>,
     move_list_reverse: Vec<String>,
