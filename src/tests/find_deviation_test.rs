@@ -16,12 +16,11 @@ pub mod diverge_transpose_test {
         .map(|sss| sss.to_string())
         .collect();
 
-        let move_list_reverse: Vec<String> = vec![
-            "c4", "e6", "Nc3", "Nf6", "d4", "d5", "Bd2", "a5", "Bc1", "Ng8",
-        ]
-        .iter()
-        .map(|sss| sss.to_string())
-        .collect();
+        let move_list_reverse: Vec<String> =
+            vec!["c4", "e6", "Nc3", "Nf6", "d4", "d5", "Bd2", "a5"]
+                .iter()
+                .map(|sss| sss.to_string())
+                .collect();
 
         let result = find_deviation(start_pos, move_list_main, move_list_reverse);
 
