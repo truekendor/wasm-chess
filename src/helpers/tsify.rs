@@ -35,7 +35,7 @@ pub struct MoveVerbose {
     pub is_castle: bool,
 }
 
-#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq, Display)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
 pub enum SquareColor {
@@ -52,6 +52,14 @@ pub struct MoveObject {
     pub promotion: Option<String>,
 }
 
+#[derive(tsify::Tsify, Serialize, Deserialize)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+// TODO: rename?
+pub struct MoveAlgebraic {
+    pub from: SquareStr,
+    pub to: SquareStr,
+}
+
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
@@ -62,13 +70,6 @@ pub struct CommentsObj {
     #[tsify(optional)]
     pub suffix_annotation: Option<String>,
     pub nags: Vec<u32>,
-}
-
-#[derive(tsify::Tsify, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
-pub struct MoveAlgebraic {
-    pub from: SquareColor,
-    pub to: SquareColor,
 }
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]

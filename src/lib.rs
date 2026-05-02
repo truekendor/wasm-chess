@@ -7,11 +7,9 @@ use shakmaty::{
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::helpers::{
-    pgn_reader::PGNResult,
-    tsify::{
-        CastlingObj, ColorChar, CommentsObj, HeadersObj, MoveObject, MoveVerbose, PieceObj,
-        SquareColor, SquareStr,
-    },
+    parsing, pgn_reader::PGNResult, tsify::{
+        CastlingObj, ColorChar, CommentsObj, HeadersObj, MoveAlgebraic, MoveObject, MoveVerbose, PieceObj, SquareColor, SquareStr
+    }
 };
 
 mod helpers;
@@ -457,7 +455,8 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "isGameOver")]
     pub fn is_game_over(&self) -> bool {
-        self.chess.is_game_over() || self.is_draw_by_fifty_moves() || self.is_threefold_repetition()
+        self.chess.is_game_over() || 
+        self.is_draw()
     }
 
     #[wasm_bindgen(js_name = "isCheck")]
@@ -504,6 +503,26 @@ impl WasmChess {
             Color::Black => ColorChar::B,
         }
     }
+
+    #[wasm_bindgen(js_name = "isStalemate")]
+    pub fn is_stalemate(&self) -> bool {
+        self.chess.is_stalemate()
+    }
+
+    #[wasm_bindgen(js_name = "isPromotion")]
+    pub fn is_promotion(&self, move_obj: MoveAlgebraic) -> bool {
+        let move_str = format!("{}{}{}", move_obj.from, move_obj.to, "n");
+
+        let internal_move: Move = match parsing::str_to_move(&move_str.as_str(), &self.chess) {
+            Ok(val) => val,
+            Err(_) => {
+                return false;
+            }
+        };
+        
+        internal_move.is_promotion()
+    }
+
 
     pub fn board(&self) -> Vec<String> {
         let result: Vec<String> = Square::ALL
