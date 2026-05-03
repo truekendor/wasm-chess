@@ -33,6 +33,7 @@ pub struct MoveVerbose {
     pub is_en_passant: bool,
     // for now we do not distinguish between kingside and queenside castle
     pub is_castle: bool,
+    // TODO: add `is_kingside_castle` and `is_queenside_castle`
 }
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq, Display)]
@@ -54,8 +55,7 @@ pub struct MoveObject {
 
 #[derive(tsify::Tsify, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
-// TODO: rename?
-pub struct MoveAlgebraic {
+pub struct MoveFromSquares {
     pub from: SquareStr,
     pub to: SquareStr,
 }

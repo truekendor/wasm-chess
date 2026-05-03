@@ -11,7 +11,7 @@ use crate::helpers::{
     parsing,
     pgn_reader::PGNResult,
     tsify::{
-        CastlingObj, ColorChar, CommentsObj, HeadersObj, MoveAlgebraic, MoveObject, MoveVerbose,
+        CastlingObj, ColorChar, CommentsObj, HeadersObj, MoveFromSquares, MoveObject, MoveVerbose,
         PieceObj, SquareColor, SquareStr,
     },
 };
@@ -519,7 +519,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "isPromotion")]
-    pub fn is_promotion(&self, move_obj: MoveAlgebraic) -> bool {
+    pub fn is_promotion(&self, move_obj: MoveFromSquares) -> bool {
         let move_str = format!("{}{}{}", move_obj.from, move_obj.to, "n");
 
         let internal_move: Move = match parsing::str_to_move(&move_str.as_str(), &self.chess) {
