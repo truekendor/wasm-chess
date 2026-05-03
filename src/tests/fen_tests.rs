@@ -1,5 +1,6 @@
 #[cfg(test)]
 pub mod fen_tests {
+    use crate::helpers::tsify::*;
     use crate::{WasmChess, helpers::tsify::ColorChar};
     use std::usize;
 
@@ -74,11 +75,11 @@ pub mod fen_tests {
     fn test_get_piece_at_square() {
         let chess = WasmChess::new(None).unwrap();
 
-        assert_eq!(chess.get("e2".to_string()).unwrap(), "P");
-        assert_eq!(chess.get("e7".to_string()).unwrap(), "p");
-        assert_eq!(chess.get("a1".to_string()).unwrap(), "R");
-        assert_eq!(chess.get("h8".to_string()).unwrap(), "r");
-        assert!(chess.get("e4".to_string()).is_none());
+        assert_eq!(chess.get(SquareStr::E2).unwrap(), "P");
+        assert_eq!(chess.get(SquareStr::E7).unwrap(), "p");
+        assert_eq!(chess.get(SquareStr::A1).unwrap(), "R");
+        assert_eq!(chess.get(SquareStr::H8).unwrap(), "r");
+        assert!(chess.get(SquareStr::E4).is_none());
     }
 
     #[test]

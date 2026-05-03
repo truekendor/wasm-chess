@@ -588,10 +588,18 @@ impl WasmChess {
         ascii_str
     }
 
-    // TODO: return PieceObj
-    pub fn get(&self, square: String) -> Option<String> {
-        let sq: shakmaty::Square = square.parse().ok()?;
-        let piece = self.chess.board().piece_at(sq);
+    // TODO:  return PieceObj !
+    pub fn get(&self, square: SquareStr) -> Option<String> {
+        let sq_string = square.to_string();
+
+        let square = match Square::from_ascii(sq_string.as_bytes()) {
+            Ok(val) => val,
+            Err(_err) => {
+                return None;
+            }
+        };
+
+        let piece = self.chess.board().piece_at(square);
         let char = match piece {
             Some(p) => p.char(),
             None => {
