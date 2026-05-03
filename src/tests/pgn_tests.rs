@@ -57,7 +57,7 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
         WasmChess,
         helpers::{
             pgn_reader::PGNResult,
-            tsify::{ColorChar, CommentsObj},
+            tsify_structs::{ColorChar, CommentsObj},
         },
     };
 

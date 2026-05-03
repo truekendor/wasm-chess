@@ -10,7 +10,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use crate::helpers::{
     parsing,
     pgn_reader::PGNResult,
-    tsify::{
+    tsify_structs::{
         CastlingObj, ColorChar, CommentsObj, HeadersObj, MoveFromSquares, MoveObject, MoveVerbose,
         PieceObj, SquareColor, SquareStr,
     },
@@ -395,12 +395,12 @@ impl WasmChess {
         let mut squares_with_piece: Vec<SquareStr> = vec![];
 
         let piece_char: char = match piece.r#type {
-            helpers::tsify::PieceSymbol::P => 'p',
-            helpers::tsify::PieceSymbol::N => 'n',
-            helpers::tsify::PieceSymbol::B => 'b',
-            helpers::tsify::PieceSymbol::R => 'r',
-            helpers::tsify::PieceSymbol::Q => 'q',
-            helpers::tsify::PieceSymbol::K => 'k',
+            helpers::tsify_structs::PieceSymbol::P => 'p',
+            helpers::tsify_structs::PieceSymbol::N => 'n',
+            helpers::tsify_structs::PieceSymbol::B => 'b',
+            helpers::tsify_structs::PieceSymbol::R => 'r',
+            helpers::tsify_structs::PieceSymbol::Q => 'q',
+            helpers::tsify_structs::PieceSymbol::K => 'k',
             _ => {
                 return Err(format!(
                     "Unknown piece type\nInput piece type: {:#?}\nInput color: {:#?}",

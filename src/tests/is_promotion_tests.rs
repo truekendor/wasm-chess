@@ -3,8 +3,8 @@
 ///
 /// @link https://github.com/jhlywa/chess.js/blob/master/__tests__/is-promotion.test.ts
 pub mod is_promotion_tests {
-    use crate::helpers::tsify::*;
-    use crate::{WasmChess, helpers::tsify::MoveFromSquares};
+    use crate::helpers::tsify_structs::*;
+    use crate::{WasmChess, helpers::tsify_structs::MoveFromSquares};
 
     #[test]
     fn true_for_promotion() {

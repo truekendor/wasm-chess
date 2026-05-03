@@ -2,7 +2,7 @@
 pub mod test {
     use crate::{
         WasmChess,
-        helpers::tsify::{SquareColor, SquareStr},
+        helpers::tsify_structs::{SquareColor, SquareStr},
     };
 
     #[test]

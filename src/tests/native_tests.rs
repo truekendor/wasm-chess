@@ -7,7 +7,7 @@ pub mod test {
     use shakmaty::Square;
 
     use crate::WasmChess;
-    use crate::helpers::tsify::*;
+    use crate::helpers::tsify_structs::*;
 
     #[test]
     fn test_new_game_initial_position() {

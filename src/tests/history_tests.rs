@@ -5,7 +5,7 @@
 pub mod history_test_chess_js {
     use crate::{
         WasmChess,
-        helpers::tsify::{ColorChar, MoveVerbose, SquareStr},
+        helpers::tsify_structs::{ColorChar, MoveVerbose, SquareStr},
     };
 
     #[test]

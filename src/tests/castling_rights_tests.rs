@@ -2,7 +2,7 @@
 pub mod castling_rights_tests {
     use crate::{
         WasmChess,
-        helpers::tsify::{CastlingObj, ColorChar},
+        helpers::tsify_structs::{CastlingObj, ColorChar},
     };
 
     #[test]

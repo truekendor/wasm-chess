@@ -2,7 +2,7 @@
 mod undo_logic_test {
     use crate::{
         WasmChess,
-        helpers::tsify::{ColorChar, MoveVerbose},
+        helpers::tsify_structs::{ColorChar, MoveVerbose},
     };
 
     #[test]
@@ -29,7 +29,7 @@ mod undo_logic_test {
                 to: "e5".to_string(),
                 before: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string(),
                 after: "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2".to_string(),
-                color: crate::helpers::tsify::ColorChar::B,
+                color: crate::helpers::tsify_structs::ColorChar::B,
                 piece: "p".to_string(),
                 captured: None,
                 promotion: None,
@@ -51,7 +51,7 @@ mod undo_logic_test {
                 to: "e4".to_string(),
                 before: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1".to_string(),
                 after: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string(),
-                color: crate::helpers::tsify::ColorChar::W,
+                color: crate::helpers::tsify_structs::ColorChar::W,
                 piece: "p".to_string(),
                 captured: None,
                 promotion: None,
