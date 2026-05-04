@@ -97,10 +97,16 @@ pub mod fen_tests {
 
         let starting_fen = wasm_chess.fen(None);
 
-        wasm_chess.make_move("e2e4").unwrap();
+        wasm_chess.make_move("e4").unwrap();
         wasm_chess.make_move("e7e5").unwrap();
         wasm_chess.make_move("Nf3").unwrap();
-        wasm_chess.make_move("h7h6").unwrap();
+        wasm_chess
+            .make_move_from_obj(MoveObject {
+                from: SquareStr::H7,
+                to: SquareStr::H6,
+                promotion: None,
+            })
+            .unwrap();
 
         pretty_assertions::assert_eq!(wasm_chess.fen_at(0).unwrap(), starting_fen);
         pretty_assertions::assert_eq!(
