@@ -337,7 +337,95 @@ pub mod comments_test {
 
         #[test]
         fn prune_comments() {
-            //
+            let mut chess = WasmChess::new(None).unwrap();
+            chess.make_move("e4").unwrap();
+            chess.set_comment("tactical");
+
+            chess.undo();
+            chess.set_comment("positional");
+
+            pretty_assertions::assert_eq!(
+                chess.get_comments(),
+                vec![CommentsObj {
+                    comment: Some("positional".to_string()),
+                    fen: chess.fen(None),
+                    nags: vec![],
+                    suffix_annotation: None
+                }]
+            );
+        }
+
+        #[test]
+        fn clear_comments_load() {
+            let mut chess = WasmChess::new(None).unwrap();
+            chess.make_move("e4").unwrap();
+            chess.set_comment("good move");
+
+            pretty_assertions::assert_eq!(
+                chess.get_comments(),
+                vec![CommentsObj {
+                    comment: Some("good move".to_string()),
+                    fen: chess.fen(None),
+                    nags: vec![],
+                    suffix_annotation: None
+                }]
+            );
+
+            // reset
+            // clear
+            // load
+            // loadPgn
+            chess.load(chess.fen(None)).unwrap();
+
+            pretty_assertions::assert_eq!(chess.get_comments(), vec![]);
+        }
+
+        #[test]
+        fn clear_comments_load_pgn() {
+            let mut chess = WasmChess::new(None).unwrap();
+            chess.make_move("e4").unwrap();
+            chess.set_comment("good move");
+
+            pretty_assertions::assert_eq!(
+                chess.get_comments(),
+                vec![CommentsObj {
+                    comment: Some("good move".to_string()),
+                    fen: chess.fen(None),
+                    nags: vec![],
+                    suffix_annotation: None
+                }]
+            );
+
+            // reset
+            // clear
+            chess.load_pgn("1. e4").unwrap();
+
+            pretty_assertions::assert_eq!(chess.get_comments(), vec![]);
+        }
+
+        #[test]
+        fn clear_comments_reset() {
+            let mut chess = WasmChess::new(None).unwrap();
+            chess.make_move("e4").unwrap();
+            chess.set_comment("good move");
+
+            pretty_assertions::assert_eq!(
+                chess.get_comments(),
+                vec![CommentsObj {
+                    comment: Some("good move".to_string()),
+                    fen: chess.fen(None),
+                    nags: vec![],
+                    suffix_annotation: None
+                }]
+            );
+
+            chess.reset();
+            pretty_assertions::assert_eq!(chess.get_comments(), vec![]);
+        }
+
+        fn clear_comment_on_clear() {
+            // TODO
+            // chess.clear()
         }
     }
 }

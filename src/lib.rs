@@ -13,7 +13,7 @@ use crate::helpers::{
     pgn_reader::PGNResult,
     tsify_structs::{
         CastlingObj, ColorChar, CommentsObj, HeadersObj, MoveFromSquares, MoveObject, MoveVerbose,
-        PieceObj, PrunedCommentsObj, SquareColor, SquareStr,
+        PieceObj, PieceSymbol, PrunedCommentsObj, SquareColor, SquareStr,
     },
 };
 
@@ -44,6 +44,8 @@ pub struct WasmChess {
     // TODO: rename
     pgn_result: Option<PGNResult>,
 }
+
+// TODO: add docs
 
 // TODO: find what String can be replaced with &str without lifetime and do it
 
@@ -130,8 +132,7 @@ impl WasmChess {
     }
 
     /// resets to default starting position
-    ///
-    /// TODO: need to double-check what is does in chess.js
+    /// and clears all history and pgn related data
     pub fn reset(&mut self) {
         self.chess = Chess::default();
 
@@ -197,18 +198,43 @@ impl WasmChess {
         fen.to_string()
     }
 
-    // as for now the api of this is strange since
-    // without any moves played it will return `None`
-    // maybe it is an OK behavior
+    /// Returns the FEN string at a specific move index.
+    ///
+    /// # Parameters
+    /// * `index` - The move index (0-based):
+    ///   - `0` - Starting position (before any moves)
+    ///   - `1` - Position after first move
+    ///   - `2` - Position after second move, etc.
+    ///
+    /// # Returns
+    /// * `Some(String)` - The FEN string at the requested position
+    /// * `None` - If `index` exceeds total moves played
+    ///
+    /// # Example
+    /// ```
+    /// assert!(chess.fen_at(0).is_some());  // Starting position always available
+    /// // After 1.e4
+    /// assert_eq!(chess.fen_at(1), Some("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string()));
+    /// ```
     #[wasm_bindgen(js_name = "fenAt")]
     pub fn fen_at(&self, index: usize) -> Option<String> {
-        if index >= self.history.len() {
-            return None;
+        match index {
+            0 => {
+                let starting_fen = match self.history.len() > 0 {
+                    false => self.fen(None),
+                    true => self.history[0].fen_before.to_string(),
+                };
+
+                Some(starting_fen)
+            }
+            idx => {
+                if idx <= self.history.len() {
+                    Some(self.history[idx - 1].fen_after.to_string())
+                } else {
+                    None
+                }
+            }
         }
-
-        let fen = &self.history[index].fen_before;
-
-        Some(fen.to_string())
     }
 
     pub fn undo(&mut self) -> Option<MoveVerbose> {
@@ -248,11 +274,16 @@ impl WasmChess {
         helpers::legal_moves::san(&self.chess)
     }
 
-    // ! API discrepancy
-    // TODO: change it later?
-    // this version of verbose moves is a bit different from chess.js since it
-    // marks en passant square only if it is a legal move,
-    // while chess.js always marks en passant square if it is available
+    /// # API Discrepancy: chess.js Compatibility
+    ///
+    /// This implementation differs from chess.js in how it handles the
+    /// en passant square in verbose move objects.
+    ///
+    /// |      Aspect       ||           chess.js             ||      This Implementation      |
+    /// |-------------------||--------------------------------||-------------------------------|
+    /// | En passant square || Always included when available || Only included for legal moves |
+    ///
+    /// **TODO:** Evaluate whether to align with chess.js behavior in a future release.
     #[wasm_bindgen(js_name = "legalMovesVerbose")]
     pub fn legal_moves_verbose(&self) -> Vec<MoveVerbose> {
         helpers::legal_moves::verbose(&self.chess)
@@ -278,7 +309,6 @@ impl WasmChess {
         self.chess.halfmoves()
     }
 
-    // TODO:
     pub fn length(&self) -> u32 {
         return self.history.len() as u32;
     }
@@ -297,7 +327,7 @@ impl WasmChess {
     // TODO: change to Result<MoveObject, String?>
     // #[wasm_bindgen(js_name = "moveAt")]
     fn move_at(&self, index: usize) -> Option<MoveObject> {
-        // TODO: index == 0 is fine
+        // TODO: index == 0 is fine? Check if 0 should be valid or not
         if index == 0 || index as u32 >= self.length() {
             return None;
         }
@@ -305,33 +335,11 @@ impl WasmChess {
         let internal_move = &self.history[index].internal_move;
         let promotion = internal_move.promotion().map(|m| m.char().to_string());
 
-        let from = match internal_move.from() {
-            Some(val) => val,
-            None => {
-                return None;
-            }
-        };
+        let from = internal_move.from()?;
+        let to = internal_move.to();
 
-        let from = from.to_string().to_lowercase().parse::<SquareStr>();
-        let to = internal_move
-            .to()
-            .to_string()
-            .to_lowercase()
-            .parse::<SquareStr>();
-
-        let from = match from {
-            Ok(val) => val,
-            Err(_err) => {
-                return None;
-            }
-        };
-
-        let to = match to {
-            Ok(val) => val,
-            Err(_err) => {
-                return None;
-            }
-        };
+        let from = from.to_string().to_lowercase().parse::<SquareStr>().ok()?;
+        let to = to.to_string().to_lowercase().parse::<SquareStr>().ok()?;
 
         Some(MoveObject {
             from,
@@ -343,95 +351,82 @@ impl WasmChess {
     #[wasm_bindgen(js_name = "squareColor")]
     pub fn square_color(&self, square: SquareStr) -> Option<SquareColor> {
         let sq_string = square.to_string();
+        let square = Square::from_ascii(sq_string.as_bytes()).ok()?;
 
-        let square = match Square::from_ascii(sq_string.as_bytes()) {
-            Ok(val) => val,
-            Err(_err) => {
-                return None;
-            }
-        };
-
-        let square_color = match square.is_light() {
-            true => SquareColor::Light,
-            false => SquareColor::Dark,
-        };
-
-        Some(square_color)
+        Some(if square.is_light() {
+            SquareColor::Light
+        } else {
+            SquareColor::Dark
+        })
     }
 
     #[wasm_bindgen(js_name = "findPieceFromString")]
     pub fn find_piece_from_str(&self, piece: &str) -> Result<Vec<SquareStr>, String> {
-        let mut squares_with_piece: Vec<SquareStr> = vec![];
-
         let piece = piece.trim();
-        if piece.len() > 1 {
-            return Err(format!("Error: unexpected piece type: {}", piece));
+
+        if piece.len() != 1 {
+            return Err(format!("Error: unexpected piece length: {}", piece.len()));
         }
 
-        // Validate piece type and color
         let piece_char = piece
             .chars()
             .next()
-            .ok_or_else(|| format!("Empty piece string"))?;
+            .ok_or_else(|| "Empty piece string".to_string())?;
 
-        let piece_type = match Piece::from_char(piece_char) {
-            Some(p) => p,
-            None => {
-                return Err(format!(
-                    "Error parsing piece char: \"{}\" into a valid piece type",
-                    piece
-                ));
-            }
-        };
+        let piece_type = Piece::from_char(piece_char).ok_or_else(|| {
+            format!(
+                "Error parsing piece char: \"{}\" into a valid piece type",
+                piece
+            )
+        })?;
 
-        self.chess.board().iter().for_each(|(sq, p)| {
+        let mut squares_with_piece = Vec::new();
+
+        for (sq, p) in self.chess.board().iter() {
             if p == piece_type {
-                squares_with_piece.push(sq.to_string().to_lowercase().parse().unwrap());
+                let square_str = sq.to_string().to_lowercase();
+                let square = SquareStr::from_str(&square_str)
+                    .map_err(|_| format!("Failed to parse square: {}", square_str))?;
+                squares_with_piece.push(square);
             }
-        });
+        }
 
         Ok(squares_with_piece)
     }
 
     #[wasm_bindgen(js_name = "findPieceFromPieceObject")]
     pub fn find_piece_from_obj(&self, piece: PieceObj) -> Result<Vec<SquareStr>, String> {
-        let mut squares_with_piece: Vec<SquareStr> = vec![];
-
         let piece_char: char = match piece.r#type {
-            helpers::tsify_structs::PieceSymbol::P => 'p',
-            helpers::tsify_structs::PieceSymbol::N => 'n',
-            helpers::tsify_structs::PieceSymbol::B => 'b',
-            helpers::tsify_structs::PieceSymbol::R => 'r',
-            helpers::tsify_structs::PieceSymbol::Q => 'q',
-            helpers::tsify_structs::PieceSymbol::K => 'k',
-            _ => {
-                return Err(format!(
-                    "Unknown piece type\nInput piece type: {:#?}\nInput color: {:#?}",
-                    piece.r#type, piece.color
-                ));
-            }
+            PieceSymbol::P => 'p',
+            PieceSymbol::N => 'n',
+            PieceSymbol::B => 'b',
+            PieceSymbol::R => 'r',
+            PieceSymbol::Q => 'q',
+            PieceSymbol::K => 'k',
         };
 
-        let piece_char: char = match piece.color {
+        let piece_char = match piece.color {
             ColorChar::W => piece_char.to_ascii_uppercase(),
             ColorChar::B => piece_char.to_ascii_lowercase(),
         };
 
-        let piece_type = match Piece::from_char(piece_char) {
-            Some(p) => p,
-            None => {
-                return Err(format!(
-                    "Error parsing piece char: \"{:#?}\" into a valid piece type",
-                    piece.r#type
-                ));
-            }
-        };
+        let piece_type = Piece::from_char(piece_char).ok_or_else(|| {
+            format!(
+                "Error parsing piece char: \"{:#?}\" into a valid piece type",
+                piece.r#type
+            )
+        })?;
 
-        self.chess.board().iter().for_each(|(sq, p)| {
+        let mut squares_with_piece: Vec<SquareStr> = vec![];
+
+        for (sq, p) in self.chess.board().iter() {
             if p == piece_type {
-                squares_with_piece.push(sq.to_string().to_lowercase().parse().unwrap());
+                let square_str = sq.to_string().to_lowercase();
+                let square = SquareStr::from_str(&square_str)
+                    .map_err(|_| format!("Failed to parse square: {}", square_str))?;
+                squares_with_piece.push(square);
             }
-        });
+        }
 
         Ok(squares_with_piece)
     }
@@ -493,12 +488,9 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "isThreefoldRepetition")]
     pub fn is_threefold_repetition(&self) -> bool {
-        match self.position_count.get(&self.hash) {
-            Some(val) => {
-                return *val >= 3;
-            }
-            None => false,
-        }
+        self.position_count
+            .get(&self.hash)
+            .is_some_and(|&val| val >= 3)
     }
 
     #[wasm_bindgen(js_name = "isDraw")]
@@ -525,19 +517,14 @@ impl WasmChess {
     pub fn is_promotion(&self, move_obj: MoveFromSquares) -> bool {
         let move_str = format!("{}{}{}", move_obj.from, move_obj.to, "n");
 
-        let internal_move: Move = match parsing::str_to_move(&move_str.as_str(), &self.chess) {
-            Ok(val) => val,
-            Err(_) => {
-                return false;
-            }
-        };
-
-        internal_move.is_promotion()
+        parsing::str_to_move(&move_str, &self.chess)
+            .map(|internal_move| internal_move.is_promotion())
+            .unwrap_or(false)
     }
 
     // TODO: idk what chess.js does
     pub fn board(&self) -> Vec<String> {
-        let result: Vec<String> = Square::ALL
+        Square::ALL
             .iter()
             .map(|sq| {
                 let piece = self.chess.board().piece_at(*sq);
@@ -547,9 +534,7 @@ impl WasmChess {
                     None => " ".to_string(),
                 }
             })
-            .collect();
-
-        result
+            .collect::<Vec<String>>()
     }
 
     pub fn ascii(&self) -> String {
@@ -614,65 +599,36 @@ impl WasmChess {
         Some(char.to_string())
     }
 
-    // TODO: TEST bevcause we derive bunh of bs with strum
+    // TODO: port chess js tests for this bad boy
     pub fn attackers(
         &self,
         square: SquareStr,
         attacked_by_side: Option<ColorChar>,
     ) -> Result<Vec<String>, String> {
-        let square = Square::from_str(&square.to_string().to_lowercase());
+        let square =
+            Square::from_str(&square.to_string().to_lowercase()).map_err(|err| err.to_string())?;
 
-        if let Err(err) = square {
-            return Err(err.to_string());
-        }
+        let get_attackers = |color: Color| -> Vec<Square> {
+            self.chess
+                .board()
+                .attacks_to(square, color, self.chess.board().by_color(color))
+                .into_iter()
+                .collect()
+        };
 
-        let square = square.unwrap();
+        let w_attackers = get_attackers(Color::White);
+        let b_attackers = get_attackers(Color::Black);
 
-        let mut squares: Vec<Square> = vec![];
+        let squares = match attacked_by_side {
+            None => match self.chess.turn() {
+                Color::White => w_attackers,
+                Color::Black => b_attackers,
+            },
+            Some(ColorChar::W) => w_attackers,
+            Some(ColorChar::B) => b_attackers,
+        };
 
-        let mut w_attackers: Vec<Square> = self
-            .chess
-            .board()
-            .attacks_to(square, Color::White, self.chess.board().white())
-            .into_iter()
-            .map(|square| {
-                return square;
-            })
-            .collect();
-
-        let mut b_attackers: Vec<Square> = self
-            .chess
-            .board()
-            .attacks_to(square, Color::Black, self.chess.board().black())
-            .into_iter()
-            .map(|square| {
-                return square;
-            })
-            .collect();
-
-        if attacked_by_side.is_none() {
-            match self.chess.turn() {
-                Color::White => {
-                    squares.append(&mut w_attackers);
-                }
-                Color::Black => {
-                    squares.append(&mut b_attackers);
-                }
-            }
-        } else {
-            match attacked_by_side.unwrap() {
-                ColorChar::W => {
-                    squares.append(&mut w_attackers);
-                }
-                ColorChar::B => {
-                    squares.append(&mut b_attackers);
-                }
-            }
-        }
-
-        let string_result: Vec<String> = squares.iter().map(|el| el.to_string()).collect();
-
-        return Ok(string_result);
+        Ok(squares.into_iter().map(|el| el.to_string()).collect())
     }
 
     #[wasm_bindgen(js_name = "historySAN")]
@@ -723,9 +679,9 @@ impl WasmChess {
                     Color::Black => ColorChar::B,
                 };
 
-                let from_sq = internal_move
-                    .from()
-                    .expect("Optional only for chess variants");
+                let from_sq = internal_move.from().expect(
+                    "Only standard chess and chess960 is supported, from() should always return Some",
+                );
 
                 MoveVerbose {
                     from: from_sq.to_string(),
@@ -789,11 +745,8 @@ impl WasmChess {
     pub fn load_pgn(&mut self, pgn: &str) -> Result<(), String> {
         let pgn_headers = helpers::pgn_reader::parse_pgn(pgn);
 
-        if let Err(pgn_error) = pgn_headers {
-            return Err(format!("Error loading pgn: {}", pgn_error));
-        }
-
-        let (pgn_result, wasm_chess) = pgn_headers.unwrap();
+        let (pgn_result, wasm_chess) =
+            pgn_headers.map_err(|err| format!("Error loading pgn: {}", err))?;
 
         self.chess = wasm_chess.chess;
         self.hash = wasm_chess.hash;
@@ -807,15 +760,14 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "getHeaders")]
     pub fn get_headers(&self) -> HeadersObj {
-        if self.pgn_result.is_none() {
-            return HeadersObj {
+        match self.pgn_result.as_ref() {
+            Some(pgn_result) => HeadersObj {
+                headers_data: pgn_result.headers.clone(),
+            },
+            None => HeadersObj {
                 headers_data: OrderMap::new(),
-            };
+            },
         }
-
-        return HeadersObj {
-            headers_data: self.pgn_result.clone().unwrap().headers,
-        };
     }
 
     #[wasm_bindgen(js_name = "setHeader")]
@@ -837,65 +789,57 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "removeHeader")]
     pub fn remove_header(&mut self, key: String) -> bool {
-        if self.pgn_result.is_some() {
-            let val = self.pgn_result.as_mut().unwrap().headers.remove(&key);
-
-            return val.is_some();
-        }
-
-        return false;
+        self.pgn_result
+            .as_mut()
+            .map(|pgn| pgn.headers.remove(&key).is_some())
+            .unwrap_or(false)
     }
 
     #[wasm_bindgen(js_name = "removeComment")]
     pub fn remove_comment(&mut self) -> Option<String> {
-        if self.pgn_result.is_none() {
-            return None;
-        }
-
         let current_fen = self.fen(None);
-        let pgn_result = self.pgn_result.as_mut().unwrap();
 
-        let comment = pgn_result.comments_map.get(&current_fen).cloned();
+        let pgn_result = self.pgn_result.as_mut()?;
+        let comment = pgn_result.comments_map.get(&current_fen).cloned()?;
+        pgn_result.comments_map.remove(&current_fen);
+        Some(comment)
+    }
 
-        if comment.is_none() {
+    #[wasm_bindgen(js_name = "removeComments")]
+    pub fn remove_comments(&mut self) -> Vec<PrunedCommentsObj> {
+        let Some(pgn_result) = self.pgn_result.as_mut() else {
+            return vec![];
+        };
+
+        pgn_result
+            .comments_map
+            .drain(..)
+            .map(|(key, value)| PrunedCommentsObj {
+                fen: key,
+                comment: value,
+            })
+            .collect()
+    }
+
+    #[wasm_bindgen(js_name = "getComment")]
+    pub fn get_comment(&self) -> Option<String> {
+        let Some(pgn_result) = self.pgn_result.as_ref() else {
             return None;
         };
 
-        pgn_result.comments_map.remove(&current_fen);
+        let comments = pgn_result.comments_map.get(&self.fen(None));
 
-        comment
+        comments.cloned()
     }
 
-    // #[wasm_bindgen(js_name = "removeComments")]
-    pub fn remove_comments(&mut self) -> Vec<PrunedCommentsObj> {
-        let mut result = vec![];
-
-        if self.pgn_result.is_none() {
-            return result;
-        }
-
-        let pgn_result = self.pgn_result.as_mut().unwrap();
-
-        pgn_result.comments_map.drain(..).for_each(|(key, value)| {
-            result.push(PrunedCommentsObj {
-                fen: key,
-                comment: value,
-            });
-        });
-
-        result
-    }
-
-    // TODO: suffix annotations not working for now
+    // TODO: suffix annotations not working for now (deprecated ?j)
     #[wasm_bindgen(js_name = "getComments")]
     pub fn get_comments(&mut self) -> Vec<CommentsObj> {
         let mut comments_vec: Vec<CommentsObj> = vec![];
 
-        if self.pgn_result.is_none() {
+        let Some(pgn_result) = self.pgn_result.as_ref() else {
             return comments_vec;
-        }
-
-        let pgn_result = self.pgn_result.as_ref().unwrap();
+        };
 
         let initial_fen_dev = match self.history.len() {
             0 => self.fen(None),
@@ -925,6 +869,16 @@ impl WasmChess {
         comments_vec
     }
 
+    #[wasm_bindgen(js_name = "setComment")]
+    pub fn set_comment(&mut self, comment: &str) {
+        let fen = self.fen(None);
+        let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
+
+        pgn_result
+            .comments_map
+            .insert(fen, comment.replace('{', "[").replace('}', "]"));
+    }
+
     fn get_comment_object(&self, fen_str: String, pgn_result: &PGNResult) -> Option<CommentsObj> {
         let comment_str = pgn_result.comments_map.get(&fen_str);
         let suffix: Option<String> = pgn_result.suffix_map.get(&fen_str).cloned();
@@ -945,62 +899,28 @@ impl WasmChess {
         return None;
     }
 
-    #[wasm_bindgen(js_name = "getComment")]
-    pub fn get_comment(&self) -> Option<String> {
-        if self.pgn_result.is_none() {
-            return None;
-        }
-
-        let pgn_result = self.pgn_result.as_ref().unwrap();
-
-        let comments = pgn_result.comments_map.get(&self.fen(None));
-
-        comments.cloned()
-    }
-
-    #[wasm_bindgen(js_name = "setComment")]
-    pub fn set_comment(&mut self, comment: &str) {
-        if self.pgn_result.is_none() {
-            self.pgn_result = Some(PGNResult::default());
-        }
-
-        let fen = self.fen(None);
-
-        let pgn_result = self.pgn_result.as_mut().unwrap();
-
-        pgn_result
-            .comments_map
-            .insert(fen, comment.replace('{', "[").replace('}', "]"));
-    }
-
     #[wasm_bindgen(js_name = "getNags")]
     pub fn get_nags(&self, fen: Option<String>) -> Vec<String> {
-        let empty = vec![];
-        if self.pgn_result.is_none() {
-            return empty;
-        }
+        let Some(pgn_result) = self.pgn_result.as_ref() else {
+            return vec![];
+        };
 
-        let pgn_result = self.pgn_result.as_ref().unwrap();
-        let fen_key = fen.unwrap_or(self.fen(None));
+        let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
-        let nags = pgn_result.nag_map.get(&fen_key);
-
-        if let Some(nag_list) = nags {
-            return nag_list.clone();
-        }
-
-        return empty;
+        pgn_result
+            .nag_map
+            .get(&fen_key)
+            .cloned()
+            .unwrap_or_else(Vec::new)
     }
 
     #[wasm_bindgen(js_name = "addNag")]
     pub fn add_nag(&mut self, nag: &str, fen: Option<String>) {
-        let fen_key = fen.unwrap_or(self.fen(None));
+        let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
-        if self.pgn_result.is_none() {
-            return;
-        }
-
-        let pgn_result = self.pgn_result.as_mut().unwrap();
+        let Some(pgn_result) = self.pgn_result.as_mut() else {
+            return ();
+        };
 
         let nags = pgn_result.nag_map.entry(fen_key.clone()).or_insert(vec![]);
 
@@ -1011,60 +931,44 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "setNags")]
     pub fn set_nags(&mut self, nags: Vec<String>, fen: Option<String>) {
-        let fen_key = fen.unwrap_or(self.fen(None));
+        let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
-        if self.pgn_result.is_none() {
-            return;
-        }
-
-        let pgn_result = self.pgn_result.as_mut().unwrap();
+        let Some(pgn_result) = self.pgn_result.as_mut() else {
+            return ();
+        };
 
         let _ = pgn_result.nag_map.insert(fen_key, nags);
     }
 
-    #[wasm_bindgen(js_name = "removeNags")]
-    pub fn remove_nags(&mut self, fen: Option<String>) -> Vec<String> {
-        let fen_key = fen.unwrap_or(self.fen(None));
-        let empty = vec![];
-
-        if self.pgn_result.is_none() {
-            return empty;
-        }
-
-        let pgn_result = self.pgn_result.as_mut().unwrap();
-
-        let removed = pgn_result.nag_map.remove(&fen_key);
-
-        removed.unwrap_or(empty)
-    }
-
     #[wasm_bindgen(js_name = "removeNag")]
     pub fn remove_nag(&mut self, nag: String, fen: Option<String>) -> bool {
-        let fen_key = fen.unwrap_or(self.fen(None));
+        let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
-        if self.pgn_result.is_none() {
+        let Some(pgn_result) = self.pgn_result.as_mut() else {
             return false;
-        }
+        };
 
-        let pgn_result = self.pgn_result.as_mut().unwrap();
-
-        let nags = pgn_result.nag_map.get_mut(&fen_key);
-
-        if nags.is_none() {
+        let Some(nags) = pgn_result.nag_map.get_mut(&fen_key) else {
             return false;
-        }
-        let nags = nags.unwrap();
+        };
 
-        let index = nags.iter().position(|el| el == &nag);
-
-        if index.is_none() {
+        let Some(index) = nags.iter().position(|el| el == &nag) else {
             return false;
-        }
-
-        let index = index.unwrap();
+        };
 
         nags.remove(index);
+        true
+    }
 
-        return true;
+    #[wasm_bindgen(js_name = "removeNags")]
+    pub fn remove_nags(&mut self, fen: Option<String>) -> Vec<String> {
+        let fen_key = fen.unwrap_or_else(|| self.fen(None));
+
+        let Some(pgn_result) = self.pgn_result.as_mut() else {
+            return vec![];
+        };
+        let removed = pgn_result.nag_map.remove(&fen_key);
+
+        removed.unwrap_or_else(|| Vec::new())
     }
 }

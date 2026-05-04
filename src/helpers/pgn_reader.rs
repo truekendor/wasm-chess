@@ -1,6 +1,6 @@
 use ordermap::OrderMap;
 use shakmaty::{CastlingMode, Chess, fen::Fen};
-use std::{collections::HashMap, io, ops::ControlFlow};
+use std::{io, ops::ControlFlow};
 
 use pgn_reader::{RawTag, Reader, SanPlus, Visitor};
 

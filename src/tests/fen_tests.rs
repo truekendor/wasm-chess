@@ -75,10 +75,10 @@ pub mod fen_tests {
     fn test_get_piece_at_square() {
         let chess = WasmChess::new(None).unwrap();
 
-        assert_eq!(chess.get(SquareStr::E2).unwrap(), "P");
-        assert_eq!(chess.get(SquareStr::E7).unwrap(), "p");
-        assert_eq!(chess.get(SquareStr::A1).unwrap(), "R");
-        assert_eq!(chess.get(SquareStr::H8).unwrap(), "r");
+        pretty_assertions::assert_eq!(chess.get(SquareStr::E2).unwrap(), "P");
+        pretty_assertions::assert_eq!(chess.get(SquareStr::E7).unwrap(), "p");
+        pretty_assertions::assert_eq!(chess.get(SquareStr::A1).unwrap(), "R");
+        pretty_assertions::assert_eq!(chess.get(SquareStr::H8).unwrap(), "r");
         assert!(chess.get(SquareStr::E4).is_none());
     }
 
@@ -86,7 +86,8 @@ pub mod fen_tests {
     fn test_fen_at_index_before_any_moves() {
         let wasm_chess = WasmChess::new(None).unwrap();
 
-        assert!(wasm_chess.fen_at(0).is_none());
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(0).unwrap(), wasm_chess.fen(None));
+
         assert!(wasm_chess.fen_at(100).is_none());
     }
 
@@ -94,29 +95,33 @@ pub mod fen_tests {
     fn test_fen_at() {
         let mut wasm_chess = WasmChess::new(None).unwrap();
 
+        let starting_fen = wasm_chess.fen(None);
+
         wasm_chess.make_move("e2e4").unwrap();
         wasm_chess.make_move("e7e5").unwrap();
-        wasm_chess.make_move("g1f3").unwrap();
+        wasm_chess.make_move("Nf3").unwrap();
         wasm_chess.make_move("h7h6").unwrap();
 
-        assert_eq!(
-            wasm_chess.fen_at(0).unwrap(),
-            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        );
-        assert_eq!(
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(0).unwrap(), starting_fen);
+        pretty_assertions::assert_eq!(
             wasm_chess.fen_at(1).unwrap(),
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
         );
-        assert_eq!(
+        pretty_assertions::assert_eq!(
             wasm_chess.fen_at(2).unwrap(),
             "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
         );
-        assert_eq!(
+        pretty_assertions::assert_eq!(
             wasm_chess.fen_at(3).unwrap(),
             "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
         );
+        pretty_assertions::assert_eq!(
+            wasm_chess.fen_at(4).unwrap(),
+            "rnbqkbnr/pppp1pp1/7p/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3"
+        );
 
-        assert!(wasm_chess.fen_at(4).is_none());
+        assert!(wasm_chess.fen_at(4).is_some());
+        assert!(wasm_chess.fen_at(5).is_none());
         assert!(wasm_chess.fen_at(10000).is_none());
         assert!(wasm_chess.fen_at(usize::MAX).is_none());
     }
