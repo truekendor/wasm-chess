@@ -3,8 +3,8 @@
 ///
 /// @link https://github.com/jhlywa/chess.js/blob/master/__tests__/is-promotion.test.ts
 pub mod is_promotion_tests {
-    use crate::helpers::tsify::*;
-    use crate::{WasmChess, helpers::tsify::MoveAlgebraic};
+    use crate::helpers::tsify_structs::*;
+    use crate::{WasmChess, helpers::tsify_structs::MoveFromSquares};
 
     #[test]
     fn true_for_promotion() {
@@ -12,7 +12,7 @@ pub mod is_promotion_tests {
         let chess = WasmChess::new(Some(fen)).unwrap();
 
         pretty_assertions::assert_eq!(
-            chess.is_promotion(MoveAlgebraic {
+            chess.is_promotion(MoveFromSquares {
                 from: SquareStr::B7,
                 to: SquareStr::B8
             }),
@@ -26,7 +26,7 @@ pub mod is_promotion_tests {
         let chess = WasmChess::new(Some(fen)).unwrap();
 
         pretty_assertions::assert_eq!(
-            chess.is_promotion(MoveAlgebraic {
+            chess.is_promotion(MoveFromSquares {
                 from: SquareStr::B7,
                 to: SquareStr::C8
             }),
@@ -40,7 +40,7 @@ pub mod is_promotion_tests {
         let chess = WasmChess::new(Some(fen)).unwrap();
 
         pretty_assertions::assert_eq!(
-            chess.is_promotion(MoveAlgebraic {
+            chess.is_promotion(MoveFromSquares {
                 from: SquareStr::E4,
                 to: SquareStr::E5
             }),
@@ -54,7 +54,7 @@ pub mod is_promotion_tests {
         let chess = WasmChess::new(Some(fen)).unwrap();
 
         pretty_assertions::assert_eq!(
-            chess.is_promotion(MoveAlgebraic {
+            chess.is_promotion(MoveFromSquares {
                 from: SquareStr::H1,
                 to: SquareStr::H8
             }),

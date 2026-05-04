@@ -1,12 +1,13 @@
+use ordermap::OrderMap;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use strum::{Display, EnumString, IntoStaticStr};
 
 #[derive(tsify::Tsify, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
 pub struct HeadersObj {
-    pub headers_data: HashMap<String, String>,
+    #[tsify(type = "Map<string, string>")]
+    pub headers_data: OrderMap<String, String>,
 }
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
@@ -33,6 +34,7 @@ pub struct MoveVerbose {
     pub is_en_passant: bool,
     // for now we do not distinguish between kingside and queenside castle
     pub is_castle: bool,
+    // TODO: add `is_kingside_castle` and `is_queenside_castle`
 }
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq, Display)]
@@ -43,7 +45,7 @@ pub enum SquareColor {
     Dark,
 }
 
-#[derive(tsify::Tsify, Serialize, Deserialize)]
+#[derive(tsify::Tsify, Serialize, Deserialize, PartialEq, Debug)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct MoveObject {
     pub from: SquareStr,
@@ -54,8 +56,7 @@ pub struct MoveObject {
 
 #[derive(tsify::Tsify, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
-// TODO: rename?
-pub struct MoveAlgebraic {
+pub struct MoveFromSquares {
     pub from: SquareStr,
     pub to: SquareStr,
 }
@@ -74,17 +75,17 @@ pub struct CommentsObj {
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
-pub struct CastlingObj {
-    pub king: bool,
-    pub queen: bool,
+#[serde(rename_all = "camelCase")]
+pub struct PrunedCommentsObj {
+    pub fen: String,
+    pub comment: String,
 }
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
-#[serde(rename_all = "camelCase")]
-pub enum ColorChar {
-    W,
-    B,
+pub struct CastlingObj {
+    pub king: bool,
+    pub queen: bool,
 }
 
 // copy of a shakmaty's Square enum for tsify types
@@ -104,6 +105,14 @@ pub enum SquareStr {
     A8, B8, C8, D8, E8, F8, G8, H8,
 }
 
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub enum ColorChar {
+    W,
+    B,
+}
+
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
@@ -121,4 +130,57 @@ pub enum PieceSymbol {
 pub struct PieceObj {
     pub r#type: PieceSymbol,
     pub color: ColorChar,
+}
+
+// this is like a custom result
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+pub struct OkOrError<T> {
+    pub ok: Option<T>,
+    pub err: Option<String>,
+}
+
+// TODO: use it later
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub enum SuffixSymbol {
+    Exclam,
+    Question,
+    DoubleExclam,
+    ExclamQuestion,
+    QuestionExclam,
+    DoubleQuestion,
+}
+
+impl SuffixSymbol {
+    fn as_str(&self) -> &'static str {
+        match self {
+            SuffixSymbol::Exclam => "!",
+            SuffixSymbol::Question => "?",
+            SuffixSymbol::DoubleExclam => "!!",
+            SuffixSymbol::ExclamQuestion => "!?",
+            SuffixSymbol::QuestionExclam => "?!",
+            SuffixSymbol::DoubleQuestion => "??",
+        }
+    }
+
+    pub fn from_str(str: &str) -> Option<SuffixSymbol> {
+        match str {
+            "!" | "$1" => Some(SuffixSymbol::Exclam),
+            "?" | "$2" => Some(SuffixSymbol::Question),
+            "!!" | "$3" => Some(SuffixSymbol::DoubleExclam),
+            "??" | "$4" => Some(SuffixSymbol::DoubleQuestion),
+            "!?" | "$5" => Some(SuffixSymbol::ExclamQuestion),
+            "?!" | "$6" => Some(SuffixSymbol::QuestionExclam),
+            _ => None,
+        }
+    }
+
+    pub fn str_is_valid_suffix(str: &str) -> bool {
+        match str {
+            "!" | "$1" | "?" | "$2" | "!!" | "$3" | "??" | "$4" | "!?" | "$5" | "?!" | "$6" => true,
+            _ => false,
+        }
+    }
 }

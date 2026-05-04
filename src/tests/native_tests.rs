@@ -7,7 +7,7 @@ pub mod test {
     use shakmaty::Square;
 
     use crate::WasmChess;
-    use crate::helpers::tsify::*;
+    use crate::helpers::tsify_structs::*;
 
     #[test]
     fn test_new_game_initial_position() {
@@ -121,25 +121,6 @@ pub mod test {
         chess.undo().unwrap();
         let history_after_undo = chess.history_san();
         assert_eq!(history_after_undo.len(), 2);
-    }
-
-    #[test]
-    // TODO
-    fn test_history_verbose() {
-        let mut chess = WasmChess::new(None).unwrap();
-
-        chess.make_move("e4").unwrap();
-        chess.make_move("e5").unwrap();
-        chess.make_move("Nf3").unwrap();
-        chess.make_move("Nc6").unwrap();
-        chess.make_move("d4").unwrap();
-        chess.make_move("Nxd4").unwrap();
-
-        let verbose = chess.history_verbose().map_err(|err| {
-            println!("Error getting verbose history: {}", err);
-        });
-
-        verbose.iter().for_each(|el| println!("{:#?}", el));
     }
 
     #[test]

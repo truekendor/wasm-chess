@@ -1,6 +1,6 @@
 use shakmaty::{Chess, Color, Position, fen::Fen, san::San, uci::UciMove};
 
-use crate::helpers::tsify::{ColorChar, MoveVerbose};
+use crate::helpers::tsify_structs::{ColorChar, MoveVerbose};
 
 pub fn uci(chess: &Chess) -> Vec<String> {
     let legal_moves: Vec<String> = chess

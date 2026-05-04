@@ -1,5 +1,6 @@
+use ordermap::OrderMap;
 use shakmaty::{CastlingMode, Chess, fen::Fen};
-use std::{collections::HashMap, io, ops::ControlFlow};
+use std::{io, ops::ControlFlow};
 
 use pgn_reader::{RawTag, Reader, SanPlus, Visitor};
 
@@ -7,13 +8,15 @@ use crate::WasmChess;
 
 #[derive(Debug, Default, Clone)]
 pub struct PGNResult {
-    pub headers: HashMap<String, String>,
+    pub headers: OrderMap<String, String>,
     pub starting_fen: Fen,
 
-    pub comments_map: HashMap<String, String>,
-    pub nag_map: HashMap<String, Vec<String>>,
-    // pub suffix_map: HashMap<String, String>,
+    pub comments_map: OrderMap<String, String>,
+    pub suffix_map: OrderMap<String, String>,
+    pub nag_map: OrderMap<String, Vec<String>>,
 }
+
+const SUFFIX_LIST: [&str; 6] = ["!", "?", "!!", "??", "!?", "?!"];
 
 impl Visitor for PGNResult {
     type Tags = ();
@@ -21,6 +24,10 @@ impl Visitor for PGNResult {
     type Output = Result<WasmChess, String>;
 
     fn begin_tags(&mut self) -> ControlFlow<Self::Output, Self::Tags> {
+        self.comments_map = OrderMap::new();
+        self.suffix_map = OrderMap::new();
+        self.nag_map = OrderMap::new();
+
         ControlFlow::Continue(())
     }
 
@@ -86,7 +93,30 @@ impl Visitor for PGNResult {
         let fen_key =
             Fen::from_position(&wasm_chess.chess, shakmaty::EnPassantMode::Legal).to_string();
 
-        // self.nag_map.insert(fen_key, nag).o;
+        let nag_str = nag.as_str();
+        match nag_str {
+            "$1" | "$2" | "$3" | "$4" | "$5" | "$6" => {
+                let last_char = nag_str.chars().last().unwrap();
+
+                let number = last_char.to_digit(10);
+
+                if let Some(suffix_number) = number {
+                    let suffix_number = suffix_number - 1;
+
+                    if suffix_number >= SUFFIX_LIST.len() as u32 {
+                        return ControlFlow::Continue(());
+                    }
+
+                    let char = SUFFIX_LIST[suffix_number as usize];
+
+                    self.suffix_map.insert(fen_key.clone(), char.to_owned());
+                }
+
+                return ControlFlow::Continue(());
+            }
+            _ => (),
+        }
+
         self.nag_map.entry(fen_key).or_insert(Vec::new()).push(nag);
 
         ControlFlow::Continue(())
@@ -120,7 +150,7 @@ impl Visitor for PGNResult {
     }
 }
 
-pub fn parse_pgn(pgn: String) -> Result<(PGNResult, WasmChess), String> {
+pub fn parse_pgn(pgn: &str) -> Result<(PGNResult, WasmChess), String> {
     let mut reader = Reader::new(io::Cursor::new(pgn));
     let mut pgn_headers = PGNResult::default();
 

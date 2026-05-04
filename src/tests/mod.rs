@@ -1,9 +1,12 @@
 pub mod ascii_tests;
 pub mod castling_rights_tests;
+pub mod comments_test;
 pub mod fen_tests;
 pub mod find_divergence_test;
 pub mod find_piece_tests;
+pub mod history_tests;
 pub mod is_promotion_tests;
+pub mod move_turn_at_tests;
 pub mod native_tests;
 pub mod pgn_tests;
 pub mod square_color_tests;
