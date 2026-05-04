@@ -1,6 +1,7 @@
 #[cfg(test)]
 pub mod comments_test {
-    use crate::{WasmChess, helpers::tsify_structs::*};
+    use crate::WasmChess;
+    use crate::tsify_structs::{others::*, *};
 
     #[test]
     fn captures_multiple_suffixes_and_comments_ok() {

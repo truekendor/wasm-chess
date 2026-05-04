@@ -1,6 +1,6 @@
 use shakmaty::{Chess, Color, Position, fen::Fen, san::San, uci::UciMove};
 
-use crate::helpers::tsify_structs::{ColorChar, MoveVerbose};
+use crate::tsify_structs::{MoveVerbose, SquareStr, others::ColorChar};
 
 pub fn uci(chess: &Chess) -> Vec<String> {
     let legal_moves: Vec<String> = chess
@@ -53,9 +53,16 @@ pub fn verbose(chess: &Chess) -> Vec<MoveVerbose> {
             let fen_after_move =
                 Fen::from_position(&new_position, shakmaty::EnPassantMode::Legal).to_string();
 
+            let from_sq = internal_move.from().expect(
+                "Only standard chess and chess960 is supported, from() should always return Some",
+            );
+
+            let from = SquareStr::from_shakmaty_sq(&from_sq);
+            let to = SquareStr::from_shakmaty_sq(&internal_move.to());
+
             MoveVerbose {
-                from: internal_move.from().unwrap().to_string(),
-                to: internal_move.to().to_string(),
+                from,
+                to,
                 promotion: internal_move.promotion().map(|p| p.char().to_string()),
 
                 san: san_move.to_string(),

@@ -1,10 +1,10 @@
 #[cfg(test)]
 pub mod tests {
+    use shakmaty::fen::Fen;
     use std::str::FromStr;
 
-    use shakmaty::fen::Fen;
-
-    use crate::{WasmChess, helpers::tsify_structs::ColorChar};
+    use crate::WasmChess;
+    use crate::tsify_structs::others::*;
 
     #[test]
     fn test_turn_at_after_moves() {

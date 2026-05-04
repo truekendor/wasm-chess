@@ -1,7 +1,8 @@
 #[cfg(test)]
 pub mod find_piece_tests {
     use crate::WasmChess;
-    use crate::helpers::tsify_structs::*;
+
+    use crate::tsify_structs::{others::*, *};
 
     #[test]
     fn find_pawns_from_str() {

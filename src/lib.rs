@@ -8,18 +8,20 @@ use shakmaty::{
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::helpers::{
-    parsing,
-    pgn_reader::PGNResult,
+use crate::{
+    helpers::{parsing, pgn_reader::PGNResult},
     tsify_structs::{
-        BoardMatrix, BoardMatrixReturnObj, BoardMatrixRow, CastlingObj, ColorChar, CommentsObj,
-        HeadersObj, MoveFromSquares, MoveObject, MoveVerbose, OkOrError, PieceObj, PieceSymbol,
-        PrunedCommentsObj, SquareColor, SquareInfoObj, SquareStr, SuffixSymbol,
+        BoardMatrix, BoardMatrixReturnObj, BoardMatrixRow, MoveVerbose, SquareStr, SuffixSymbol,
+        others::{
+            CastlingObj, ColorChar, CommentsObj, HeadersObj, MoveFromSquares, MoveObject,
+            OkOrError, PieceObj, PieceSymbol, PrunedCommentsObj, SquareColor, SquareInfoObj,
+        },
     },
 };
 
 mod helpers;
 mod tests;
+mod tsify_structs;
 
 #[derive(Clone, Debug)]
 struct History {
@@ -272,8 +274,8 @@ impl WasmChess {
                 let from = internal_move.from()?;
                 let to = internal_move.to();
 
-                let from = from.to_string().to_lowercase().parse::<SquareStr>().ok()?;
-                let to = to.to_string().to_lowercase().parse::<SquareStr>().ok()?;
+                let from = SquareStr::from_shakmaty_sq(&from);
+                let to = SquareStr::from_shakmaty_sq(&to);
 
                 Some(MoveObject {
                     from,
@@ -327,9 +329,7 @@ impl WasmChess {
     // TODO: write tests
     #[wasm_bindgen(js_name = "isAttacked")]
     pub fn is_attacked(&self, square: SquareStr, attacked_by_side: Option<ColorChar>) -> bool {
-        let Ok(square) = Square::from_str(&square.to_string().to_lowercase()) else {
-            return false;
-        };
+        let square = SquareStr::to_shakmaty_sq(&square);
 
         let get_attackers = |color: Color| -> Vec<Square> {
             self.chess
@@ -440,8 +440,7 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "squareColor")]
     pub fn square_color(&self, square: SquareStr) -> Option<SquareColor> {
-        let sq_string = square.to_string();
-        let square = Square::from_ascii(sq_string.as_bytes()).ok()?;
+        let square = SquareStr::to_shakmaty_sq(&square);
 
         Some(if square.is_light() {
             SquareColor::Light
@@ -474,9 +473,7 @@ impl WasmChess {
 
         for (sq, p) in self.chess.board().iter() {
             if p == piece_type {
-                let square_str = sq.to_string().to_lowercase();
-                let square = SquareStr::from_str(&square_str)
-                    .map_err(|_| format!("Failed to parse square: {}", square_str))?;
+                let square = SquareStr::from_shakmaty_sq(&sq);
                 squares_with_piece.push(square);
             }
         }
@@ -511,9 +508,8 @@ impl WasmChess {
 
         for (sq, p) in self.chess.board().iter() {
             if p == piece_type {
-                let square_str = sq.to_string().to_lowercase();
-                let square = SquareStr::from_str(&square_str)
-                    .map_err(|_| format!("Failed to parse square: {}", square_str))?;
+                let square = SquareStr::from_shakmaty_sq(&sq);
+
                 squares_with_piece.push(square);
             }
         }
@@ -622,7 +618,7 @@ impl WasmChess {
                 let square_str = format!("{}{}", file, rank);
                 let square = square_str.parse::<SquareStr>().unwrap(); // Safe because format is correct
 
-                let shakmaty_square = Square::from_str(&square_str).unwrap();
+                let shakmaty_square = SquareStr::to_shakmaty_sq(&square);
                 let piece = self.chess.board().piece_at(shakmaty_square);
 
                 let square_info = match piece {
@@ -694,14 +690,7 @@ impl WasmChess {
 
     // TODO:  return PieceObj !
     pub fn get(&self, square: SquareStr) -> Option<String> {
-        let sq_string = square.to_string();
-
-        let square = match Square::from_ascii(sq_string.as_bytes()) {
-            Ok(val) => val,
-            Err(_err) => {
-                return None;
-            }
-        };
+        let square = square.to_shakmaty_sq();
 
         let piece = self.chess.board().piece_at(square);
         let char = match piece {
@@ -720,8 +709,7 @@ impl WasmChess {
         square: SquareStr,
         attacked_by_side: Option<ColorChar>,
     ) -> Result<Vec<String>, String> {
-        let square =
-            Square::from_str(&square.to_string().to_lowercase()).map_err(|err| err.to_string())?;
+        let square = square.to_shakmaty_sq();
 
         let get_attackers = |color: Color| -> Vec<Square> {
             self.chess
@@ -798,9 +786,12 @@ impl WasmChess {
                     "Only standard chess and chess960 is supported, from() should always return Some",
                 );
 
+                let from = SquareStr::from_shakmaty_sq(&from_sq);
+                let to = SquareStr::from_shakmaty_sq(&internal_move.to());
+
                 MoveVerbose {
-                    from: from_sq.to_string(),
-                    to: internal_move.to().to_string(),
+                    from,
+                    to,
                     promotion,
                     lan: internal_move
                         .to_uci(shakmaty::CastlingMode::Chess960)
@@ -1077,7 +1068,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "removeNags")]
-    pub fn remove_nags(&mut self, fen: Option<String>) -> Vec<String> {
+    pub fn remove_nags(&mut self, fen: Option<String>) -> Vec<NAGString> {
         let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
         let Some(pgn_result) = self.pgn_result.as_mut() else {

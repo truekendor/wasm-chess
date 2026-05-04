@@ -1,7 +1,12 @@
 #[cfg(test)]
 pub mod fen_tests {
-    use crate::helpers::tsify_structs::*;
-    use crate::{WasmChess, helpers::tsify_structs::ColorChar};
+    use crate::{
+        WasmChess,
+        tsify_structs::{
+            SquareStr,
+            others::{ColorChar, MoveObject},
+        },
+    };
     use std::usize;
 
     #[test]

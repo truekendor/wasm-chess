@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use shakmaty::{Chess, Color, Move, Position, fen::Fen, san::San, uci::UciMove};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::helpers::tsify_structs::{ColorChar, MoveVerbose};
+use crate::tsify_structs::{MoveVerbose, SquareStr, others::ColorChar};
 
 #[derive(Clone, Debug)]
 pub enum MoveParseError {
@@ -260,13 +260,16 @@ pub fn verbose_move_object_from_internal_move(
     chess_pos.play_unchecked(internal_move);
     let fen_after = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
-    if from_sq.is_none() {
-        return Err("unable to get square info from move".to_string());
-    }
+    let from_sq = internal_move
+        .from()
+        .expect("Only standard chess and chess960 is supported, from() should always return Some");
+
+    let from = SquareStr::from_shakmaty_sq(&from_sq);
+    let to = SquareStr::from_shakmaty_sq(&internal_move.to());
 
     Ok(MoveVerbose {
-        from: from_sq.unwrap().to_string(),
-        to: internal_move.to().to_string(),
+        from,
+        to,
         promotion,
         lan: internal_move
             .to_uci(shakmaty::CastlingMode::Chess960)

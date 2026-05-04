@@ -4,10 +4,9 @@
 
 #[cfg(test)]
 pub mod test {
-    use shakmaty::Square;
-
     use crate::WasmChess;
-    use crate::helpers::tsify_structs::*;
+    use crate::tsify_structs::{others::*, *};
+    use shakmaty::Square;
 
     #[test]
     fn test_new_game_initial_position() {

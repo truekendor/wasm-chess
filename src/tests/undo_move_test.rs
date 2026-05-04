@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod undo_logic_test {
-    use crate::{WasmChess, helpers::tsify_structs::*};
+    use crate::WasmChess;
+    use crate::tsify_structs::{MoveVerbose, SquareStr, others::*};
 
     #[test]
     fn test_undo_after_two_moves() {
@@ -22,8 +23,8 @@ mod undo_logic_test {
         pretty_assertions::assert_eq!(
             move_str,
             MoveVerbose {
-                from: "e7".to_string(),
-                to: "e5".to_string(),
+                from: SquareStr::E7,
+                to: SquareStr::E5,
                 before: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string(),
                 after: "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2".to_string(),
                 color: ColorChar::B,
@@ -47,8 +48,8 @@ mod undo_logic_test {
         pretty_assertions::assert_eq!(
             move_str,
             MoveVerbose {
-                from: "e2".to_string(),
-                to: "e4".to_string(),
+                from: SquareStr::E2,
+                to: SquareStr::E4,
                 before: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1".to_string(),
                 after: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string(),
                 color: ColorChar::W,

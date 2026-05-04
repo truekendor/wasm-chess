@@ -1,9 +1,7 @@
 #[cfg(test)]
 pub mod test {
-    use crate::{
-        WasmChess,
-        helpers::tsify_structs::{SquareColor, SquareStr},
-    };
+    use crate::WasmChess;
+    use crate::tsify_structs::{others::*, *};
 
     #[test]
     fn square_color_parsing_ok() {
