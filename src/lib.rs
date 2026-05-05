@@ -23,6 +23,18 @@ use crate::{
     },
 };
 
+/// TODOs global
+/// add helper for fen parsing
+/// move board(), get_comments(), load_pgn() out of WasmChess struct
+///
+/// add current_or_initial_fen() ?
+///
+/// change legalMoves(UCI/SAN/Verbose) to
+/// legalMoves(Option<Mode::Verbose/San/Uci >)
+///
+/// NOTES: not supported: nullmoves, excessive material
+/// direct board manipulation: clear(), put(), remove(), (setTurn() ? may be possible rn),
+/// setCastlingRights, clear
 mod helpers;
 mod tests;
 mod tsify_structs;
@@ -30,10 +42,14 @@ mod tsify_structs;
 #[derive(Clone, Debug)]
 struct History {
     raw_move: Move,
-    turn: Color,
 
+    /// Invariants:
+    /// - fen_before corresponds to position_before
+    /// - fen_after is the position after raw_move is applied
+    /// - turn is the side that played raw_move
     fen_before: Fen,
     fen_after: Fen,
+    turn: Color,
 
     position_before: Chess,
 }
@@ -54,6 +70,8 @@ pub type SuffixString = String;
 // todo: make nag and suffix u8/u16/u32 number ??
 pub type NAGString = String;
 pub type MoveString = String;
+
+// TODO: this is a null move?
 
 #[wasm_bindgen]
 impl WasmChess {
@@ -125,16 +143,14 @@ impl WasmChess {
     }
 
     // TODO:
-    // implement later. returns a position as if the move was played
-    // without mutating current state
+    // pla
     fn next_position(&self) -> MoveVerbose {
         //
         todo!()
     }
 
     // TODO:
-    // API for playing arbitrary number of moves to avoid multiple make_move() calls from JS
-    // with one move Vec
+    // Planned for batch move simulation API.
     fn play_moves(&self, moves: Vec<MoveString>) -> Vec<MoveVerbose> {
         //
         todo!()
@@ -146,12 +162,9 @@ impl WasmChess {
         move_str.push_str(&move_obj.from.as_str());
         move_str.push_str(&move_obj.to.as_str());
 
-        match move_obj.promotion {
-            Some(val) => {
-                move_str.push_str(val.as_str());
-            }
-            None => (),
-        };
+        if let Some(val) = move_obj.promotion {
+            move_str.push_str(val.as_str());
+        }
 
         self.make_move(&move_str)
     }
@@ -164,6 +177,13 @@ impl WasmChess {
         self.reset_all();
     }
 
+    /// Loads a new position from FEN.
+    ///
+    /// This clears:
+    /// - move history
+    /// - repetition tracking
+    /// - PGN comments
+    /// - headers
     pub fn load(
         &mut self,
         starting_fen: FenString,
@@ -311,8 +331,8 @@ impl WasmChess {
     /// # Returns
     /// * `Some(ColorChar)` - The side to move at the requested position
     /// * `None` - If `index` exceeds total history length
-    #[wasm_bindgen(js_name = "turnAt")]
-    pub fn turn_at(&self, index: usize) -> Option<ColorChar> {
+    #[wasm_bindgen(js_name = "sideToMoveAt")]
+    pub fn side_to_move_at(&self, index: usize) -> Option<ColorChar> {
         match index {
             0 => {
                 let turn = match self.history.is_empty() {
@@ -338,7 +358,11 @@ impl WasmChess {
         }
     }
 
-    // TODO: write tests
+    // TODO:
+    // write tests
+    // consider changing default behavior if None is provided by returning
+    // true if any side given square
+    // i don't like state coupling, but it is the way chess.js implemented it
     #[wasm_bindgen(js_name = "isAttacked")]
     pub fn is_attacked(&self, square: SquareStr, attacked_by_side: Option<ColorChar>) -> bool {
         let square = SquareStr::to_shakmaty_sq(&square);
@@ -361,8 +385,50 @@ impl WasmChess {
         }
     }
 
+    // TODO:
+    // consider changing default behavior if None is provided by returning
+    // true if any side given square
+    // i don't like state coupling, but it is the way chess.js implemented it
+    pub fn attackers(
+        &self,
+        square: SquareStr,
+        attacked_by_side: Option<ColorChar>,
+    ) -> Vec<SquareStr> {
+        let square = square.to_shakmaty_sq();
+
+        let get_attackers = |color: Color| -> Vec<Square> {
+            self.chess
+                .board()
+                .attacks_to(
+                    square,
+                    color,
+                    self.chess.board().occupied(), // .without(square)
+                )
+                .into_iter()
+                .collect()
+        };
+
+        let w_attackers = get_attackers(Color::White);
+        let b_attackers = get_attackers(Color::Black);
+
+        let squares = match attacked_by_side {
+            None => match self.chess.turn() {
+                Color::White => w_attackers,
+                Color::Black => b_attackers,
+            },
+            Some(ColorChar::W) => w_attackers,
+            Some(ColorChar::B) => b_attackers,
+        };
+
+        squares
+            .into_iter()
+            .map(|sq| SquareStr::from_shakmaty_sq(&sq))
+            .collect()
+    }
+
     // TODO: make static/move to some other mod?
-    pub fn fen_is_valid(&self, fen: FenString) -> OkOrError<FenString> {
+    // TODO: add js_name
+    pub fn validate_fen(&self, fen: FenString) -> OkOrError<FenString> {
         match fen.parse::<Fen>() {
             Ok(fen) => OkOrError {
                 ok: Some(fen.to_string()),
@@ -457,7 +523,7 @@ impl WasmChess {
         })
     }
 
-    #[wasm_bindgen(js_name = "findPieceFromString")]
+    #[wasm_bindgen(js_name = "findPiece")]
     pub fn find_piece_from_str(&self, piece: &str) -> Result<Vec<SquareStr>, String> {
         let piece = piece.trim();
 
@@ -489,7 +555,7 @@ impl WasmChess {
         Ok(squares_with_piece)
     }
 
-    #[wasm_bindgen(js_name = "findPieceFromPieceObject")]
+    #[wasm_bindgen(js_name = "findPieceByType")]
     pub fn find_piece_from_obj(&self, piece: PieceObj) -> Vec<SquareStr> {
         let piece_type = piece.to_shakmaty_piece();
 
@@ -704,43 +770,6 @@ impl WasmChess {
         Some(char.to_string())
     }
 
-    pub fn attackers(
-        &self,
-        square: SquareStr,
-        attacked_by_side: Option<ColorChar>,
-    ) -> Vec<SquareStr> {
-        let square = square.to_shakmaty_sq();
-
-        let get_attackers = |color: Color| -> Vec<Square> {
-            self.chess
-                .board()
-                .attacks_to(
-                    square,
-                    color,
-                    self.chess.board().occupied(), // .without(square)
-                )
-                .into_iter()
-                .collect()
-        };
-
-        let w_attackers = get_attackers(Color::White);
-        let b_attackers = get_attackers(Color::Black);
-
-        let squares = match attacked_by_side {
-            None => match self.chess.turn() {
-                Color::White => w_attackers,
-                Color::Black => b_attackers,
-            },
-            Some(ColorChar::W) => w_attackers,
-            Some(ColorChar::B) => b_attackers,
-        };
-
-        squares
-            .into_iter()
-            .map(|sq| SquareStr::from_shakmaty_sq(&sq))
-            .collect()
-    }
-
     #[wasm_bindgen(js_name = "historySAN")]
     pub fn history_san(&self) -> Vec<String> {
         self.history
@@ -852,10 +881,18 @@ impl WasmChess {
 
         match self.pgn_result.as_mut() {
             Some(val) => {
-                val.headers = OrderMap::new();
+                val.headers.clear();
                 val.headers.insert(key, value);
             }
-            None => (),
+            None => {
+                self.pgn_result = Some(PGNResult::default());
+                // TODO: remove unwrap later
+                self.pgn_result
+                    .as_mut()
+                    .expect("we just created it")
+                    .headers
+                    .insert(key, value);
+            }
         }
 
         self.get_headers()
@@ -994,6 +1031,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "addNag")]
+    // TODO: brokeN ??
     pub fn add_nag(&mut self, nag: &str, fen: Option<FenString>) {
         let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
@@ -1060,6 +1098,52 @@ impl WasmChess {
         };
 
         pgn_result.suffix_map.get(&fen_key).cloned()
+    }
+
+    #[wasm_bindgen(js_name = "pgn")]
+    pub fn pgn(&self) -> String {
+        let mut pgn = String::new();
+
+        // Headers
+        if let Some(pgn_result) = &self.pgn_result {
+            for (key, value) in &pgn_result.headers {
+                pgn.push_str(&format!("[{key} \"{value}\"]\n"));
+            }
+
+            if !pgn_result.headers.is_empty() {
+                pgn.push('\n');
+            }
+        }
+
+        // Moves
+        for (index, entry) in self.history.iter().enumerate() {
+            // White move -> prepend move number
+            if index % 2 == 0 {
+                let move_number = (index / 2) + 1;
+                pgn.push_str(&format!("{move_number}. "));
+            }
+
+            let san = San::from_move(&entry.position_before, entry.raw_move);
+
+            pgn.push_str(&san.to_string());
+            pgn.push(' ');
+        }
+
+        // Result
+        let result = if self.is_checkmate() {
+            match self.turn() {
+                ColorChar::W => "0-1",
+                ColorChar::B => "1-0",
+            }
+        } else if self.is_draw() {
+            "1/2-1/2"
+        } else {
+            "*"
+        };
+
+        pgn.push_str(result);
+
+        pgn.trim().to_string()
     }
 
     // TODO: add custom types like type Suffix = String to avoid confusion

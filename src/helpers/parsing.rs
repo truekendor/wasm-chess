@@ -1,7 +1,7 @@
 use core::fmt;
 
 use serde::{Deserialize, Serialize};
-use shakmaty::{Chess, Color, Move, Position, Role, Square, fen::Fen, san::San, uci::UciMove};
+use shakmaty::{Chess, Color, Move, Position, Role, fen::Fen, san::San, uci::UciMove};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{

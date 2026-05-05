@@ -14,9 +14,9 @@ pub mod tests {
         chess.make_move("e4").unwrap();
 
         // After 1 move, it should be Black's turn
-        pretty_assertions::assert_eq!(chess.turn_at(0), Some(ColorChar::W)); // Starting position
-        pretty_assertions::assert_eq!(chess.turn_at(1), Some(ColorChar::B)); // After e4
-        pretty_assertions::assert_eq!(chess.turn_at(2), None); // Beyond move count
+        pretty_assertions::assert_eq!(chess.side_to_move_at(0), Some(ColorChar::W)); // Starting position
+        pretty_assertions::assert_eq!(chess.side_to_move_at(1), Some(ColorChar::B)); // After e4
+        pretty_assertions::assert_eq!(chess.side_to_move_at(2), None); // Beyond move count
     }
 
     #[test]
@@ -28,9 +28,9 @@ pub mod tests {
         chess.make_move("e5").unwrap();
 
         // After 2 moves, White's turn again
-        assert_eq!(chess.turn_at(0), Some(ColorChar::W)); // Starting position
-        assert_eq!(chess.turn_at(1), Some(ColorChar::B)); // After e4
-        assert_eq!(chess.turn_at(2), Some(ColorChar::W)); // After e5
+        assert_eq!(chess.side_to_move_at(0), Some(ColorChar::W)); // Starting position
+        assert_eq!(chess.side_to_move_at(1), Some(ColorChar::B)); // After e4
+        assert_eq!(chess.side_to_move_at(2), Some(ColorChar::W)); // After e5
     }
 
     #[test]
@@ -38,15 +38,15 @@ pub mod tests {
         let mut chess = WasmChess::new(None).unwrap();
 
         // Empty board (no moves)
-        assert_eq!(chess.turn_at(0), Some(ColorChar::W));
-        assert_eq!(chess.turn_at(1), None);
-        assert_eq!(chess.turn_at(5), None);
+        assert_eq!(chess.side_to_move_at(0), Some(ColorChar::W));
+        assert_eq!(chess.side_to_move_at(1), None);
+        assert_eq!(chess.side_to_move_at(5), None);
 
         chess.make_move("e4").unwrap();
 
         // After one move
-        assert_eq!(chess.turn_at(2), None);
-        assert_eq!(chess.turn_at(99), None);
+        assert_eq!(chess.side_to_move_at(2), None);
+        assert_eq!(chess.side_to_move_at(99), None);
     }
 
     #[test]
