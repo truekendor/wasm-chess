@@ -9,5 +9,6 @@ pub type BoardMatrix = Vec<BoardMatrixRow>;
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
 pub struct BoardMatrixReturnObj {
+    #[tsify(type = "Array<Array<SquareInfoObj | null | undefined>>")]
     pub board_matrix: BoardMatrix,
 }

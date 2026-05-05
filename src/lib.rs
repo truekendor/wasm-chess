@@ -1,4 +1,4 @@
-use std::{collections::HashMap, str::FromStr};
+use std::collections::HashMap;
 
 use ordermap::OrderMap;
 use shakmaty::{
@@ -48,12 +48,14 @@ pub struct WasmChess {
     pgn_result: Option<PGNResult>,
 }
 
-// TODO: use them
+// TODO:
+// replace relevant return types with these
 pub type FenString = String;
 pub type SuffixString = String;
 
 // todo: make nag u8/u16/u32 number ??
 pub type NAGString = String;
+pub type MoveString = String;
 
 // TODO: add docs
 
@@ -102,8 +104,8 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "move")]
+    // pub fn make_move(&mut self, move_str: &str) -> Result<MoveVerbose, String> {
     pub fn make_move(&mut self, move_str: &str) -> Result<(), String> {
-        // pub fn make_move(&mut self, move_str: &str) -> Result<MoveVerbose, String> {
         let internal_move =
             helpers::parsing::str_to_move(move_str, &self.chess).map_err(|err| {
                 return err.to_string();
@@ -136,8 +138,8 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "moveFromObj")]
+    // pub fn make_move_from_obj(&mut self, move_obj: MoveObject) -> Result<MoveVerbose, String> {
     pub fn make_move_from_obj(&mut self, move_obj: MoveObject) -> Result<(), String> {
-        // pub fn make_move_from_obj(&mut self, move_obj: MoveObject) -> Result<MoveVerbose, String> {
         let mut uci_str = format!("{}{}", move_obj.from, move_obj.to);
 
         match move_obj.promotion {
@@ -160,8 +162,9 @@ impl WasmChess {
 
     pub fn load(
         &mut self,
-        starting_fen: String,
-        // TODO: I don't even know if we can just skip fen validation
+        starting_fen: FenString,
+        // NOTE:
+        // I don't even know if we can just skip fen validation
         // {skip_validation: bool}
     ) -> Result<(), String> {
         self.reset_history();
@@ -353,7 +356,7 @@ impl WasmChess {
     }
 
     // TODO: make static/move to some other mod?
-    pub fn fen_is_valid(&self, fen: String) -> OkOrError<String> {
+    pub fn fen_is_valid(&self, fen: FenString) -> OkOrError<FenString> {
         match fen.parse::<Fen>() {
             Ok(fen) => OkOrError {
                 ok: Some(fen.to_string()),
@@ -391,12 +394,12 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "legalMovesUCI")]
-    pub fn legal_moves_uci(&self) -> Vec<String> {
+    pub fn legal_moves_uci(&self) -> Vec<MoveString> {
         helpers::legal_moves::uci(&self.chess)
     }
 
     #[wasm_bindgen(js_name = "legalMovesSAN")]
-    pub fn legal_moves_san(&self) -> Vec<String> {
+    pub fn legal_moves_san(&self) -> Vec<MoveString> {
         helpers::legal_moves::san(&self.chess)
     }
 
@@ -405,9 +408,9 @@ impl WasmChess {
     /// This implementation differs from chess.js in how it handles the
     /// en passant square in verbose move objects.
     ///
-    /// |      Aspect       ||           chess.js             ||      This Implementation      |
-    /// |-------------------||--------------------------------||-------------------------------|
-    /// | En passant square || Always included when available || Only included for legal moves |
+    /// |      Aspect       |           chess.js             |      This Implementation      |
+    /// |-------------------|--------------------------------|-------------------------------|
+    /// | En passant square | Always included when available | Only included for legal moves |
     ///
     /// **TODO:** Evaluate whether to align with chess.js behavior in a future release.
     #[wasm_bindgen(js_name = "legalMovesVerbose")]
@@ -482,27 +485,8 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "findPieceFromPieceObject")]
-    pub fn find_piece_from_obj(&self, piece: PieceObj) -> Result<Vec<SquareStr>, String> {
-        let piece_char: char = match piece.r#type {
-            PieceSymbol::P => 'p',
-            PieceSymbol::N => 'n',
-            PieceSymbol::B => 'b',
-            PieceSymbol::R => 'r',
-            PieceSymbol::Q => 'q',
-            PieceSymbol::K => 'k',
-        };
-
-        let piece_char = match piece.color {
-            ColorChar::W => piece_char.to_ascii_uppercase(),
-            ColorChar::B => piece_char.to_ascii_lowercase(),
-        };
-
-        let piece_type = Piece::from_char(piece_char).ok_or_else(|| {
-            format!(
-                "Error parsing piece char: \"{:#?}\" into a valid piece type",
-                piece.r#type
-            )
-        })?;
+    pub fn find_piece_from_obj(&self, piece: PieceObj) -> Vec<SquareStr> {
+        let piece_type = piece.to_shakmaty_piece();
 
         let mut squares_with_piece: Vec<SquareStr> = vec![];
 
@@ -514,7 +498,7 @@ impl WasmChess {
             }
         }
 
-        Ok(squares_with_piece)
+        squares_with_piece
     }
 
     #[wasm_bindgen(js_name = "zobristHash")]
@@ -523,7 +507,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "getCastlingRights")]
-    pub fn get_castling_rights(&self, color_char: ColorChar) -> Result<CastlingObj, String> {
+    pub fn get_castling_rights(&self, color_char: ColorChar) -> CastlingObj {
         let castles_bitboard = &self.chess.castles().castling_rights();
 
         match color_char {
@@ -531,19 +515,19 @@ impl WasmChess {
                 let queenside = castles_bitboard.contains(Square::A1);
                 let kingside = castles_bitboard.contains(Square::H1);
 
-                return Ok(CastlingObj {
+                return CastlingObj {
                     king: kingside,
                     queen: queenside,
-                });
+                };
             }
             ColorChar::B => {
                 let queenside = castles_bitboard.contains(Square::A8);
                 let kingside = castles_bitboard.contains(Square::H8);
 
-                return Ok(CastlingObj {
+                return CastlingObj {
                     king: kingside,
                     queen: queenside,
-                });
+                };
             }
         };
     }
@@ -1005,7 +989,11 @@ impl WasmChess {
             .insert(fen, comment.replace('{', "[").replace('}', "]"));
     }
 
-    fn get_comment_object(&self, fen_str: String, pgn_result: &PGNResult) -> Option<CommentsObj> {
+    fn get_comment_object(
+        &self,
+        fen_str: FenString,
+        pgn_result: &PGNResult,
+    ) -> Option<CommentsObj> {
         let comment_str = pgn_result.comments_map.get(&fen_str);
         let suffix: Option<String> = pgn_result.suffix_map.get(&fen_str).cloned();
         let nags = match pgn_result.nag_map.get(&fen_str) {
@@ -1027,7 +1015,7 @@ impl WasmChess {
 
     // TODO: add tests for nags ?
     #[wasm_bindgen(js_name = "getNags")]
-    pub fn get_nags(&self, fen: Option<String>) -> Vec<String> {
+    pub fn get_nags(&self, fen: Option<FenString>) -> Vec<String> {
         let Some(pgn_result) = self.pgn_result.as_ref() else {
             return vec![];
         };
@@ -1042,7 +1030,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "addNag")]
-    pub fn add_nag(&mut self, nag: &str, fen: Option<String>) {
+    pub fn add_nag(&mut self, nag: &str, fen: Option<FenString>) {
         let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
         let Some(pgn_result) = self.pgn_result.as_mut() else {
@@ -1057,7 +1045,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "setNags")]
-    pub fn set_nags(&mut self, nags: Vec<String>, fen: Option<String>) {
+    pub fn set_nags(&mut self, nags: Vec<String>, fen: Option<FenString>) {
         let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
         let Some(pgn_result) = self.pgn_result.as_mut() else {
@@ -1068,7 +1056,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "removeNag")]
-    pub fn remove_nag(&mut self, nag: String, fen: Option<String>) -> bool {
+    pub fn remove_nag(&mut self, nag: String, fen: Option<FenString>) -> bool {
         let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
         let Some(pgn_result) = self.pgn_result.as_mut() else {
@@ -1088,7 +1076,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "removeNags")]
-    pub fn remove_nags(&mut self, fen: Option<String>) -> Vec<NAGString> {
+    pub fn remove_nags(&mut self, fen: Option<FenString>) -> Vec<NAGString> {
         let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
         let Some(pgn_result) = self.pgn_result.as_mut() else {
@@ -1100,7 +1088,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "getSuffixAnnotation")]
-    pub fn get_suffix_annotation(&self, fen: Option<String>) -> Option<SuffixString> {
+    pub fn get_suffix_annotation(&self, fen: Option<FenString>) -> Option<SuffixString> {
         let fen_key = fen.unwrap_or_else(|| self.fen(None));
 
         let Some(pgn_result) = self.pgn_result.as_ref() else {

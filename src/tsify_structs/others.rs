@@ -108,6 +108,7 @@ pub struct PieceObj {
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct OkOrError<T> {
+    #[tsify(type = "T")]
     pub ok: Option<T>,
     pub err: Option<String>,
 }
