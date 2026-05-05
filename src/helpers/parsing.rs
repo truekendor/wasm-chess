@@ -242,7 +242,7 @@ fn to_internal_moves(moves: Vec<String>, starting_fen: Option<String>) -> Vec<Mo
     internal_moves_list
 }
 
-pub fn verbose_move_object_from_internal_move(raw_move: Move, chess_pos: &Chess) -> MoveVerbose {
+pub fn verbose_move_object_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerbose {
     let mut chess_pos = chess_pos.clone();
 
     let fen_before = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
@@ -284,6 +284,7 @@ pub fn verbose_move_object_from_internal_move(raw_move: Move, chess_pos: &Chess)
         san: san_move.to_string(),
         piece: raw_move.role().char().to_string(),
         captured: captured_piece,
+        is_regular_capture: raw_move.is_capture() && !raw_move.is_en_passant(),
 
         color: color_shorthand,
         before: fen_before.to_string(),
