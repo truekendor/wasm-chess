@@ -177,14 +177,14 @@ impl WasmChess {
                 return format!("Error {err}\nFEN: {fen}");
             })?;
 
-        self.reset_pos_count_and_hash();
+        self.reset_repetition_table_and_hash();
 
         Ok(())
     }
 
     fn reset_all(&mut self) {
         self.reset_history();
-        self.reset_pos_count_and_hash();
+        self.reset_repetition_table_and_hash();
     }
 
     fn reset_history(&mut self) {
@@ -192,7 +192,7 @@ impl WasmChess {
         self.history.clear();
     }
 
-    fn reset_pos_count_and_hash(&mut self) {
+    fn reset_repetition_table_and_hash(&mut self) {
         let zobrist_hash = self.chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
 
         self.hash = zobrist_hash;
