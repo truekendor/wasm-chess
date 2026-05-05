@@ -11,7 +11,7 @@ Built with:
 
 ---
 
-# Features
+## Features
 
 * chess.js-inspired API
 * SAN and UCI move support
@@ -25,7 +25,7 @@ Built with:
 
 ---
 
-# Installation TODO
+## Installation TODO
 
 ```bash
 
@@ -33,7 +33,7 @@ Built with:
 
 ---
 
-# Quick Example
+## Quick Example
 
 ```js
 import { WasmChess } from 'wasm-chess'
@@ -50,7 +50,11 @@ console.log(chess.pgn())
 
 ---
 
-# API Overview
+## API Overview
+
+TODO
+
+---
 
 ## Basic Game Control
 
@@ -104,7 +108,7 @@ chess.pgn()
 
 ---
 
-# PGN Features
+## PGN Features
 
 The PGN implementation supports:
 
@@ -124,6 +128,7 @@ Example:
 ```
 
 ---
+
 ## Direct Board Manipulation
 
 Some low-level board editing APIs commonly found in chess.js are intentionally not yet implemented:
@@ -132,6 +137,17 @@ Some low-level board editing APIs commonly found in chess.js are intentionally n
 * `put()`
 * `remove()`
 * castling-right mutation APIs (`setCastling`, etc.)
+
+his library is built on top of `shakmaty`, which enforces legal and internally consistent chess positions
+
+That means seemingly simple editing operations become significantly more complex because they may invalidate:
+
+* king safety
+* castling rights
+* side-to-move consistency
+* en passant state
+* move counters
+* general position legality
 
 These features are planned for a future release once a clean and well-defined API design is finalized.
 
