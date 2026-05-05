@@ -1,6 +1,9 @@
 use shakmaty::{Chess, Color, Position, fen::Fen, san::San, uci::UciMove};
 
-use crate::tsify_structs::{MoveVerbose, SquareStr, others::ColorChar};
+use crate::{
+    helpers::parsing::{CastleData, castle_data_from_san_move, is_two_square_pawn_move},
+    tsify_structs::{MoveVerbose, SquareStr, others::ColorChar},
+};
 
 pub fn uci(chess: &Chess) -> Vec<String> {
     let legal_moves: Vec<String> = chess
@@ -60,6 +63,14 @@ pub fn verbose(chess: &Chess) -> Vec<MoveVerbose> {
             let from = SquareStr::from_shakmaty_sq(&from_sq);
             let to = SquareStr::from_shakmaty_sq(&internal_move.to());
 
+            let CastleData {
+                is_castle,
+                is_kingside_castle,
+                is_queenside_castle,
+            } = castle_data_from_san_move(&san_move);
+
+            let is_big_pawn = is_two_square_pawn_move(&internal_move);
+
             MoveVerbose {
                 from,
                 to,
@@ -76,8 +87,12 @@ pub fn verbose(chess: &Chess) -> Vec<MoveVerbose> {
 
                 piece: internal_move.role().char().to_string(),
 
+                is_big_pawn,
                 is_en_passant: internal_move.is_en_passant(),
-                is_castle: internal_move.is_castle(),
+
+                is_castle,
+                is_kingside_castle,
+                is_queenside_castle,
             }
         })
         .collect();

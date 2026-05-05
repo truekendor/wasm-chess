@@ -41,8 +41,14 @@ pub mod history_test_chess_js {
                 after: "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
+                is_castle: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -57,13 +63,18 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
                 piece: "n".to_string(),
-                from: SquareStr::G1,
 
+                from: SquareStr::G1,
                 to: SquareStr::F3,
 
                 san: "Nf3".to_string(),
@@ -73,7 +84,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -91,7 +107,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -108,8 +129,13 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -126,8 +152,13 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -144,8 +175,13 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -163,7 +199,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -180,8 +221,13 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -199,8 +245,13 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: true,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: true,
+                is_kingside_castle: true,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -217,8 +268,13 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -235,8 +291,13 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -254,7 +315,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -271,8 +337,13 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -290,7 +361,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: Some("p".to_string()),
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -308,7 +384,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: Some("p".to_string()),
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -326,7 +407,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: Some("b".to_string()),
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -344,7 +430,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: Some("b".to_string()),
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -362,7 +453,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: Some("n".to_string()),
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -379,7 +475,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: Some("n".to_string()),
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -395,7 +496,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -411,7 +517,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -427,7 +538,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -443,8 +559,13 @@ pub mod history_test_chess_js {
                 after: "rn3rk1/p3qpp1/1p2b2p/2pp4/Q2P4/4PN2/PP3PPP/2R1KB1R w K - 0 13".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -460,7 +581,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -476,7 +602,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -492,7 +623,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -508,7 +644,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -524,23 +665,34 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: Some("p".to_string()),
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
                 piece: "p".to_string(),
-                from: SquareStr::B6,
 
+                from: SquareStr::B6,
                 to: SquareStr::C5,
 
                 san: "bxc5".to_string(),
                 lan: "b6c5".to_string(),
                 before: "rnr3k1/4qpp1/pp2b2p/1BPp4/8/Q3PN2/PP3PPP/2R1K2R b K - 0 15".to_string(),
+                after: "rnr3k1/4qpp1/p3b2p/1Bpp4/8/Q3PN2/PP3PPP/2R1K2R w K - 0 16".to_string(),
+
                 promotion: None,
                 captured: Some("p".to_string()),
-                is_castle: false,
+
                 is_en_passant: false,
-                after: "rnr3k1/4qpp1/p3b2p/1Bpp4/8/Q3PN2/PP3PPP/2R1K2R w K - 0 16".to_string(),
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -550,14 +702,22 @@ pub mod history_test_chess_js {
                 to: SquareStr::H1,
 
                 san: "O-O".to_string(),
-                // TODO: discrepancy because of Chess960 by default
+                // NOTE:
+                // discrepancy in produced LAN move
+                // because we use Chess960 castling format by default
+                // TODO: fix?
                 lan: "e1h1".to_string(),
                 before: "rnr3k1/4qpp1/p3b2p/1Bpp4/8/Q3PN2/PP3PPP/2R1K2R w K - 0 16".to_string(),
                 after: "rnr3k1/4qpp1/p3b2p/1Bpp4/8/Q3PN2/PP3PPP/2R2RK1 b - - 1 16".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: true,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: true,
+                is_kingside_castle: true,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -573,7 +733,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -589,7 +754,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -605,7 +775,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -621,7 +796,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -637,7 +817,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -653,7 +838,12 @@ pub mod history_test_chess_js {
                 captured: Some("b".to_string()),
                 is_castle: false,
                 is_en_passant: false,
+
                 after: "2r2qk1/r2n1pp1/p3N2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 b - - 0 19".to_string(),
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -669,7 +859,12 @@ pub mod history_test_chess_js {
                 captured: Some("n".to_string()),
                 is_castle: false,
                 is_en_passant: false,
+
                 after: "2r2qk1/r2n2p1/p3p2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 w - - 0 20".to_string(),
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -685,7 +880,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -701,7 +901,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -717,7 +922,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -733,7 +943,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -749,7 +964,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -765,7 +985,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -781,7 +1006,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -797,7 +1027,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -813,7 +1048,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -829,7 +1069,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -845,7 +1090,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -861,7 +1111,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -877,7 +1132,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -893,7 +1153,12 @@ pub mod history_test_chess_js {
                 captured: Some("p".to_string()),
                 is_castle: false,
                 is_en_passant: false,
+
                 after: "1r3n1k/r3q1p1/7p/p1p1Pp2/2Bp4/1P5Q/P5PP/2R2RK1 w - - 0 27".to_string(),
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -909,7 +1174,12 @@ pub mod history_test_chess_js {
                 captured: Some("p".to_string()),
                 is_castle: false,
                 is_en_passant: false,
+
                 after: "1r3n1k/r3q1p1/7p/p1p1PR2/2Bp4/1P5Q/P5PP/2R3K1 b - - 0 27".to_string(),
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -925,7 +1195,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -941,7 +1216,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -957,7 +1237,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -973,7 +1258,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -989,7 +1279,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1005,7 +1300,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1021,7 +1321,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1037,7 +1342,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1053,7 +1363,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1069,7 +1384,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1084,8 +1404,13 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r1pn/4P2p/p1p1QR2/2Bp3P/1P6/P5P1/5RK1 w - - 3 33".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1101,7 +1426,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1117,7 +1447,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1133,7 +1468,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1149,7 +1489,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1165,7 +1510,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1181,7 +1531,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1197,7 +1552,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1213,7 +1573,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1229,7 +1594,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1245,7 +1615,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1261,7 +1636,12 @@ pub mod history_test_chess_js {
                 captured: Some("n".to_string()),
                 is_castle: false,
                 is_en_passant: false,
+
                 after: "4q2k/2r1r1p1/4PR1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 b - - 0 38".to_string(),
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1277,7 +1657,12 @@ pub mod history_test_chess_js {
                 captured: Some("r".to_string()),
                 is_castle: false,
                 is_en_passant: false,
+
                 after: "4q2k/2r1r3/4Pp1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 w - - 0 39".to_string(),
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1293,7 +1678,12 @@ pub mod history_test_chess_js {
                 captured: Some("p".to_string()),
                 is_castle: false,
                 is_en_passant: false,
+
                 after: "4q2k/2r1r3/4PR1p/p1p5/P2pQ2P/1P1B4/6P1/6K1 b - - 0 39".to_string(),
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1309,7 +1699,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1325,7 +1720,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1341,7 +1741,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1357,7 +1762,12 @@ pub mod history_test_chess_js {
                 promotion: None,
                 captured: None,
                 is_castle: false,
+
                 is_en_passant: false,
+                is_big_pawn: false,
+
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
         ];
 
@@ -1380,10 +1790,10 @@ pub mod history_test_chess_js {
     #[test]
     fn history_pgn_setup() {
         let pgn = r#"[SetUp "1"]
-[FEN "r1bqk1nr/pppp1ppp/2n5/4p3/1bB1P3/2P2N2/P2P1PPP/RNBQK2R b KQkq - 0 1"]
+    [FEN "r1bqk1nr/pppp1ppp/2n5/4p3/1bB1P3/2P2N2/P2P1PPP/RNBQK2R b KQkq - 0 1"]
 
-1. ... Ba5 2. O-O d6
-3. d4"#;
+    1. ... Ba5 2. O-O d6
+    3. d4"#;
 
         let mut chess = WasmChess::new(None).unwrap();
 
@@ -1401,10 +1811,15 @@ pub mod history_test_chess_js {
                     .to_string(),
                 after: "r1bqk1nr/pppp1ppp/2n5/b3p3/2B1P3/2P2N2/P2P1PPP/RNBQK2R w KQkq - 1 2"
                     .to_string(),
-                is_castle: false,
-                is_en_passant: false,
                 captured: None,
                 promotion: None,
+
+                is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1417,10 +1832,15 @@ pub mod history_test_chess_js {
                     .to_string(),
                 after: "r1bqk1nr/pppp1ppp/2n5/b3p3/2B1P3/2P2N2/P2P1PPP/RNBQ1RK1 b kq - 2 2"
                     .to_string(),
-                is_castle: true,
-                is_en_passant: false,
                 captured: None,
                 promotion: None,
+
+                is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: true,
+                is_kingside_castle: true,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::B,
@@ -1433,10 +1853,14 @@ pub mod history_test_chess_js {
                     .to_string(),
                 after: "r1bqk1nr/ppp2ppp/2np4/b3p3/2B1P3/2P2N2/P2P1PPP/RNBQ1RK1 w kq - 0 3"
                     .to_string(),
-                is_castle: false,
-                is_en_passant: false,
                 captured: None,
                 promotion: None,
+
+                is_en_passant: false,
+                is_castle: false,
+                is_big_pawn: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
             MoveVerbose {
                 color: ColorChar::W,
@@ -1449,13 +1873,194 @@ pub mod history_test_chess_js {
                     .to_string(),
                 after: "r1bqk1nr/ppp2ppp/2np4/b3p3/2BPP3/2P2N2/P4PPP/RNBQ1RK1 b kq - 0 3"
                     .to_string(),
-                is_castle: false,
-                is_en_passant: false,
                 captured: None,
                 promotion: None,
+
+                is_en_passant: false,
+                is_big_pawn: true,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
             },
         ];
 
         pretty_assertions::assert_eq!(moves, chess.history_verbose())
+    }
+
+    #[test]
+    fn history_with_queenside_castle() {
+        let pgn = r#"
+        [Variant "From Position"]
+[FEN "bbnnrkrq/pppppppp/8/8/8/8/PPPPPPPP/RQBKRBNN w KQkq - 0 1"]
+
+1. e4 e5 2. Nf3 Nd6 3. Bc4 Nc6 4. O-O O-O-O"#;
+
+        let mut chess = WasmChess::new(None).unwrap();
+        chess.load_pgn(pgn).unwrap();
+
+        let answer = vec![
+            MoveVerbose {
+                from: SquareStr::E2,
+                to: SquareStr::E4,
+                before: "bbnnrkrq/pppppppp/8/8/8/8/PPPPPPPP/RQBKRBNN w KQkq - 0 1".to_string(),
+                after: "bbnnrkrq/pppppppp/8/8/4P3/8/PPPP1PPP/RQBKRBNN b KQkq - 0 1".to_string(),
+                color: ColorChar::W,
+                piece: "p".to_string(),
+                captured: None,
+                promotion: None,
+                san: "e4".to_string(),
+                lan: "e2e4".to_string(),
+                is_en_passant: false,
+                is_big_pawn: true,
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
+            },
+            MoveVerbose {
+                from: SquareStr::E7,
+                to: SquareStr::E5,
+                before: "bbnnrkrq/pppppppp/8/8/4P3/8/PPPP1PPP/RQBKRBNN b KQkq - 0 1".to_string(),
+                after: "bbnnrkrq/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RQBKRBNN w KQkq - 0 2".to_string(),
+                color: ColorChar::B,
+                piece: "p".to_string(),
+                captured: None,
+                promotion: None,
+                san: "e5".to_string(),
+                lan: "e7e5".to_string(),
+
+                is_en_passant: false,
+                is_big_pawn: true,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
+            },
+            MoveVerbose {
+                from: SquareStr::G1,
+                to: SquareStr::F3,
+                before: "bbnnrkrq/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RQBKRBNN w KQkq - 0 2".to_string(),
+                after: "bbnnrkrq/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RQBKRB1N b KQkq - 1 2".to_string(),
+                color: ColorChar::W,
+                piece: "n".to_string(),
+                captured: None,
+                promotion: None,
+                san: "Nf3".to_string(),
+                lan: "g1f3".to_string(),
+
+                is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
+            },
+            MoveVerbose {
+                from: SquareStr::C8,
+                to: SquareStr::D6,
+                before: "bbnnrkrq/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RQBKRB1N b KQkq - 1 2"
+                    .to_string(),
+                after: "bb1nrkrq/pppp1ppp/3n4/4p3/4P3/5N2/PPPP1PPP/RQBKRB1N w KQkq - 2 3"
+                    .to_string(),
+                color: ColorChar::B,
+                piece: "n".to_string(),
+                captured: None,
+                promotion: None,
+                san: "Nd6".to_string(),
+                lan: "c8d6".to_string(),
+
+                is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
+            },
+            MoveVerbose {
+                from: SquareStr::F1,
+                to: SquareStr::C4,
+                before: "bb1nrkrq/pppp1ppp/3n4/4p3/4P3/5N2/PPPP1PPP/RQBKRB1N w KQkq - 2 3"
+                    .to_string(),
+                after: "bb1nrkrq/pppp1ppp/3n4/4p3/2B1P3/5N2/PPPP1PPP/RQBKR2N b KQkq - 3 3"
+                    .to_string(),
+                color: ColorChar::W,
+                piece: "b".to_string(),
+                captured: None,
+                promotion: None,
+                san: "Bc4".to_string(),
+                lan: "f1c4".to_string(),
+
+                is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
+            },
+            MoveVerbose {
+                from: SquareStr::D8,
+                to: SquareStr::C6,
+                before: "bb1nrkrq/pppp1ppp/3n4/4p3/2B1P3/5N2/PPPP1PPP/RQBKR2N b KQkq - 3 3"
+                    .to_string(),
+                after: "bb2rkrq/pppp1ppp/2nn4/4p3/2B1P3/5N2/PPPP1PPP/RQBKR2N w KQkq - 4 4"
+                    .to_string(),
+                color: ColorChar::B,
+                piece: "n".to_string(),
+                captured: None,
+                promotion: None,
+                san: "Nc6".to_string(),
+                lan: "d8c6".to_string(),
+
+                is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false,
+            },
+            MoveVerbose {
+                from: SquareStr::D1,
+                to: SquareStr::E1,
+                before: "bb2rkrq/pppp1ppp/2nn4/4p3/2B1P3/5N2/PPPP1PPP/RQBKR2N w KQkq - 4 4"
+                    .to_string(),
+                after: "bb2rkrq/pppp1ppp/2nn4/4p3/2B1P3/5N2/PPPP1PPP/RQB2RKN b kq - 5 4"
+                    .to_string(),
+                color: ColorChar::W,
+                piece: "k".to_string(),
+                captured: None,
+                promotion: None,
+                san: "O-O".to_string(),
+                lan: "d1e1".to_string(),
+
+                is_en_passant: false,
+                is_big_pawn: false,
+
+                is_castle: true,
+                is_kingside_castle: true,
+                is_queenside_castle: false,
+            },
+            MoveVerbose {
+                from: SquareStr::F8,
+                to: SquareStr::E8,
+                before: "bb2rkrq/pppp1ppp/2nn4/4p3/2B1P3/5N2/PPPP1PPP/RQB2RKN b kq - 5 4"
+                    .to_string(),
+                after: "bbkr2rq/pppp1ppp/2nn4/4p3/2B1P3/5N2/PPPP1PPP/RQB2RKN w - - 6 5".to_string(),
+                color: ColorChar::B,
+                piece: "k".to_string(),
+                captured: None,
+                promotion: None,
+                san: "O-O-O".to_string(),
+                lan: "f8e8".to_string(),
+
+                is_en_passant: false,
+                is_big_pawn: false,
+                is_castle: true,
+
+                is_kingside_castle: false,
+                is_queenside_castle: true,
+            },
+        ];
+
+        pretty_assertions::assert_eq!(chess.history_verbose(), answer);
     }
 }

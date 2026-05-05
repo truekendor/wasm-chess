@@ -1,7 +1,7 @@
 use core::fmt;
 
 use serde::{Deserialize, Serialize};
-use shakmaty::{Chess, Color, Move, Position, fen::Fen, san::San, uci::UciMove};
+use shakmaty::{Chess, Color, Move, Position, Role, Square, fen::Fen, san::San, uci::UciMove};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
@@ -242,17 +242,14 @@ fn to_internal_moves(moves: Vec<String>, starting_fen: Option<String>) -> Vec<Mo
     internal_moves_list
 }
 
-pub fn verbose_move_object_from_internal_move(
-    internal_move: Move,
-    chess_pos: &Chess,
-) -> MoveVerbose {
+pub fn verbose_move_object_from_internal_move(raw_move: Move, chess_pos: &Chess) -> MoveVerbose {
     let mut chess_pos = chess_pos.clone();
 
     let fen_before = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
-    let promotion: Option<String> = internal_move.promotion().map(|val| val.char().to_string());
-    let captured_piece: Option<String> = internal_move.capture().map(|val| val.char().to_string());
-    let from_sq = internal_move
+    let promotion: Option<String> = raw_move.promotion().map(|val| val.char().to_string());
+    let captured_piece: Option<String> = raw_move.capture().map(|val| val.char().to_string());
+    let from_sq = raw_move
         .from()
         .expect("Only standard chess and chess960 is supported, from() should always return Some");
 
@@ -261,29 +258,89 @@ pub fn verbose_move_object_from_internal_move(
         Color::Black => ColorChar::B,
     };
 
-    let san_move = San::from_move(&chess_pos, internal_move);
-    chess_pos.play_unchecked(internal_move);
+    let san_move = San::from_move(&chess_pos, raw_move);
+
+    let CastleData {
+        is_castle,
+        is_kingside_castle,
+        is_queenside_castle,
+    } = castle_data_from_san_move(&san_move);
+
+    chess_pos.play_unchecked(raw_move);
     let fen_after = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
     let from = SquareStr::from_shakmaty_sq(&from_sq);
-    let to = SquareStr::from_shakmaty_sq(&internal_move.to());
+    let to = SquareStr::from_shakmaty_sq(&raw_move.to());
+
+    let is_big_pawn = is_two_square_pawn_move(&raw_move);
 
     MoveVerbose {
         from,
         to,
         promotion,
-        lan: internal_move
+        lan: raw_move
             .to_uci(shakmaty::CastlingMode::Chess960)
             .to_string(),
         san: san_move.to_string(),
-        piece: internal_move.role().char().to_string(),
+        piece: raw_move.role().char().to_string(),
         captured: captured_piece,
 
         color: color_shorthand,
         before: fen_before.to_string(),
         after: fen_after.to_string(),
 
-        is_en_passant: internal_move.is_en_passant(),
-        is_castle: internal_move.is_castle(),
+        is_en_passant: raw_move.is_en_passant(),
+        is_castle,
+        is_big_pawn,
+        is_kingside_castle,
+        is_queenside_castle,
     }
+}
+
+pub fn is_two_square_pawn_move(mov: &Move) -> bool {
+    // Only pawns can make "big pawn" moves
+    if mov.role() != Role::Pawn {
+        return false;
+    }
+
+    let from = match mov.from() {
+        Some(sq) => sq,
+        None => return false,
+    };
+    let to = mov.to();
+
+    // TODO:  probably just check if from() rank is 2 or 7 and to() rank is 4 or 5?
+
+    let rank_diff = (to.rank() as i8 - from.rank() as i8).abs();
+
+    rank_diff == 2
+}
+
+pub fn castle_data_from_san_move(san_move: &San) -> CastleData {
+    match san_move {
+        San::Castle(castling_side) => match castling_side {
+            shakmaty::CastlingSide::KingSide => CastleData {
+                is_castle: true,
+                is_queenside_castle: false,
+                is_kingside_castle: true,
+            },
+            shakmaty::CastlingSide::QueenSide => CastleData {
+                is_castle: true,
+                is_queenside_castle: true,
+                is_kingside_castle: false,
+            },
+        },
+        _ => CastleData {
+            is_castle: false,
+            is_kingside_castle: false,
+            is_queenside_castle: false,
+        },
+    }
+}
+
+#[derive(Default)]
+pub struct CastleData {
+    pub is_castle: bool,
+    pub is_queenside_castle: bool,
+    pub is_kingside_castle: bool,
 }

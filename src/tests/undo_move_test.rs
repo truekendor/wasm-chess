@@ -25,16 +25,26 @@ mod undo_logic_test {
             MoveVerbose {
                 from: SquareStr::E7,
                 to: SquareStr::E5,
+
                 before: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string(),
                 after: "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2".to_string(),
+
                 color: ColorChar::B,
                 piece: "p".to_string(),
+
                 captured: None,
+
                 promotion: None,
+
                 san: "e5".to_string(),
                 lan: "e7e5".to_string(),
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
                 is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false
             }
         );
 
@@ -58,8 +68,13 @@ mod undo_logic_test {
                 promotion: None,
                 san: "e4".to_string(),
                 lan: "e2e4".to_string(),
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
                 is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false
             }
         );
 

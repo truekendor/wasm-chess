@@ -24,7 +24,10 @@ pub struct MoveVerbose {
     pub lan: String,
 
     pub is_en_passant: bool,
-    // for now we do not distinguish between kingside and queenside castle
+    /// returns true if the move is a two-square pawn move
+    pub is_big_pawn: bool,
+
     pub is_castle: bool,
-    // TODO: add `is_kingside_castle` and `is_queenside_castle`
+    pub is_kingside_castle: bool,
+    pub is_queenside_castle: bool,
 }
