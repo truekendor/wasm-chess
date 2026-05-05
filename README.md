@@ -201,7 +201,7 @@ Repositories:
 Build:
 
 ```bash
-wasm-pack build
+wasm-pack build --target web
 ```
 
 Run tests:
