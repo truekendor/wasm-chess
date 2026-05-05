@@ -41,18 +41,14 @@ pub mod find_piece_tests {
     fn find_pawns_from_obj() {
         let chess = WasmChess::new(None).unwrap();
 
-        let w_pawns = chess
-            .find_piece_from_obj(PieceObj {
-                r#type: PieceSymbol::P,
-                color: ColorChar::W,
-            })
-            .unwrap();
-        let b_pawns = chess
-            .find_piece_from_obj(PieceObj {
-                r#type: PieceSymbol::P,
-                color: ColorChar::B,
-            })
-            .unwrap();
+        let w_pawns = chess.find_piece_from_obj(PieceObj {
+            r#type: PieceSymbol::P,
+            color: ColorChar::W,
+        });
+        let b_pawns = chess.find_piece_from_obj(PieceObj {
+            r#type: PieceSymbol::P,
+            color: ColorChar::B,
+        });
 
         let expected_white: Vec<SquareStr> = vec![
             SquareStr::A2,
@@ -87,13 +83,10 @@ pub mod find_piece_tests {
         ))
         .unwrap();
 
-        let w_queen = chess
-            .find_piece_from_obj(PieceObj {
-                r#type: PieceSymbol::Q,
-                color: ColorChar::W,
-            })
-            .unwrap();
-
+        let w_queen = chess.find_piece_from_obj(PieceObj {
+            r#type: PieceSymbol::Q,
+            color: ColorChar::W,
+        });
         pretty_assertions::assert_eq!(w_queen.len(), 0);
     }
 

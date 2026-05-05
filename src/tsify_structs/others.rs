@@ -1,5 +1,6 @@
 use ordermap::OrderMap;
 use serde::{Deserialize, Serialize};
+use shakmaty::{Color, Piece};
 use strum::Display;
 
 use crate::tsify_structs::square_str::SquareStr;
@@ -111,7 +112,24 @@ pub struct OkOrError<T> {
     pub err: Option<String>,
 }
 
-// TODO: use it later
+impl PieceObj {
+    pub fn to_shakmaty_piece(&self) -> Piece {
+        Piece {
+            color: match self.color {
+                ColorChar::W => Color::White,
+                ColorChar::B => Color::Black,
+            },
+            role: match self.r#type {
+                PieceSymbol::P => shakmaty::Role::Pawn,
+                PieceSymbol::N => shakmaty::Role::Knight,
+                PieceSymbol::B => shakmaty::Role::Bishop,
+                PieceSymbol::R => shakmaty::Role::Rook,
+                PieceSymbol::Q => shakmaty::Role::Queen,
+                PieceSymbol::K => shakmaty::Role::King,
+            },
+        }
+    }
+}
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
