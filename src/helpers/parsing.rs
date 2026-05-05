@@ -242,14 +242,16 @@ fn to_internal_moves(moves: Vec<String>, starting_fen: Option<String>) -> Vec<Mo
 pub fn verbose_move_object_from_internal_move(
     internal_move: Move,
     chess_pos: &Chess,
-) -> Result<MoveVerbose, String> {
+) -> MoveVerbose {
     let mut chess_pos = chess_pos.clone();
 
     let fen_before = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
     let promotion: Option<String> = internal_move.promotion().map(|val| val.char().to_string());
     let captured_piece: Option<String> = internal_move.capture().map(|val| val.char().to_string());
-    let from_sq = internal_move.from();
+    let from_sq = internal_move
+        .from()
+        .expect("Only standard chess and chess960 is supported, from() should always return Some");
 
     let color_shorthand = match chess_pos.turn() {
         Color::White => ColorChar::W,
@@ -260,14 +262,10 @@ pub fn verbose_move_object_from_internal_move(
     chess_pos.play_unchecked(internal_move);
     let fen_after = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
-    let from_sq = internal_move
-        .from()
-        .expect("Only standard chess and chess960 is supported, from() should always return Some");
-
     let from = SquareStr::from_shakmaty_sq(&from_sq);
     let to = SquareStr::from_shakmaty_sq(&internal_move.to());
 
-    Ok(MoveVerbose {
+    MoveVerbose {
         from,
         to,
         promotion,
@@ -284,5 +282,5 @@ pub fn verbose_move_object_from_internal_move(
 
         is_en_passant: internal_move.is_en_passant(),
         is_castle: internal_move.is_castle(),
-    })
+    }
 }
