@@ -161,7 +161,7 @@ Repository:
 
 This project is fundamentally powered by the incredible `shakmaty` ecosystem.
 
-Core chess logic, move legality, SAN handling, position management and many more
+Core chess logic, move legality, SAN handling, position management and more
 are built on top of:
 
 * shakmaty
