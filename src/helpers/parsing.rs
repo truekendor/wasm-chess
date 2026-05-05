@@ -261,7 +261,7 @@ pub fn verbose_move_object_from_internal_move(
         Color::Black => ColorChar::B,
     };
 
-    let san_move = San::from_move(&chess_pos.clone(), internal_move);
+    let san_move = San::from_move(&chess_pos, internal_move);
     chess_pos.play_unchecked(internal_move);
     let fen_after = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
