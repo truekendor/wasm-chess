@@ -41,6 +41,7 @@ pub mod history_test_chess_js {
                 after: "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: true,
@@ -62,11 +63,12 @@ pub mod history_test_chess_js {
                 after: "rnbqkbnr/pppp1ppp/4p3/8/2P5/8/PP1PPPPP/RNBQKBNR w KQkq - 0 2".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -83,11 +85,12 @@ pub mod history_test_chess_js {
                 after: "rnbqkbnr/pppp1ppp/4p3/8/2P5/5N2/PP1PPPPP/RNBQKB1R b KQkq - 1 2".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -106,11 +109,12 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: true,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -129,6 +133,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: true,
@@ -152,6 +157,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -175,6 +181,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -198,6 +205,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -221,6 +229,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -245,6 +254,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -268,6 +278,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -291,6 +302,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -314,6 +326,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -337,6 +350,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -360,6 +374,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: Some("p".to_string()),
+                is_regular_capture: true,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -372,7 +387,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "n".to_string(),
                 from: SquareStr::F6,
-
                 to: SquareStr::D5,
 
                 san: "Nxd5".to_string(),
@@ -383,11 +397,12 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: Some("p".to_string()),
-                is_castle: false,
+                is_regular_capture: true,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -395,7 +410,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "b".to_string(),
                 from: SquareStr::H4,
-
                 to: SquareStr::E7,
 
                 san: "Bxe7".to_string(),
@@ -406,6 +420,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: Some("b".to_string()),
+                is_regular_capture: true,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -418,7 +433,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "q".to_string(),
                 from: SquareStr::D8,
-
                 to: SquareStr::E7,
 
                 san: "Qxe7".to_string(),
@@ -429,6 +443,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: Some("b".to_string()),
+                is_regular_capture: true,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -452,6 +467,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 promotion: None,
                 captured: Some("n".to_string()),
+                is_regular_capture: true,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -464,7 +480,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "p".to_string(),
                 from: SquareStr::E6,
-
                 to: SquareStr::D5,
 
                 san: "exd5".to_string(),
@@ -474,11 +489,12 @@ pub mod history_test_chess_js {
                 after: "rnb2rk1/p1p1qpp1/1p5p/3p4/3P4/4PN2/PP3PPP/R2QKB1R w KQ - 0 11".to_string(),
                 promotion: None,
                 captured: Some("n".to_string()),
-                is_castle: false,
+                is_regular_capture: true,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -495,6 +511,7 @@ pub mod history_test_chess_js {
                 after: "rnb2rk1/p1p1qpp1/1p5p/3p4/3P4/4PN2/PP3PPP/2RQKB1R b K - 1 11".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -516,6 +533,7 @@ pub mod history_test_chess_js {
                 after: "rn3rk1/p1p1qpp1/1p2b2p/3p4/3P4/4PN2/PP3PPP/2RQKB1R w K - 2 12".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -537,6 +555,7 @@ pub mod history_test_chess_js {
                 after: "rn3rk1/p1p1qpp1/1p2b2p/3p4/Q2P4/4PN2/PP3PPP/2R1KB1R b K - 3 12".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -559,6 +578,7 @@ pub mod history_test_chess_js {
                 after: "rn3rk1/p3qpp1/1p2b2p/2pp4/Q2P4/4PN2/PP3PPP/2R1KB1R w K - 0 13".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: true,
@@ -580,6 +600,7 @@ pub mod history_test_chess_js {
                 after: "rn3rk1/p3qpp1/1p2b2p/2pp4/3P4/Q3PN2/PP3PPP/2R1KB1R b K - 1 13".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -601,6 +622,7 @@ pub mod history_test_chess_js {
                 after: "rnr3k1/p3qpp1/1p2b2p/2pp4/3P4/Q3PN2/PP3PPP/2R1KB1R w K - 2 14".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -622,6 +644,7 @@ pub mod history_test_chess_js {
                 after: "rnr3k1/p3qpp1/1p2b2p/1Bpp4/3P4/Q3PN2/PP3PPP/2R1K2R b K - 3 14".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -643,6 +666,7 @@ pub mod history_test_chess_js {
                 after: "rnr3k1/4qpp1/pp2b2p/1Bpp4/3P4/Q3PN2/PP3PPP/2R1K2R w K - 0 15".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -655,7 +679,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 from: SquareStr::D4,
-
                 to: SquareStr::C5,
 
                 san: "dxc5".to_string(),
@@ -664,11 +687,12 @@ pub mod history_test_chess_js {
                 after: "rnr3k1/4qpp1/pp2b2p/1BPp4/8/Q3PN2/PP3PPP/2R1K2R b K - 0 15".to_string(),
                 promotion: None,
                 captured: Some("p".to_string()),
-                is_castle: false,
+                is_regular_capture: true,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -686,6 +710,7 @@ pub mod history_test_chess_js {
 
                 promotion: None,
                 captured: Some("p".to_string()),
+                is_regular_capture: true,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -711,6 +736,7 @@ pub mod history_test_chess_js {
                 after: "rnr3k1/4qpp1/p3b2p/1Bpp4/8/Q3PN2/PP3PPP/2R2RK1 b - - 1 16".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -732,6 +758,7 @@ pub mod history_test_chess_js {
                 after: "1nr3k1/r3qpp1/p3b2p/1Bpp4/8/Q3PN2/PP3PPP/2R2RK1 w - - 2 17".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -753,6 +780,7 @@ pub mod history_test_chess_js {
                 after: "1nr3k1/r3qpp1/p3b2p/2pp4/8/Q3PN2/PP2BPPP/2R2RK1 b - - 3 17".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -774,6 +802,7 @@ pub mod history_test_chess_js {
                 after: "2r3k1/r2nqpp1/p3b2p/2pp4/8/Q3PN2/PP2BPPP/2R2RK1 w - - 4 18".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -795,6 +824,7 @@ pub mod history_test_chess_js {
                 after: "2r3k1/r2nqpp1/p3b2p/2pp4/3N4/Q3P3/PP2BPPP/2R2RK1 b - - 5 18".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -816,11 +846,12 @@ pub mod history_test_chess_js {
                 after: "2r2qk1/r2n1pp1/p3b2p/2pp4/3N4/Q3P3/PP2BPPP/2R2RK1 w - - 6 19".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -828,20 +859,20 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "n".to_string(),
                 from: SquareStr::D4,
-
                 to: SquareStr::E6,
 
                 san: "Nxe6".to_string(),
                 lan: "d4e6".to_string(),
                 before: "2r2qk1/r2n1pp1/p3b2p/2pp4/3N4/Q3P3/PP2BPPP/2R2RK1 w - - 6 19".to_string(),
+                after: "2r2qk1/r2n1pp1/p3N2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 b - - 0 19".to_string(),
                 promotion: None,
                 captured: Some("b".to_string()),
-                is_castle: false,
-                is_en_passant: false,
+                is_regular_capture: true,
 
-                after: "2r2qk1/r2n1pp1/p3N2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 b - - 0 19".to_string(),
+                is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -849,20 +880,20 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "p".to_string(),
                 from: SquareStr::F7,
-
                 to: SquareStr::E6,
 
                 san: "fxe6".to_string(),
                 lan: "f7e6".to_string(),
                 before: "2r2qk1/r2n1pp1/p3N2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 b - - 0 19".to_string(),
+                after: "2r2qk1/r2n2p1/p3p2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 w - - 0 20".to_string(),
                 promotion: None,
                 captured: Some("n".to_string()),
-                is_castle: false,
-                is_en_passant: false,
+                is_regular_capture: true,
 
-                after: "2r2qk1/r2n2p1/p3p2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 w - - 0 20".to_string(),
+                is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -870,7 +901,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 from: SquareStr::E3,
-
                 to: SquareStr::E4,
 
                 san: "e4".to_string(),
@@ -879,11 +909,12 @@ pub mod history_test_chess_js {
                 after: "2r2qk1/r2n2p1/p3p2p/2pp4/4P3/Q7/PP2BPPP/2R2RK1 b - - 0 20".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -891,7 +922,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "p".to_string(),
                 from: SquareStr::D5,
-
                 to: SquareStr::D4,
 
                 san: "d4".to_string(),
@@ -900,6 +930,7 @@ pub mod history_test_chess_js {
                 after: "2r2qk1/r2n2p1/p3p2p/2p5/3pP3/Q7/PP2BPPP/2R2RK1 w - - 0 21".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
                 is_castle: false,
 
                 is_en_passant: false,
@@ -912,7 +943,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 from: SquareStr::F2,
-
                 to: SquareStr::F4,
 
                 san: "f4".to_string(),
@@ -921,11 +951,12 @@ pub mod history_test_chess_js {
                 after: "2r2qk1/r2n2p1/p3p2p/2p5/3pPP2/Q7/PP2B1PP/2R2RK1 b - - 0 21".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: true,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -933,7 +964,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "q".to_string(),
                 from: SquareStr::F8,
-
                 to: SquareStr::E7,
 
                 san: "Qe7".to_string(),
@@ -942,11 +972,12 @@ pub mod history_test_chess_js {
                 after: "2r3k1/r2nq1p1/p3p2p/2p5/3pPP2/Q7/PP2B1PP/2R2RK1 w - - 1 22".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -954,7 +985,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 from: SquareStr::E4,
-
                 to: SquareStr::E5,
 
                 san: "e5".to_string(),
@@ -963,11 +993,12 @@ pub mod history_test_chess_js {
                 after: "2r3k1/r2nq1p1/p3p2p/2p1P3/3p1P2/Q7/PP2B1PP/2R2RK1 b - - 0 22".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -975,7 +1006,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "r".to_string(),
                 from: SquareStr::C8,
-
                 to: SquareStr::B8,
 
                 san: "Rb8".to_string(),
@@ -984,11 +1014,12 @@ pub mod history_test_chess_js {
                 after: "1r4k1/r2nq1p1/p3p2p/2p1P3/3p1P2/Q7/PP2B1PP/2R2RK1 w - - 1 23".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -996,7 +1027,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "b".to_string(),
                 from: SquareStr::E2,
-
                 to: SquareStr::C4,
 
                 san: "Bc4".to_string(),
@@ -1005,11 +1035,12 @@ pub mod history_test_chess_js {
                 after: "1r4k1/r2nq1p1/p3p2p/2p1P3/2Bp1P2/Q7/PP4PP/2R2RK1 b - - 2 23".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1017,7 +1048,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "k".to_string(),
                 from: SquareStr::G8,
-
                 to: SquareStr::H8,
 
                 san: "Kh8".to_string(),
@@ -1026,11 +1056,12 @@ pub mod history_test_chess_js {
                 after: "1r5k/r2nq1p1/p3p2p/2p1P3/2Bp1P2/Q7/PP4PP/2R2RK1 w - - 3 24".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1038,7 +1069,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "q".to_string(),
                 from: SquareStr::A3,
-
                 to: SquareStr::H3,
 
                 san: "Qh3".to_string(),
@@ -1047,11 +1077,12 @@ pub mod history_test_chess_js {
                 after: "1r5k/r2nq1p1/p3p2p/2p1P3/2Bp1P2/7Q/PP4PP/2R2RK1 b - - 4 24".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1059,7 +1090,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "n".to_string(),
                 from: SquareStr::D7,
-
                 to: SquareStr::F8,
 
                 san: "Nf8".to_string(),
@@ -1068,11 +1098,12 @@ pub mod history_test_chess_js {
                 after: "1r3n1k/r3q1p1/p3p2p/2p1P3/2Bp1P2/7Q/PP4PP/2R2RK1 w - - 5 25".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1089,11 +1120,12 @@ pub mod history_test_chess_js {
                 after: "1r3n1k/r3q1p1/p3p2p/2p1P3/2Bp1P2/1P5Q/P5PP/2R2RK1 b - - 0 25".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1101,7 +1133,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "p".to_string(),
                 from: SquareStr::A6,
-
                 to: SquareStr::A5,
 
                 san: "a5".to_string(),
@@ -1110,11 +1141,12 @@ pub mod history_test_chess_js {
                 after: "1r3n1k/r3q1p1/4p2p/p1p1P3/2Bp1P2/1P5Q/P5PP/2R2RK1 w - - 0 26".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1122,7 +1154,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 from: SquareStr::F4,
-
                 to: SquareStr::F5,
 
                 san: "f5".to_string(),
@@ -1131,11 +1162,12 @@ pub mod history_test_chess_js {
                 after: "1r3n1k/r3q1p1/4p2p/p1p1PP2/2Bp4/1P5Q/P5PP/2R2RK1 b - - 0 26".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1143,20 +1175,20 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "p".to_string(),
                 from: SquareStr::E6,
-
                 to: SquareStr::F5,
 
                 san: "exf5".to_string(),
                 lan: "e6f5".to_string(),
                 before: "1r3n1k/r3q1p1/4p2p/p1p1PP2/2Bp4/1P5Q/P5PP/2R2RK1 b - - 0 26".to_string(),
+                after: "1r3n1k/r3q1p1/7p/p1p1Pp2/2Bp4/1P5Q/P5PP/2R2RK1 w - - 0 27".to_string(),
                 promotion: None,
                 captured: Some("p".to_string()),
-                is_castle: false,
-                is_en_passant: false,
+                is_regular_capture: true,
 
-                after: "1r3n1k/r3q1p1/7p/p1p1Pp2/2Bp4/1P5Q/P5PP/2R2RK1 w - - 0 27".to_string(),
+                is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1164,20 +1196,20 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "r".to_string(),
                 from: SquareStr::F1,
-
                 to: SquareStr::F5,
 
                 san: "Rxf5".to_string(),
                 lan: "f1f5".to_string(),
                 before: "1r3n1k/r3q1p1/7p/p1p1Pp2/2Bp4/1P5Q/P5PP/2R2RK1 w - - 0 27".to_string(),
+                after: "1r3n1k/r3q1p1/7p/p1p1PR2/2Bp4/1P5Q/P5PP/2R3K1 b - - 0 27".to_string(),
                 promotion: None,
                 captured: Some("p".to_string()),
-                is_castle: false,
-                is_en_passant: false,
+                is_regular_capture: true,
 
-                after: "1r3n1k/r3q1p1/7p/p1p1PR2/2Bp4/1P5Q/P5PP/2R3K1 b - - 0 27".to_string(),
+                is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1185,7 +1217,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "n".to_string(),
                 from: SquareStr::F8,
-
                 to: SquareStr::H7,
 
                 san: "Nh7".to_string(),
@@ -1194,11 +1225,12 @@ pub mod history_test_chess_js {
                 after: "1r5k/r3q1pn/7p/p1p1PR2/2Bp4/1P5Q/P5PP/2R3K1 w - - 1 28".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1206,7 +1238,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "r".to_string(),
                 from: SquareStr::C1,
-
                 to: SquareStr::F1,
 
                 san: "Rcf1".to_string(),
@@ -1215,11 +1246,12 @@ pub mod history_test_chess_js {
                 after: "1r5k/r3q1pn/7p/p1p1PR2/2Bp4/1P5Q/P5PP/5RK1 b - - 2 28".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1227,7 +1259,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "q".to_string(),
                 from: SquareStr::E7,
-
                 to: SquareStr::D8,
 
                 san: "Qd8".to_string(),
@@ -1236,11 +1267,11 @@ pub mod history_test_chess_js {
                 after: "1r1q3k/r5pn/7p/p1p1PR2/2Bp4/1P5Q/P5PP/5RK1 w - - 3 29".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
-
+                is_regular_capture: false,
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1248,7 +1279,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "q".to_string(),
                 from: SquareStr::H3,
-
                 to: SquareStr::G3,
 
                 san: "Qg3".to_string(),
@@ -1257,11 +1287,12 @@ pub mod history_test_chess_js {
                 after: "1r1q3k/r5pn/7p/p1p1PR2/2Bp4/1P4Q1/P5PP/5RK1 b - - 4 29".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1269,7 +1300,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "r".to_string(),
                 from: SquareStr::A7,
-
                 to: SquareStr::E7,
 
                 san: "Re7".to_string(),
@@ -1278,11 +1308,12 @@ pub mod history_test_chess_js {
                 after: "1r1q3k/4r1pn/7p/p1p1PR2/2Bp4/1P4Q1/P5PP/5RK1 w - - 5 30".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1290,7 +1321,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 from: SquareStr::H2,
-
                 to: SquareStr::H4,
 
                 san: "h4".to_string(),
@@ -1299,11 +1329,12 @@ pub mod history_test_chess_js {
                 after: "1r1q3k/4r1pn/7p/p1p1PR2/2Bp3P/1P4Q1/P5P1/5RK1 b - - 0 30".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: true,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1311,7 +1342,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "r".to_string(),
                 from: SquareStr::B8,
-
                 to: SquareStr::B7,
 
                 san: "Rbb7".to_string(),
@@ -1320,11 +1350,12 @@ pub mod history_test_chess_js {
                 after: "3q3k/1r2r1pn/7p/p1p1PR2/2Bp3P/1P4Q1/P5P1/5RK1 w - - 1 31".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1332,7 +1363,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 from: SquareStr::E5,
-
                 to: SquareStr::E6,
 
                 san: "e6".to_string(),
@@ -1341,11 +1371,12 @@ pub mod history_test_chess_js {
                 after: "3q3k/1r2r1pn/4P2p/p1p2R2/2Bp3P/1P4Q1/P5P1/5RK1 b - - 0 31".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1353,7 +1384,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "r".to_string(),
                 from: SquareStr::B7,
-
                 to: SquareStr::C7,
 
                 san: "Rbc7".to_string(),
@@ -1362,11 +1392,12 @@ pub mod history_test_chess_js {
                 after: "3q3k/2r1r1pn/4P2p/p1p2R2/2Bp3P/1P4Q1/P5P1/5RK1 w - - 1 32".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1383,11 +1414,12 @@ pub mod history_test_chess_js {
                 after: "3q3k/2r1r1pn/4P2p/p1p1QR2/2Bp3P/1P6/P5P1/5RK1 b - - 2 32".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1395,7 +1427,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "q".to_string(),
                 from: SquareStr::D8,
-
                 to: SquareStr::E8,
 
                 san: "Qe8".to_string(),
@@ -1404,6 +1435,7 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r1pn/4P2p/p1p1QR2/2Bp3P/1P6/P5P1/5RK1 w - - 3 33".to_string(),
                 promotion: None,
                 captured: None,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
@@ -1416,7 +1448,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 from: SquareStr::A2,
-
                 to: SquareStr::A4,
 
                 san: "a4".to_string(),
@@ -1425,11 +1456,12 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r1pn/4P2p/p1p1QR2/P1Bp3P/1P6/6P1/5RK1 b - - 0 33".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: true,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1437,7 +1469,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "q".to_string(),
                 from: SquareStr::E8,
-
                 to: SquareStr::D8,
 
                 san: "Qd8".to_string(),
@@ -1446,11 +1477,12 @@ pub mod history_test_chess_js {
                 after: "3q3k/2r1r1pn/4P2p/p1p1QR2/P1Bp3P/1P6/6P1/5RK1 w - - 1 34".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1458,7 +1490,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "r".to_string(),
                 from: SquareStr::F1,
-
                 to: SquareStr::F2,
 
                 san: "R1f2".to_string(),
@@ -1467,11 +1498,12 @@ pub mod history_test_chess_js {
                 after: "3q3k/2r1r1pn/4P2p/p1p1QR2/P1Bp3P/1P6/5RP1/6K1 b - - 2 34".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1479,7 +1511,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "q".to_string(),
                 from: SquareStr::D8,
-
                 to: SquareStr::E8,
 
                 san: "Qe8".to_string(),
@@ -1488,11 +1519,12 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r1pn/4P2p/p1p1QR2/P1Bp3P/1P6/5RP1/6K1 w - - 3 35".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1509,11 +1541,12 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r1pn/4P2p/p1p1QR2/P1Bp3P/1P3R2/6P1/6K1 b - - 4 35".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1530,11 +1563,12 @@ pub mod history_test_chess_js {
                 after: "3q3k/2r1r1pn/4P2p/p1p1QR2/P1Bp3P/1P3R2/6P1/6K1 w - - 5 36".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1551,11 +1585,12 @@ pub mod history_test_chess_js {
                 after: "3q3k/2r1r1pn/4P2p/p1p1QR2/P2p3P/1P1B1R2/6P1/6K1 b - - 6 36".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1563,7 +1598,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "q".to_string(),
                 from: SquareStr::D8,
-
                 to: SquareStr::E8,
 
                 san: "Qe8".to_string(),
@@ -1572,11 +1606,12 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r1pn/4P2p/p1p1QR2/P2p3P/1P1B1R2/6P1/6K1 w - - 7 37".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1584,7 +1619,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "q".to_string(),
                 from: SquareStr::E5,
-
                 to: SquareStr::E4,
 
                 san: "Qe4".to_string(),
@@ -1593,11 +1627,12 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r1pn/4P2p/p1p2R2/P2pQ2P/1P1B1R2/6P1/6K1 b - - 8 37".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1605,7 +1640,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "n".to_string(),
                 from: SquareStr::H7,
-
                 to: SquareStr::F6,
 
                 san: "Nf6".to_string(),
@@ -1614,11 +1648,12 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r1p1/4Pn1p/p1p2R2/P2pQ2P/1P1B1R2/6P1/6K1 w - - 9 38".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1626,20 +1661,20 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "r".to_string(),
                 from: SquareStr::F5,
-
                 to: SquareStr::F6,
 
                 san: "Rxf6".to_string(),
                 lan: "f5f6".to_string(),
                 before: "4q2k/2r1r1p1/4Pn1p/p1p2R2/P2pQ2P/1P1B1R2/6P1/6K1 w - - 9 38".to_string(),
+                after: "4q2k/2r1r1p1/4PR1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 b - - 0 38".to_string(),
                 promotion: None,
                 captured: Some("n".to_string()),
-                is_castle: false,
-                is_en_passant: false,
+                is_regular_capture: true,
 
-                after: "4q2k/2r1r1p1/4PR1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 b - - 0 38".to_string(),
+                is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1647,20 +1682,20 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "p".to_string(),
                 from: SquareStr::G7,
-
                 to: SquareStr::F6,
 
                 san: "gxf6".to_string(),
                 lan: "g7f6".to_string(),
                 before: "4q2k/2r1r1p1/4PR1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 b - - 0 38".to_string(),
+                after: "4q2k/2r1r3/4Pp1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 w - - 0 39".to_string(),
                 promotion: None,
                 captured: Some("r".to_string()),
-                is_castle: false,
-                is_en_passant: false,
+                is_regular_capture: true,
 
-                after: "4q2k/2r1r3/4Pp1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 w - - 0 39".to_string(),
+                is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1668,20 +1703,20 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "r".to_string(),
                 from: SquareStr::F3,
-
                 to: SquareStr::F6,
 
                 san: "Rxf6".to_string(),
                 lan: "f3f6".to_string(),
                 before: "4q2k/2r1r3/4Pp1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 w - - 0 39".to_string(),
+                after: "4q2k/2r1r3/4PR1p/p1p5/P2pQ2P/1P1B4/6P1/6K1 b - - 0 39".to_string(),
                 promotion: None,
                 captured: Some("p".to_string()),
-                is_castle: false,
-                is_en_passant: false,
+                is_regular_capture: true,
 
-                after: "4q2k/2r1r3/4PR1p/p1p5/P2pQ2P/1P1B4/6P1/6K1 b - - 0 39".to_string(),
+                is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1689,7 +1724,6 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "k".to_string(),
                 from: SquareStr::H8,
-
                 to: SquareStr::G8,
 
                 san: "Kg8".to_string(),
@@ -1698,11 +1732,12 @@ pub mod history_test_chess_js {
                 after: "4q1k1/2r1r3/4PR1p/p1p5/P2pQ2P/1P1B4/6P1/6K1 w - - 1 40".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1719,11 +1754,12 @@ pub mod history_test_chess_js {
                 after: "4q1k1/2r1r3/4PR1p/p1p5/P1BpQ2P/1P6/6P1/6K1 b - - 2 40".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1740,11 +1776,12 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r3/4PR1p/p1p5/P1BpQ2P/1P6/6P1/6K1 w - - 3 41".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1761,11 +1798,12 @@ pub mod history_test_chess_js {
                 after: "4q2k/2r1r3/4PR1p/p1p5/P1Bp1Q1P/1P6/6P1/6K1 b - - 4 41".to_string(),
                 promotion: None,
                 captured: None,
-                is_castle: false,
+                is_regular_capture: false,
 
                 is_en_passant: false,
                 is_big_pawn: false,
 
+                is_castle: false,
                 is_kingside_castle: false,
                 is_queenside_castle: false,
             },
@@ -1812,6 +1850,7 @@ pub mod history_test_chess_js {
                 after: "r1bqk1nr/pppp1ppp/2n5/b3p3/2B1P3/2P2N2/P2P1PPP/RNBQK2R w KQkq - 1 2"
                     .to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
 
                 is_en_passant: false,
@@ -1833,6 +1872,7 @@ pub mod history_test_chess_js {
                 after: "r1bqk1nr/pppp1ppp/2n5/b3p3/2B1P3/2P2N2/P2P1PPP/RNBQ1RK1 b kq - 2 2"
                     .to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
 
                 is_en_passant: false,
@@ -1854,6 +1894,7 @@ pub mod history_test_chess_js {
                 after: "r1bqk1nr/ppp2ppp/2np4/b3p3/2B1P3/2P2N2/P2P1PPP/RNBQ1RK1 w kq - 0 3"
                     .to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
 
                 is_en_passant: false,
@@ -1874,6 +1915,7 @@ pub mod history_test_chess_js {
                 after: "r1bqk1nr/ppp2ppp/2np4/b3p3/2BPP3/2P2N2/P4PPP/RNBQ1RK1 b kq - 0 3"
                     .to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
 
                 is_en_passant: false,
@@ -1908,6 +1950,7 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "e4".to_string(),
                 lan: "e2e4".to_string(),
@@ -1925,6 +1968,7 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "p".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "e5".to_string(),
                 lan: "e7e5".to_string(),
@@ -1944,6 +1988,7 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "n".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "Nf3".to_string(),
                 lan: "g1f3".to_string(),
@@ -1965,6 +2010,7 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "n".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "Nd6".to_string(),
                 lan: "c8d6".to_string(),
@@ -1986,6 +2032,7 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "b".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "Bc4".to_string(),
                 lan: "f1c4".to_string(),
@@ -2007,6 +2054,7 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "n".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "Nc6".to_string(),
                 lan: "d8c6".to_string(),
@@ -2028,6 +2076,7 @@ pub mod history_test_chess_js {
                 color: ColorChar::W,
                 piece: "k".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "O-O".to_string(),
                 lan: "d1e1".to_string(),
@@ -2048,6 +2097,7 @@ pub mod history_test_chess_js {
                 color: ColorChar::B,
                 piece: "k".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "O-O-O".to_string(),
                 lan: "f8e8".to_string(),

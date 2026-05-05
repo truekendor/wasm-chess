@@ -33,6 +33,7 @@ mod undo_logic_test {
                 piece: "p".to_string(),
 
                 captured: None,
+                is_regular_capture: false,
 
                 promotion: None,
 
@@ -65,6 +66,7 @@ mod undo_logic_test {
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "e4".to_string(),
                 lan: "e2e4".to_string(),
