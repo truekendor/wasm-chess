@@ -1146,9 +1146,7 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "pgn")]
     pub fn pgn(&self) -> String {
-        let pgn_string = chess_to_pgn(&self);
-
-        pgn_string
+        chess_to_pgn(&self)
     }
 
     // TODO: add custom types like type Suffix = String to avoid confusion
