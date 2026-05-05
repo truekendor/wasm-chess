@@ -4,10 +4,9 @@
 
 #[cfg(test)]
 pub mod test {
-    use shakmaty::Square;
-
     use crate::WasmChess;
-    use crate::helpers::tsify_structs::*;
+    use crate::tsify_structs::{others::*, *};
+    use shakmaty::Square;
 
     #[test]
     fn test_new_game_initial_position() {
@@ -170,7 +169,7 @@ pub mod test {
             "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1".to_string(),
         ))
         .unwrap();
-        chess.make_move("a2a3").unwrap_or(());
+        chess.make_move("a2a3").unwrap();
 
         chess.reset();
 

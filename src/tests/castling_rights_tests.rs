@@ -2,7 +2,7 @@
 pub mod castling_rights_tests {
     use crate::{
         WasmChess,
-        helpers::tsify_structs::{CastlingObj, ColorChar},
+        tsify_structs::others::{CastlingObj, ColorChar},
     };
 
     #[test]
@@ -12,7 +12,7 @@ pub mod castling_rights_tests {
         let chess = WasmChess::new(Some(no_castling_fen.to_string())).unwrap();
 
         pretty_assertions::assert_eq!(
-            chess.get_castling_rights(ColorChar::W).unwrap(),
+            chess.get_castling_rights(ColorChar::W),
             CastlingObj {
                 king: false,
                 queen: true
@@ -20,7 +20,7 @@ pub mod castling_rights_tests {
         );
 
         pretty_assertions::assert_eq!(
-            chess.get_castling_rights(ColorChar::B).unwrap(),
+            chess.get_castling_rights(ColorChar::B),
             CastlingObj {
                 king: false,
                 queen: true
@@ -35,7 +35,7 @@ pub mod castling_rights_tests {
         let mut chess = WasmChess::new(Some(no_castling_fen.to_string())).unwrap();
 
         pretty_assertions::assert_eq!(
-            chess.get_castling_rights(ColorChar::W).unwrap(),
+            chess.get_castling_rights(ColorChar::W),
             CastlingObj {
                 king: true,
                 queen: true
@@ -43,7 +43,7 @@ pub mod castling_rights_tests {
         );
 
         pretty_assertions::assert_eq!(
-            chess.get_castling_rights(ColorChar::B).unwrap(),
+            chess.get_castling_rights(ColorChar::B),
             CastlingObj {
                 king: true,
                 queen: true
@@ -54,14 +54,14 @@ pub mod castling_rights_tests {
         chess.make_move("Rh7").unwrap();
 
         pretty_assertions::assert_eq!(
-            chess.get_castling_rights(ColorChar::W).unwrap(),
+            chess.get_castling_rights(ColorChar::W),
             CastlingObj {
                 king: true,
                 queen: false
             }
         );
         pretty_assertions::assert_eq!(
-            chess.get_castling_rights(ColorChar::B).unwrap(),
+            chess.get_castling_rights(ColorChar::B),
             CastlingObj {
                 king: false,
                 queen: true
@@ -76,7 +76,7 @@ pub mod castling_rights_tests {
         let mut chess = WasmChess::new(Some(no_castling_fen.to_string())).unwrap();
 
         pretty_assertions::assert_eq!(
-            chess.get_castling_rights(ColorChar::W).unwrap(),
+            chess.get_castling_rights(ColorChar::W),
             CastlingObj {
                 king: true,
                 queen: true
@@ -86,7 +86,7 @@ pub mod castling_rights_tests {
         chess.make_move("Ke2").unwrap();
 
         pretty_assertions::assert_eq!(
-            chess.get_castling_rights(ColorChar::W).unwrap(),
+            chess.get_castling_rights(ColorChar::W),
             CastlingObj {
                 king: false,
                 queen: false

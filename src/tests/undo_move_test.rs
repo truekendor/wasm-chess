@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod undo_logic_test {
-    use crate::{WasmChess, helpers::tsify_structs::*};
+    use crate::WasmChess;
+    use crate::tsify_structs::{MoveVerbose, SquareStr, others::*};
 
     #[test]
     fn test_undo_after_two_moves() {
@@ -22,18 +23,29 @@ mod undo_logic_test {
         pretty_assertions::assert_eq!(
             move_str,
             MoveVerbose {
-                from: "e7".to_string(),
-                to: "e5".to_string(),
+                from: SquareStr::E7,
+                to: SquareStr::E5,
+
                 before: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string(),
                 after: "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2".to_string(),
+
                 color: ColorChar::B,
                 piece: "p".to_string(),
+
                 captured: None,
+                is_regular_capture: false,
+
                 promotion: None,
+
                 san: "e5".to_string(),
                 lan: "e7e5".to_string(),
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
                 is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false
             }
         );
 
@@ -47,18 +59,24 @@ mod undo_logic_test {
         pretty_assertions::assert_eq!(
             move_str,
             MoveVerbose {
-                from: "e2".to_string(),
-                to: "e4".to_string(),
+                from: SquareStr::E2,
+                to: SquareStr::E4,
                 before: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1".to_string(),
                 after: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string(),
                 color: ColorChar::W,
                 piece: "p".to_string(),
                 captured: None,
+                is_regular_capture: false,
                 promotion: None,
                 san: "e4".to_string(),
                 lan: "e2e4".to_string(),
+
                 is_en_passant: false,
+                is_big_pawn: true,
+
                 is_castle: false,
+                is_kingside_castle: false,
+                is_queenside_castle: false
             }
         );
 
@@ -74,12 +92,12 @@ mod undo_logic_test {
         chess.make_move("e7e5").unwrap();
 
         pretty_assertions::assert_eq!(chess.history.len(), 2);
-        pretty_assertions::assert_eq!(chess.position_count.len(), 3);
+        pretty_assertions::assert_eq!(chess.repetition_table.len(), 3);
 
         let undo_result = chess.undo();
 
         pretty_assertions::assert_eq!(chess.history.len(), 1);
-        pretty_assertions::assert_eq!(chess.position_count.len(), 2);
+        pretty_assertions::assert_eq!(chess.repetition_table.len(), 2);
 
         pretty_assertions::assert_eq!(undo_result.unwrap().san, "e5".to_string());
         pretty_assertions::assert_eq!(chess.turn(), ColorChar::B);
@@ -100,6 +118,6 @@ mod undo_logic_test {
 
         pretty_assertions::assert_eq!(chess.history.len(), 0);
         // we always have starting position in position count, so it should never be 0
-        pretty_assertions::assert_eq!(chess.position_count.len(), 1);
+        pretty_assertions::assert_eq!(chess.repetition_table.len(), 1);
     }
 }

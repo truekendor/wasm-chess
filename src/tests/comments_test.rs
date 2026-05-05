@@ -1,6 +1,7 @@
 #[cfg(test)]
 pub mod comments_test {
-    use crate::{WasmChess, helpers::tsify_structs::*};
+    use crate::WasmChess;
+    use crate::tsify_structs::{others::*, *};
 
     #[test]
     fn captures_multiple_suffixes_and_comments_ok() {
@@ -342,6 +343,7 @@ pub mod comments_test {
             chess.set_comment("tactical");
 
             chess.undo();
+            chess.make_move("d4").unwrap();
             chess.set_comment("positional");
 
             pretty_assertions::assert_eq!(
@@ -353,10 +355,13 @@ pub mod comments_test {
                     suffix_annotation: None
                 }]
             );
+
+            println!("PGN: {}", chess.pgn());
+            // assert !(chess.pgn().ends_with("1. d4 {positional} *"));
         }
 
         #[test]
-        fn clear_comments_load() {
+        fn comments_clear_after_load() {
             let mut chess = WasmChess::new(None).unwrap();
             chess.make_move("e4").unwrap();
             chess.set_comment("good move");
@@ -371,17 +376,13 @@ pub mod comments_test {
                 }]
             );
 
-            // reset
-            // clear
-            // load
-            // loadPgn
             chess.load(chess.fen(None)).unwrap();
 
             pretty_assertions::assert_eq!(chess.get_comments(), vec![]);
         }
 
         #[test]
-        fn clear_comments_load_pgn() {
+        fn comments_clear_after_pgn_load() {
             let mut chess = WasmChess::new(None).unwrap();
             chess.make_move("e4").unwrap();
             chess.set_comment("good move");
@@ -396,15 +397,13 @@ pub mod comments_test {
                 }]
             );
 
-            // reset
-            // clear
             chess.load_pgn("1. e4").unwrap();
 
             pretty_assertions::assert_eq!(chess.get_comments(), vec![]);
         }
 
         #[test]
-        fn clear_comments_reset() {
+        fn comments_clear_after_reset() {
             let mut chess = WasmChess::new(None).unwrap();
             chess.make_move("e4").unwrap();
             chess.set_comment("good move");
