@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
     MoveString,
-    tsify_structs::{MoveVerbose, SquareStr, others::ColorChar},
+    tsify_structs::{MoveVerbose, PieceSymbol, SquareStr, others::ColorChar},
 };
 
 #[derive(Clone, Debug)]
@@ -248,7 +248,9 @@ pub fn verbose_move_object_from_raw_move(raw_move: Move, chess_pos: &Chess) -> M
     let fen_before = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
     let promotion: Option<String> = raw_move.promotion().map(|val| val.char().to_string());
-    let captured_piece: Option<String> = raw_move.capture().map(|val| val.char().to_string());
+    let captured_piece: Option<PieceSymbol> = raw_move
+        .capture()
+        .map(|role| PieceSymbol::from_shakmaty_piece_role(&role));
     let from_sq = raw_move
         .from()
         .expect("Only standard chess and chess960 is supported, from() should always return Some");

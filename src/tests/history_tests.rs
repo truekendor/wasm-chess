@@ -373,7 +373,7 @@ pub mod history_test_chess_js {
                 after: "rnbq1rk1/p1p1bpp1/1p2pn1p/3P4/3P3B/2N1PN2/PP3PPP/R2QKB1R b KQ - 0 8"
                     .to_string(),
                 promotion: None,
-                captured: Some("p".to_string()),
+                captured: Some(PieceSymbol::P),
                 is_regular_capture: true,
                 is_castle: false,
 
@@ -396,7 +396,7 @@ pub mod history_test_chess_js {
                 after: "rnbq1rk1/p1p1bpp1/1p2p2p/3n4/3P3B/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 9"
                     .to_string(),
                 promotion: None,
-                captured: Some("p".to_string()),
+                captured: Some(PieceSymbol::P),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -419,7 +419,7 @@ pub mod history_test_chess_js {
                 after: "rnbq1rk1/p1p1Bpp1/1p2p2p/3n4/3P4/2N1PN2/PP3PPP/R2QKB1R b KQ - 0 9"
                     .to_string(),
                 promotion: None,
-                captured: Some("b".to_string()),
+                captured: Some(PieceSymbol::B),
                 is_regular_capture: true,
                 is_castle: false,
 
@@ -442,7 +442,7 @@ pub mod history_test_chess_js {
                 after: "rnb2rk1/p1p1qpp1/1p2p2p/3n4/3P4/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 10"
                     .to_string(),
                 promotion: None,
-                captured: Some("b".to_string()),
+                captured: Some(PieceSymbol::B),
                 is_regular_capture: true,
                 is_castle: false,
 
@@ -466,7 +466,7 @@ pub mod history_test_chess_js {
                 after: "rnb2rk1/p1p1qpp1/1p2p2p/3N4/3P4/4PN2/PP3PPP/R2QKB1R b KQ - 0 10"
                     .to_string(),
                 promotion: None,
-                captured: Some("n".to_string()),
+                captured: Some(PieceSymbol::N),
                 is_regular_capture: true,
                 is_castle: false,
 
@@ -488,7 +488,7 @@ pub mod history_test_chess_js {
                     .to_string(),
                 after: "rnb2rk1/p1p1qpp1/1p5p/3p4/3P4/4PN2/PP3PPP/R2QKB1R w KQ - 0 11".to_string(),
                 promotion: None,
-                captured: Some("n".to_string()),
+                captured: Some(PieceSymbol::N),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -686,7 +686,7 @@ pub mod history_test_chess_js {
                 before: "rnr3k1/4qpp1/pp2b2p/1Bpp4/3P4/Q3PN2/PP3PPP/2R1K2R w K - 0 15".to_string(),
                 after: "rnr3k1/4qpp1/pp2b2p/1BPp4/8/Q3PN2/PP3PPP/2R1K2R b K - 0 15".to_string(),
                 promotion: None,
-                captured: Some("p".to_string()),
+                captured: Some(PieceSymbol::P),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -709,7 +709,7 @@ pub mod history_test_chess_js {
                 after: "rnr3k1/4qpp1/p3b2p/1Bpp4/8/Q3PN2/PP3PPP/2R1K2R w K - 0 16".to_string(),
 
                 promotion: None,
-                captured: Some("p".to_string()),
+                captured: Some(PieceSymbol::P),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -866,7 +866,7 @@ pub mod history_test_chess_js {
                 before: "2r2qk1/r2n1pp1/p3b2p/2pp4/3N4/Q3P3/PP2BPPP/2R2RK1 w - - 6 19".to_string(),
                 after: "2r2qk1/r2n1pp1/p3N2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 b - - 0 19".to_string(),
                 promotion: None,
-                captured: Some("b".to_string()),
+                captured: Some(PieceSymbol::B),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -887,7 +887,7 @@ pub mod history_test_chess_js {
                 before: "2r2qk1/r2n1pp1/p3N2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 b - - 0 19".to_string(),
                 after: "2r2qk1/r2n2p1/p3p2p/2pp4/8/Q3P3/PP2BPPP/2R2RK1 w - - 0 20".to_string(),
                 promotion: None,
-                captured: Some("n".to_string()),
+                captured: Some(PieceSymbol::N),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -1182,7 +1182,7 @@ pub mod history_test_chess_js {
                 before: "1r3n1k/r3q1p1/4p2p/p1p1PP2/2Bp4/1P5Q/P5PP/2R2RK1 b - - 0 26".to_string(),
                 after: "1r3n1k/r3q1p1/7p/p1p1Pp2/2Bp4/1P5Q/P5PP/2R2RK1 w - - 0 27".to_string(),
                 promotion: None,
-                captured: Some("p".to_string()),
+                captured: Some(PieceSymbol::P),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -1203,7 +1203,7 @@ pub mod history_test_chess_js {
                 before: "1r3n1k/r3q1p1/7p/p1p1Pp2/2Bp4/1P5Q/P5PP/2R2RK1 w - - 0 27".to_string(),
                 after: "1r3n1k/r3q1p1/7p/p1p1PR2/2Bp4/1P5Q/P5PP/2R3K1 b - - 0 27".to_string(),
                 promotion: None,
-                captured: Some("p".to_string()),
+                captured: Some(PieceSymbol::P),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -1668,7 +1668,7 @@ pub mod history_test_chess_js {
                 before: "4q2k/2r1r1p1/4Pn1p/p1p2R2/P2pQ2P/1P1B1R2/6P1/6K1 w - - 9 38".to_string(),
                 after: "4q2k/2r1r1p1/4PR1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 b - - 0 38".to_string(),
                 promotion: None,
-                captured: Some("n".to_string()),
+                captured: Some(PieceSymbol::N),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -1689,7 +1689,7 @@ pub mod history_test_chess_js {
                 before: "4q2k/2r1r1p1/4PR1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 b - - 0 38".to_string(),
                 after: "4q2k/2r1r3/4Pp1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 w - - 0 39".to_string(),
                 promotion: None,
-                captured: Some("r".to_string()),
+                captured: Some(PieceSymbol::R),
                 is_regular_capture: true,
 
                 is_en_passant: false,
@@ -1710,7 +1710,7 @@ pub mod history_test_chess_js {
                 before: "4q2k/2r1r3/4Pp1p/p1p5/P2pQ2P/1P1B1R2/6P1/6K1 w - - 0 39".to_string(),
                 after: "4q2k/2r1r3/4PR1p/p1p5/P2pQ2P/1P1B4/6P1/6K1 b - - 0 39".to_string(),
                 promotion: None,
-                captured: Some("p".to_string()),
+                captured: Some(PieceSymbol::P),
                 is_regular_capture: true,
 
                 is_en_passant: false,

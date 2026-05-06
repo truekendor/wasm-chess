@@ -1,6 +1,6 @@
 #[cfg(test)]
 pub mod move_tests {
-    use crate::WasmChess;
+    use crate::{WasmChess, tsify_structs::PieceSymbol};
 
     #[test]
     fn move_works_standard_algebraic_notation() {
@@ -81,7 +81,7 @@ pub mod move_tests {
         let rook_mate_move = chess.make_move("fxe6").unwrap();
 
         assert!(rook_mate_move.captured.is_some());
-        pretty_assertions::assert_eq!(rook_mate_move.captured, Some("p".to_string()));
+        pretty_assertions::assert_eq!(rook_mate_move.captured, Some(PieceSymbol::P));
         pretty_assertions::assert_eq!(rook_mate_move.promotion, None);
 
         pretty_assertions::assert_eq!(rook_mate_move.after, chess.fen(None));
@@ -117,7 +117,7 @@ pub mod move_tests {
         let rook_mate_move = chess.make_move("fxe3").unwrap();
 
         assert!(rook_mate_move.captured.is_some());
-        pretty_assertions::assert_eq!(rook_mate_move.captured, Some("p".to_string()));
+        pretty_assertions::assert_eq!(rook_mate_move.captured, Some(PieceSymbol::P));
         pretty_assertions::assert_eq!(rook_mate_move.promotion, None);
 
         pretty_assertions::assert_eq!(rook_mate_move.after, chess.fen(None));
