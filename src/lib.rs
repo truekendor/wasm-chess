@@ -472,14 +472,14 @@ impl WasmChess {
 
     // TODO: make static/move to some other mod?
     // TODO: add js_name
-    pub fn validate_fen(&self, fen: FenString) -> OkOrError<FenString> {
+    pub fn validate_fen(&self, fen: FenString) -> OkOrError<bool> {
         match fen.parse::<Fen>() {
-            Ok(fen) => OkOrError {
-                ok: Some(fen.to_string()),
+            Ok(_) => OkOrError {
+                ok: true,
                 err: None,
             },
             Err(err) => OkOrError {
-                ok: None,
+                ok: false,
                 err: Some(err.to_string()),
             },
         }

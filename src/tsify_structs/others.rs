@@ -84,7 +84,7 @@ pub struct PieceObj {
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct OkOrError<T> {
     #[tsify(type = "T")]
-    pub ok: Option<T>,
+    pub ok: T,
     pub err: Option<String>,
 }
 
