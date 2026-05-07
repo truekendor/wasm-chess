@@ -11,6 +11,7 @@ pub mod is_promotion_tests;
 pub mod move_tests;
 pub mod move_turn_at_tests;
 pub mod native_tests;
+mod pgn_from_chess;
 pub mod pgn_tests;
 pub mod san_tests;
 pub mod square_color_tests;
