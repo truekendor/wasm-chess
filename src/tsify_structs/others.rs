@@ -1,6 +1,5 @@
 use ordermap::OrderMap;
 use serde::{Deserialize, Serialize};
-use shakmaty::{Color, Piece, Role};
 use strum::Display;
 
 use crate::tsify_structs::{PieceSymbol, square_str::SquareStr};
@@ -72,13 +71,6 @@ pub enum ColorChar {
     B,
 }
 
-#[derive(tsify::Tsify, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
-pub struct PieceObj {
-    pub r#type: PieceSymbol,
-    pub color: ColorChar,
-}
-
 // this is like a custom result
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
@@ -86,25 +78,6 @@ pub struct OkOrError<T> {
     #[tsify(type = "T")]
     pub ok: T,
     pub err: Option<String>,
-}
-
-impl PieceObj {
-    pub fn to_shakmaty_piece(&self) -> Piece {
-        Piece {
-            color: match self.color {
-                ColorChar::W => Color::White,
-                ColorChar::B => Color::Black,
-            },
-            role: match self.r#type {
-                PieceSymbol::P => shakmaty::Role::Pawn,
-                PieceSymbol::N => shakmaty::Role::Knight,
-                PieceSymbol::B => shakmaty::Role::Bishop,
-                PieceSymbol::R => shakmaty::Role::Rook,
-                PieceSymbol::Q => shakmaty::Role::Queen,
-                PieceSymbol::K => shakmaty::Role::King,
-            },
-        }
-    }
 }
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
