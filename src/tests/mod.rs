@@ -12,5 +12,6 @@ pub mod move_tests;
 pub mod move_turn_at_tests;
 pub mod native_tests;
 pub mod pgn_tests;
+pub mod san_tests;
 pub mod square_color_tests;
 pub mod undo_move_test;
