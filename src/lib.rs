@@ -10,6 +10,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
     helpers::{
+        ascii,
         parsing::{self, verbose_move_object_from_raw_move},
         pgn::chess_to_pgn,
         pgn_reader::PGNResult,
@@ -74,8 +75,6 @@ pub type SuffixString = String;
 // todo: make nag and suffix u8/u16/u32 number ??
 pub type NAGString = String;
 pub type MoveString = String;
-
-// TODO: this is a null move?
 
 #[wasm_bindgen]
 impl WasmChess {
@@ -472,6 +471,7 @@ impl WasmChess {
 
     // TODO: make static/move to some other mod?
     // TODO: add js_name
+    #[wasm_bindgen(js_name = "validateFen")]
     pub fn validate_fen(&self, fen: FenString) -> OkOrError<bool> {
         match fen.parse::<Fen>() {
             Ok(_) => OkOrError {
@@ -775,44 +775,7 @@ impl WasmChess {
     }
 
     pub fn ascii(&self) -> String {
-        let border: &str = "   +------------------------+\n";
-        let letters: &str = "     a  b  c  d  e  f  g  h\n";
-        let end_of_board_str = "|\n";
-        let mut ascii_str = String::with_capacity(328);
-
-        ascii_str.push_str(border);
-
-        for rank in (0..8).rev() {
-            ascii_str.push_str(&format!(" {} |", rank + 1));
-
-            for file in 0..8 {
-                let sq = Square::from_coords(
-                    shakmaty::File::new(file as u32),
-                    shakmaty::Rank::new(rank as u32),
-                );
-
-                let piece = self.chess.board().piece_at(sq);
-
-                match piece {
-                    Some(p) => {
-                        let symbol = p.char();
-                        ascii_str.push(' ');
-                        ascii_str.push(symbol);
-                        ascii_str.push(' ');
-                    }
-                    None => {
-                        ascii_str.push_str(" . ");
-                    }
-                }
-            }
-
-            ascii_str.push_str(&end_of_board_str);
-        }
-
-        ascii_str.push_str(border);
-        ascii_str.push_str(letters.trim_end());
-
-        ascii_str
+        ascii::from_board(&self.chess.board())
     }
 
     // TODO:  return PieceObj !
