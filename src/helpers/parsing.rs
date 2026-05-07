@@ -249,6 +249,11 @@ fn to_internal_moves(moves: Vec<String>, starting_fen: Option<String>) -> Vec<Mo
 /// using `play_unchecked()`, assuming the move is already validated as legal by the caller.
 /// Passing an illegal move may result in an invalid board state or panics.
 ///
+/// # Mutation Note
+/// This function does not mutate the original `WasmChess` struct or the provided `chess_pos`
+/// reference. The position is cloned internally, and all mutations happen on the clone.
+/// The original position remains unchanged.
+///
 /// # Parameters
 /// - `raw_move`: The raw move to convert and apply to the position
 /// - `chess_pos`: The current chess position before the move is played
@@ -266,12 +271,6 @@ fn to_internal_moves(moves: Vec<String>, starting_fen: Option<String>) -> Vec<Mo
 /// # Note
 /// Only standard chess and Chess960 positions are supported. The function will panic if
 /// `raw_move.from()` returns `None`, which shouldn't happen for standard chess variants.
-///
-/// # Example
-/// ```ignore
-/// let verbose_move = verbose_move_object_from_raw_move(raw_move, &position);
-/// println!("SAN: {}, Fen after: {:?}", verbose_move.san, verbose_move.after);
-/// ```
 pub fn verbose_move_object_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerbose {
     let mut chess_pos = chess_pos.clone();
 
