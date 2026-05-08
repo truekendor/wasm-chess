@@ -38,7 +38,9 @@ Built with:
 ## Quick Example
 
 ```js
-import { WasmChess } from 'wasm-chess'
+import init, { WasmChess } from 'FUTURE_PACKAGE_NAME'
+
+await init()
 
 const chess = new WasmChess()
 
