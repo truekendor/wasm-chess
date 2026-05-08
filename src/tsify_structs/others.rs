@@ -95,3 +95,12 @@ pub struct SquareInfoObj {
 pub struct PreserveHeaders {
     pub preserve_headers: bool,
 }
+
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+// TODO: rename
+pub struct PGNOptions {
+    pub max_width: Option<usize>,
+    pub newline: Option<String>,
+}
