@@ -20,7 +20,7 @@ use crate::{
         SquareStr, SuffixSymbol,
         others::{
             CastlingObj, ColorChar, CommentsObj, HeadersObj, MoveFromSquares, MoveObject,
-            OkOrError, PreserveHeaders, PrunedCommentsObj, SquareColor, SquareInfoObj,
+            OkOrError, PGNOptions, PreserveHeaders, PrunedCommentsObj, SquareColor, SquareInfoObj,
         },
     },
 };
@@ -57,6 +57,7 @@ struct History {
     turn: Color,
 
     position_before: Chess,
+    position_after: Chess,
 }
 
 #[wasm_bindgen]
@@ -67,6 +68,7 @@ pub struct WasmChess {
     repetition_table: HashMap<Zobrist64, i32>,
     // TODO: rename
     pgn_result: Option<PGNResult>,
+    seven_tag_roster: OrderMap<&'static str, &'static str>,
 }
 
 pub type FenString = String;
@@ -115,6 +117,15 @@ impl WasmChess {
             repetition_table,
             history: vec![],
             pgn_result: None,
+            seven_tag_roster: OrderMap::from([
+                ("Event", "?"),
+                ("Site", "?"),
+                ("Date", "????.??.??"),
+                ("Round", "?"),
+                ("White", "?"),
+                ("Black", "?"),
+                ("Result", "*"),
+            ]),
         })
     }
 
@@ -584,7 +595,7 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "moveNumber")]
     pub fn move_number(&self) -> u32 {
-        return self.fullmoves();
+        return self.history.len() as u32;
     }
 
     pub fn fullmoves(&self) -> u32 {
@@ -825,7 +836,7 @@ impl WasmChess {
         Some(piece_obj)
     }
 
-    pub fn put(&mut self, piece_obj: PieceObj) -> bool {
+    fn put(&mut self, piece_obj: PieceObj) -> bool {
         todo!()
         // self.chess.board_mut().set_piece(
         //     SquareStr::to_shakmaty_sq(&piece_obj.square),
@@ -833,11 +844,11 @@ impl WasmChess {
         // );
     }
 
-    pub fn remove(&mut self, square: SquareStr) -> Option<PieceObj> {
+    fn remove(&mut self, square: SquareStr) -> Option<PieceObj> {
         todo!()
     }
 
-    pub fn clear(&mut self, preserve_headers: Option<PreserveHeaders>) {
+    fn clear(&mut self, preserve_headers: Option<PreserveHeaders>) {
         let preserve_headers: bool = match preserve_headers {
             Some(val) => val.preserve_headers,
             None => false,
@@ -846,15 +857,21 @@ impl WasmChess {
         todo!()
     }
 
-    pub fn set_turn(&mut self, color: ColorChar) -> bool {
+    fn set_turn(&mut self, color: ColorChar) -> bool {
         todo!()
     }
 
-    pub fn set_castling_rights(&mut self, color: ColorChar, castling_obj: CastlingObj) -> bool {
+    fn set_castling_rights(&mut self, color: ColorChar, castling_obj: CastlingObj) -> bool {
         todo!()
     }
 
-    #[wasm_bindgen(js_name = "historySAN")]
+    // TODO:
+    // consider changing the behavior
+    // NOTE:
+    // currently we do not returning SAN+ and therefore
+    // skip some helpful tokens, like "+" if the move
+    // is check or "#" when mate is on a board
+    #[wasm_bindgen(js_name = "historySan")]
     pub fn history_san(&self) -> Vec<String> {
         self.history
             .iter()
@@ -865,7 +882,7 @@ impl WasmChess {
             .collect()
     }
 
-    #[wasm_bindgen(js_name = "historyUCI")]
+    #[wasm_bindgen(js_name = "historyUci")]
     pub fn history_uci(&self) -> Vec<String> {
         self.history
             .iter()
@@ -907,6 +924,7 @@ impl WasmChess {
             fen_after: Fen::from_position(&self.chess, EnPassantMode::Legal),
 
             position_before: pos_before,
+            position_after: self.chess.clone(),
         });
     }
 
@@ -928,6 +946,7 @@ impl WasmChess {
         Ok(())
     }
 
+    // TODO: add custom new line char to params
     #[wasm_bindgen(js_name = "loadPgn")]
     pub fn load_pgn(&mut self, pgn: &str) -> Result<(), String> {
         let pgn_headers = helpers::pgn_reader::parse_pgn(pgn);
@@ -946,24 +965,30 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "pgn")]
-    pub fn pgn(&self) -> String {
-        chess_to_pgn(&self)
+    pub fn pgn(&self, options: Option<PGNOptions>) -> String {
+        let options = options.unwrap_or_else(|| PGNOptions {
+            max_width: Some(0),
+            newline: Some("\n".to_string()),
+        });
+
+        chess_to_pgn(&self, options)
     }
 
     #[wasm_bindgen(js_name = "getHeaders")]
-    pub fn get_headers(&self) -> HeadersObj {
-        match self.pgn_result.as_ref() {
-            Some(pgn_result) => HeadersObj {
-                headers_data: pgn_result.headers.clone(),
-            },
-            None => HeadersObj {
-                headers_data: OrderMap::new(),
-            },
+    pub fn get_headers(&mut self) -> HeadersObj {
+        self.populate_seven_tag_roster();
+
+        let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
+
+        HeadersObj {
+            headers_data: pgn_result.headers.clone(),
         }
     }
 
     #[wasm_bindgen(js_name = "setHeader")]
     pub fn set_header(&mut self, key: String, value: String) -> HeadersObj {
+        self.populate_seven_tag_roster();
+
         let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
 
         pgn_result.headers.insert(key, value);
@@ -975,8 +1000,28 @@ impl WasmChess {
     pub fn remove_header(&mut self, key: String) -> bool {
         self.pgn_result
             .as_mut()
-            .map(|pgn| pgn.headers.remove(&key).is_some())
+            .map(|pgn| {
+                if let Some(val) = self.seven_tag_roster.get(&key.clone().as_str()) {
+                    pgn.headers.insert(key, val.to_string());
+
+                    return true;
+                }
+                pgn.headers.remove(&key).is_some()
+            })
             .unwrap_or(false)
+    }
+
+    fn populate_seven_tag_roster(&mut self) {
+        let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
+
+        if pgn_result.headers.len() < 1 {
+            self.seven_tag_roster.iter().for_each(|(key, val)| {
+                pgn_result
+                    .headers
+                    .entry(key.to_string())
+                    .or_insert(val.to_string());
+            });
+        }
     }
 
     #[wasm_bindgen(js_name = "removeComment")]
