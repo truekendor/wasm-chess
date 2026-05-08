@@ -27,7 +27,6 @@ Some low-level board editing APIs commonly found in chess.js are intentionally n
 * `clear()`
 * `put()`
 * `remove()`
-* castling-right mutation APIs (`setCastling`, etc.)
 
 These features are planned for a future release once a clean and well-defined API design is finalized.
 
