@@ -337,6 +337,8 @@ pub mod comments_test {
         }
 
         #[test]
+        // TODO:
+        // finish the test
         fn prune_comments() {
             let mut chess = WasmChess::new(None).unwrap();
             chess.make_move("e4").unwrap();
@@ -356,7 +358,7 @@ pub mod comments_test {
                 }]
             );
 
-            println!("PGN: {}", chess.pgn());
+            // println!("PGN: {}", chess.pgn());
             // assert !(chess.pgn().ends_with("1. d4 {positional} *"));
         }
 
