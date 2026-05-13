@@ -1,6 +1,4 @@
-// TODO: rename file and module
-// TODO: add more tests for edge cases, e.g. en passant, promotion, castling, ambiguous moves, etc.
-// TODO: decompose into multiple test modules
+// TODO: decompose into multiple test modules until empty
 
 #[cfg(test)]
 pub mod test {
