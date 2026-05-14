@@ -130,6 +130,11 @@ pub mod header_tests {
                 ("White".to_string(), "Reckless".to_string()),
                 ("Black".to_string(), "Stockfish".to_string()),
                 ("Result".to_string(), "1/2-1/2".to_string()),
+                ("SetUp".to_string(), "1".to_string()),
+                (
+                    "FEN".to_string(),
+                    "nqbrkbrn/pppppp1p/6p1/8/7P/8/PPPPPPP1/BBNRNKRQ w GDgd - 0 2".to_string(),
+                ),
                 //
                 ("Custom1".to_string(), "Custom1".to_string()),
                 ("Custom2".to_string(), "Custom2".to_string()),
@@ -140,11 +145,6 @@ pub mod header_tests {
                 ("Custom7".to_string(), "Custom7".to_string()),
                 ("Custom8".to_string(), "Custom8".to_string()),
                 ("Custom9".to_string(), "Custom9".to_string()),
-                (
-                    "FEN".to_string(),
-                    "nqbrkbrn/pppppp1p/6p1/8/7P/8/PPPPPPP1/BBNRNKRQ w GDgd - 0 2".to_string(),
-                ),
-                ("SetUp".to_string(), "1".to_string()),
             ]),
         };
 
