@@ -2,16 +2,16 @@ use shakmaty::{Position, san::San};
 
 use crate::{
     WasmChess,
-    helpers::pgn_reader::PGNResult,
+    helpers::{parsing::san_to_san_plus, pgn_reader::PGNResult},
     tsify_structs::others::{ColorChar, PGNOptions},
 };
 
 pub fn chess_to_pgn(wasm_chess: &mut WasmChess, options: PGNOptions) -> String {
     let newline = options.newline.unwrap_or("\n".to_string());
-    let newline = newline.as_str();
-    let max_width = options.max_width.unwrap_or(0);
+    let newline_char = newline.as_str();
+    let max_line_width = options.max_width.unwrap_or(0);
 
-    let mut tokens: Vec<String> = Vec::new();
+    let mut move_chunks: Vec<String> = Vec::new();
     let mut header_string = String::new();
 
     let initial_fen = if wasm_chess.history.is_empty() {
@@ -23,34 +23,45 @@ pub fn chess_to_pgn(wasm_chess: &mut WasmChess, options: PGNOptions) -> String {
     let pgn_result = wasm_chess.pgn_result.get_or_insert_with(PGNResult::default);
 
     for (key, value) in &pgn_result.headers {
-        header_string.push_str(&format!("[{key} \"{value}\"]{newline}"));
+        header_string.push_str(&format!("[{key} \"{value}\"]{newline_char}"));
     }
 
     if !pgn_result.headers.is_empty() {
-        header_string.push_str(newline);
+        header_string.push_str(newline_char);
     }
 
     if let Some(comment) = pgn_result.comments_map.get(&initial_fen) {
-        tokens.push(format!("{{{comment}}}"));
+        move_chunks.push(format!("{{{comment}}}"));
     }
 
-    // Moves
     for (index, history_entry) in wasm_chess.history.iter().enumerate() {
         let move_number = history_entry.position_before.fullmoves();
 
-        if index == 0 {
+        let san = San::from_move(&history_entry.position_before, history_entry.raw_move);
+        let san_plus = san_to_san_plus(&san, &history_entry.position_after);
+        let mut move_text = san_plus;
+
+        let prefix = if index == 0 {
             match history_entry.turn {
-                shakmaty::Color::White => tokens.push(format!("{move_number}.")),
-                shakmaty::Color::Black => tokens.push(format!("{move_number}...")),
-            };
+                shakmaty::Color::White => format!("{move_number}."),
+                shakmaty::Color::Black => format!("{move_number}..."),
+            }
         } else if index % 2 == 0 {
-            tokens.push(format!("{move_number}."));
+            format!("{move_number}.")
+        } else {
+            String::new()
         };
 
-        let san = San::from_move(&history_entry.position_before, history_entry.raw_move);
-        let fen_after = history_entry.fen_after.to_string();
+        if prefix.is_empty() {
+            if let Some(last) = move_chunks.last_mut() {
+                last.push(' ');
+                last.push_str(&move_text);
+            }
+        } else {
+            move_chunks.push(format!("{prefix} {move_text}"));
+        }
 
-        let mut move_text = san.to_string();
+        let fen_after = history_entry.fen_after.to_string();
 
         if history_entry.position_after.is_checkmate() {
             move_text.push_str("#");
@@ -72,12 +83,9 @@ pub fn chess_to_pgn(wasm_chess: &mut WasmChess, options: PGNOptions) -> String {
             move_text.push_str(suffix);
         }
 
-        tokens.push(move_text);
-
         if let Some(comment) = pgn_result.comments_map.get(&fen_after) {
-            let comment = comment.replace("\n", " ");
-            // let comment = comment.trim();
-            tokens.push(format!("{{{comment}}}"));
+            let comment = comment.split_whitespace().collect::<Vec<_>>().join(" ");
+            move_chunks.push(format!("{{{comment}}}"));
         }
     }
 
@@ -92,40 +100,39 @@ pub fn chess_to_pgn(wasm_chess: &mut WasmChess, options: PGNOptions) -> String {
         "*"
     };
 
-    tokens.push(result.to_string());
+    move_chunks.push(result.to_string());
 
     // No wrapping
-    if max_width == 0 {
-        return format!("{header_string}{}", tokens.join(" "))
+    if max_line_width == 0 {
+        return format!("{header_string}{}", move_chunks.join(" "))
             .trim()
             .to_string();
     }
 
-    // Wrap lines like chess.js
     let mut result_string = header_string;
     let mut current_line_width = 0;
 
-    for token in tokens {
+    for token in move_chunks {
         let token_len = token.chars().count();
 
-        // if current_line_width == 0 {
-        //     result_string.push_str(&token);
-        //     current_line_width = token_len;
-        // } else
-        if current_line_width + token_len > max_width {
-            result_string.push_str(newline);
-            result_string.push_str(&token);
-            current_line_width = token_len;
-            continue;
-        }
+        let required_width = if current_line_width == 0 {
+            token_len
+        } else {
+            1 + token_len
+        };
 
-        if current_line_width == 0 {
+        if current_line_width > 0 && ((current_line_width + required_width) > max_line_width) {
+            result_string.push_str(newline_char);
             result_string.push_str(&token);
             current_line_width = token_len;
         } else {
-            result_string.push(' ');
+            if current_line_width > 0 {
+                result_string.push(' ');
+                current_line_width += 1;
+            }
+
             result_string.push_str(&token);
-            current_line_width += 1 + token_len;
+            current_line_width += token_len;
         }
     }
 
