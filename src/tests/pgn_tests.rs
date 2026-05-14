@@ -79,7 +79,9 @@ pub mod pgn_from_chess_test {
         pretty_assertions::assert_eq!(exists, false);
     }
 
-    // #[test]
+    // TODO:
+    // fix the formatting to be 100% compatible with chess.js
+    #[test]
     fn list_of_positions_ok() {
         struct TestingPositions<'a> {
             moves: &'a str,
@@ -142,9 +144,6 @@ pub mod pgn_from_chess_test {
             };
 
             let pgn = chess.pgn(Some(options));
-
-            println!("ANSWER {}", position.pgn);
-            println!("{}", pgn);
 
             pretty_assertions::assert_eq!(position.pgn, pgn);
         });
