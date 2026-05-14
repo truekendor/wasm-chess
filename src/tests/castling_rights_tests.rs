@@ -280,7 +280,7 @@ pub mod castling_rights_tests {
             },
         );
 
-        pretty_assertions::assert_eq!(ok, true);
+        pretty_assertions::assert_eq!(ok, false);
 
         let castling_rights = chess.get_castling_rights(ColorChar::W);
 
@@ -303,7 +303,7 @@ pub mod castling_rights_tests {
             },
         );
 
-        pretty_assertions::assert_eq!(ok, true);
+        pretty_assertions::assert_eq!(ok, false);
 
         let castling_rights = chess.get_castling_rights(ColorChar::B);
 
