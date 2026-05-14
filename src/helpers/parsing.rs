@@ -240,7 +240,9 @@ pub fn verbose_move_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerb
 
     let fen_before = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
-    let promotion: Option<String> = raw_move.promotion().map(|val| val.char().to_string());
+    let promotion: Option<PieceSymbol> = raw_move
+        .promotion()
+        .map(|role| PieceSymbol::from_shakmaty_piece_role(&role));
     let captured_piece: Option<PieceSymbol> = raw_move
         .capture()
         .map(|role| PieceSymbol::from_shakmaty_piece_role(&role));
