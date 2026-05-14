@@ -1,3 +1,7 @@
+/// tests taken from chess.js test suite for set/get castlingRights with few exceptions
+///
+/// @link https://github.com/jhlywa/chess.js/blob/master/__tests__/castling-rights.test.ts
+
 #[cfg(test)]
 pub mod castling_rights_tests {
     use crate::{
@@ -92,5 +96,180 @@ pub mod castling_rights_tests {
                 queen: Some(false)
             }
         );
+    }
+
+    #[test]
+    fn set_castling_clear_white_kingside() {
+        let mut chess = WasmChess::new(None).unwrap();
+
+        let ok = chess.set_castling_rights(
+            ColorChar::W,
+            CastlingObj {
+                king: Some(false),
+                queen: None,
+            },
+        );
+
+        pretty_assertions::assert_eq!(ok, true);
+
+        let castling_rights = chess.get_castling_rights(ColorChar::W);
+
+        pretty_assertions::assert_eq!(castling_rights.king, Some(false));
+
+        let ok = chess.set_castling_rights(
+            ColorChar::W,
+            CastlingObj {
+                king: Some(true),
+                queen: None,
+            },
+        );
+
+        pretty_assertions::assert_eq!(ok, true);
+
+        let castling_rights = chess.get_castling_rights(ColorChar::W);
+        pretty_assertions::assert_eq!(castling_rights.king, Some(true));
+    }
+
+    #[test]
+    fn set_castling_clear_white_queenside() {
+        let mut chess = WasmChess::new(None).unwrap();
+
+        let ok = chess.set_castling_rights(
+            ColorChar::W,
+            CastlingObj {
+                king: None,
+                queen: Some(false),
+            },
+        );
+
+        pretty_assertions::assert_eq!(ok, true);
+
+        let castling_rights = chess.get_castling_rights(ColorChar::W);
+
+        pretty_assertions::assert_eq!(castling_rights.queen, Some(false));
+    }
+
+    #[test]
+    fn set_castling_clear_black_kingside() {
+        let mut chess = WasmChess::new(None).unwrap();
+
+        let ok = chess.set_castling_rights(
+            ColorChar::B,
+            CastlingObj {
+                king: Some(false),
+                queen: None,
+            },
+        );
+        pretty_assertions::assert_eq!(ok, true);
+
+        let castling_rights = chess.get_castling_rights(ColorChar::B);
+
+        pretty_assertions::assert_eq!(castling_rights.king, Some(false));
+    }
+
+    #[test]
+    fn set_castling_clear_black_queenside() {
+        let mut chess = WasmChess::new(None).unwrap();
+
+        let ok = chess.set_castling_rights(
+            ColorChar::B,
+            CastlingObj {
+                king: None,
+                queen: Some(false),
+            },
+        );
+
+        pretty_assertions::assert_eq!(ok, true);
+
+        let castling_rights = chess.get_castling_rights(ColorChar::B);
+
+        pretty_assertions::assert_eq!(castling_rights.queen, Some(false));
+    }
+
+    #[test]
+    fn set_castling_rights_set_white_kingside() {
+        let fen = "r3k2r/8/8/8/8/8/8/R3K2R w - - 0 1".to_string();
+        let mut chess = WasmChess::new(Some(fen)).unwrap();
+
+        let ok = chess.set_castling_rights(
+            ColorChar::W,
+            CastlingObj {
+                king: Some(true),
+                queen: None,
+            },
+        );
+
+        pretty_assertions::assert_eq!(ok, true);
+
+        let castling_rights = chess.get_castling_rights(ColorChar::W);
+
+        pretty_assertions::assert_eq!(castling_rights.king, Some(true));
+    }
+
+    #[test]
+    fn set_castling_rights_set_white_queenside() {
+        let fen = "r3k2r/8/8/8/8/8/8/R3K2R w - - 0 1".to_string();
+        let mut chess = WasmChess::new(Some(fen)).unwrap();
+
+        let ok = chess.set_castling_rights(
+            ColorChar::W,
+            CastlingObj {
+                king: None,
+                queen: Some(true),
+            },
+        );
+
+        pretty_assertions::assert_eq!(ok, true);
+
+        let castling_rights = chess.get_castling_rights(ColorChar::W);
+
+        pretty_assertions::assert_eq!(castling_rights.queen, Some(true));
+    }
+
+    #[test]
+    fn set_castling_rights_set_black_kingside() {
+        let fen = "r3k2r/8/8/8/8/8/8/R3K2R w - - 0 1".to_string();
+        let mut chess = WasmChess::new(Some(fen)).unwrap();
+
+        let ok = chess.set_castling_rights(
+            ColorChar::B,
+            CastlingObj {
+                king: Some(true),
+                queen: None,
+            },
+        );
+
+        pretty_assertions::assert_eq!(ok, true);
+
+        let castling_rights = chess.get_castling_rights(ColorChar::B);
+
+        pretty_assertions::assert_eq!(castling_rights.king, Some(true));
+    }
+
+    #[test]
+    fn set_castling_rights_set_black_queenside() {
+        let fen = "r3k2r/8/8/8/8/8/8/R3K2R w - - 0 1".to_string();
+        let mut chess = WasmChess::new(Some(fen)).unwrap();
+
+        let ok = chess.set_castling_rights(
+            ColorChar::B,
+            CastlingObj {
+                king: None,
+                queen: Some(true),
+            },
+        );
+
+        pretty_assertions::assert_eq!(ok, true);
+
+        let castling_rights = chess.get_castling_rights(ColorChar::B);
+
+        pretty_assertions::assert_eq!(castling_rights.queen, Some(true));
+    }
+
+    // TODO:
+    // add eventually ?
+    // #[test]
+    fn fail_to_set_white_kingside() {
+        // chess.clear()
     }
 }
