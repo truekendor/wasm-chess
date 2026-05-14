@@ -89,18 +89,33 @@ pub fn chess_to_pgn(wasm_chess: &mut WasmChess, options: PGNOptions) -> String {
         }
     }
 
-    let result = if wasm_chess.is_checkmate() {
-        match wasm_chess.turn() {
-            ColorChar::W => "0-1",
-            ColorChar::B => "1-0",
-        }
-    } else if wasm_chess.is_draw() {
-        "1/2-1/2"
-    } else {
-        "*"
-    };
+    if let Some(pgn_result) = wasm_chess.pgn_result.as_ref() {
+        let result: &str = match pgn_result.known_outcome {
+            Some(outcome) => match outcome {
+                shakmaty::KnownOutcome::Decisive { winner } => {
+                    let winner = match winner {
+                        shakmaty::Color::White => "1-0",
+                        shakmaty::Color::Black => "0-1",
+                    };
 
-    move_chunks.push(result.to_string());
+                    winner
+                }
+                shakmaty::KnownOutcome::Draw => "1/2-1/2",
+            },
+            None => {
+                let result_from_headers = pgn_result.headers.get("Result");
+
+                let str = match result_from_headers {
+                    Some(val) => val,
+                    None => "*",
+                };
+
+                &str.to_string()
+            }
+        };
+
+        move_chunks.push(result.to_string());
+    }
 
     // No wrapping
     if max_line_width == 0 {
