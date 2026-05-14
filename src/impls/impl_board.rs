@@ -2,7 +2,7 @@ use super::*;
 
 #[wasm_bindgen]
 impl WasmChess {
-    pub fn put(&mut self, piece_obj: PieceObj, square: SquareStr) -> bool {
+    fn put(&mut self, piece_obj: PieceObj, square: SquareStr) -> bool {
         let piece = piece_obj.to_shakmaty_piece();
         let square = square.to_shakmaty_sq();
 
@@ -18,11 +18,16 @@ impl WasmChess {
         // knowing which one of the boards it is ?
         // OR we just do  `if _ {} else {}`
 
-        let setup = self
-            .editable_setup
-            .get_or_insert_with(|| Chess::to_setup(&self.chess, EnPassantMode::Legal));
+        let editable = match self.editable.as_mut() {
+            Some(val) => val,
+            None => &mut EditablePosition {
+                setup: Chess::to_setup(&self.chess, EnPassantMode::Legal),
+                validated: None,
+            },
+        };
 
-        setup.board.set_piece_at(square, piece);
+        let setup = &mut editable.setup;
+        let _ = &setup.board.set_piece_at(square, piece);
 
         let pos = setup
             .clone()
@@ -33,29 +38,40 @@ impl WasmChess {
         // update setup
         // update ep square
 
-        let is_valid_position = pos.is_ok();
-        self.editable_chess_pos = pos.ok();
-
         // TODO:
         // immediatelly try to replace current pos with new one
 
-        return is_valid_position;
+        if let Some(validated) = pos.ok() {
+            editable.validated = Some(validated.clone());
+            // TODO:
+            // why even bother with this if we immediately replace
+            self.chess = validated;
+            return true;
+        }
+        editable.validated = None;
+
+        return false;
     }
 
     fn remove(&mut self, square: SquareStr) -> Option<PieceObj> {
         let square = square.to_shakmaty_sq();
 
-        let setup = self
-            .editable_setup
-            .get_or_insert_with(|| Chess::to_setup(&self.chess, EnPassantMode::Legal));
+        let editable = match self.editable.as_mut() {
+            Some(val) => val,
+            None => &mut EditablePosition {
+                setup: Chess::to_setup(&self.chess, EnPassantMode::Legal),
+                validated: None,
+            },
+        };
 
+        let setup = &mut editable.setup;
         let piece = setup.board.remove_piece_at(square);
 
         let pos = setup
             .clone()
             .position::<Chess>(shakmaty::CastlingMode::Chess960);
 
-        self.editable_chess_pos = pos.ok();
+        editable.validated = pos.ok();
 
         if let Some(p) = piece {
             return Some(PieceObj::from_shakmaty_piece(&p));
@@ -70,14 +86,13 @@ impl WasmChess {
     }
 
     fn clear(&mut self, preserve_headers: Option<PreserveHeaders>) -> () {
-        // let preserve_headers: bool = match preserve_headers {
-        //     Some(val) => val.preserve_headers,
-        //     None => false,
-        // };
-
-        let setup_before = self
-            .editable_setup
-            .get_or_insert_with(|| Chess::to_setup(&self.chess, EnPassantMode::Legal));
+        let editable = match self.editable.as_mut() {
+            Some(val) => val,
+            None => &mut EditablePosition {
+                setup: Chess::to_setup(&self.chess, EnPassantMode::Legal),
+                validated: None,
+            },
+        };
 
         let empty_setup = Setup::empty();
 
