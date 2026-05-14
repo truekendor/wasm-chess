@@ -1,4 +1,3 @@
-pub mod ascii;
 pub mod find_divergence;
 pub mod legal_moves;
 pub mod parsing;
