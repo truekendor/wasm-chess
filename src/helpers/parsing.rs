@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
     MoveString,
-    tsify_structs::{MoveVerbose, SquareStr, others::ColorChar},
+    models::{MoveVerbose, PieceSymbol, SquareStr, utils::ColorChar},
 };
 
 #[derive(Clone, Debug)]
@@ -206,49 +206,46 @@ pub fn str_to_move(move_str: &str, chess: &Chess) -> Result<Move, MoveParseError
     Err(MoveParseError::InvalidFormat(move_str.to_string()))
 }
 
-// TODO: return something like MovesAndError
-fn to_internal_moves(moves: Vec<String>, starting_fen: Option<String>) -> Vec<Move> {
-    let starting_fen = starting_fen.unwrap_or_else(|| {
-        Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
-    });
-
-    let mut internal_moves_list: Vec<Move> = vec![];
-
-    let fen: Fen = match starting_fen.parse() {
-        Ok(val) => val,
-        Err(_err) => return internal_moves_list,
-    };
-
-    let mut chess_pos: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
-        Ok(val) => val,
-        Err(_err) => return internal_moves_list,
-    };
-
-    for move_str in moves {
-        let internal_move: Move = match str_to_move(&move_str, &chess_pos) {
-            Ok(val) => val,
-            Err(_err) => return internal_moves_list,
-        };
-
-        if !chess_pos.is_legal(internal_move) {
-            return internal_moves_list;
-        }
-
-        chess_pos.play_unchecked(internal_move);
-
-        internal_moves_list.push(internal_move);
-    }
-
-    internal_moves_list
-}
-
-pub fn verbose_move_object_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerbose {
+/// **Converts a raw chess move into a verbose move object containing comprehensive move metadata.**
+///
+/// ## Important Safety Note
+/// **Move validation is the caller's responsibility.** This function plays the move unchecked
+/// using `play_unchecked()`, assuming the move is already validated as legal by the caller.
+/// Passing an illegal move may result in an invalid board state or panics.
+///
+/// ## Mutation Note
+/// This function does not mutate the original `WasmChess` struct or the provided `chess_pos`
+/// reference. The position is cloned internally, and all mutations happen on the clone.
+/// The original position remains unchanged.
+///
+/// ## Parameters
+/// - `raw_move`: The raw move to convert and apply to the position
+/// - `chess_pos`: The current chess position before the move is played
+///
+/// ## Returns
+/// A `MoveVerbose` struct containing:
+/// - Algebraic notation (SAN and LAN/UCI formats)
+/// - Piece and capture information
+/// - Castle detection flags
+/// - En passant detection
+/// - FEN strings of the board state before and after the move
+/// - Square coordinates (from/to)
+/// - Promotion piece (if any)
+///
+/// ## Note
+/// Only standard chess and Chess960 positions are supported. The function will panic if
+/// `raw_move.from()` returns `None`, which shouldn't happen for standard chess variants.
+pub fn verbose_move_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerbose {
     let mut chess_pos = chess_pos.clone();
 
     let fen_before = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
-    let promotion: Option<String> = raw_move.promotion().map(|val| val.char().to_string());
-    let captured_piece: Option<String> = raw_move.capture().map(|val| val.char().to_string());
+    let promotion: Option<PieceSymbol> = raw_move
+        .promotion()
+        .map(|role| PieceSymbol::from_shakmaty_piece_role(&role));
+    let captured_piece: Option<PieceSymbol> = raw_move
+        .capture()
+        .map(|role| PieceSymbol::from_shakmaty_piece_role(&role));
     let from_sq = raw_move
         .from()
         .expect("Only standard chess and chess960 is supported, from() should always return Some");
@@ -258,6 +255,7 @@ pub fn verbose_move_object_from_raw_move(raw_move: Move, chess_pos: &Chess) -> M
         Color::Black => ColorChar::B,
     };
 
+    let piece = PieceSymbol::from_shakmaty_piece_role(&raw_move.role());
     let san_move = San::from_move(&chess_pos, raw_move);
 
     let CastleData {
@@ -268,6 +266,8 @@ pub fn verbose_move_object_from_raw_move(raw_move: Move, chess_pos: &Chess) -> M
 
     chess_pos.play_unchecked(raw_move);
     let fen_after = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
+
+    let san_string = san_to_san_plus(&san_move, &chess_pos);
 
     let from = SquareStr::from_shakmaty_sq(&from_sq);
     let to = SquareStr::from_shakmaty_sq(&raw_move.to());
@@ -281,8 +281,8 @@ pub fn verbose_move_object_from_raw_move(raw_move: Move, chess_pos: &Chess) -> M
         lan: raw_move
             .to_uci(shakmaty::CastlingMode::Chess960)
             .to_string(),
-        san: san_move.to_string(),
-        piece: raw_move.role().char().to_string(),
+        san: san_string,
+        piece,
         captured: captured_piece,
         is_regular_capture: raw_move.is_capture() && !raw_move.is_en_passant(),
 
@@ -315,6 +315,17 @@ pub fn is_two_square_pawn_move(mov: &Move) -> bool {
     let rank_diff = (to.rank() as i8 - from.rank() as i8).abs();
 
     rank_diff == 2
+}
+
+pub fn san_to_san_plus(san_move: &San, pos_after: &Chess) -> String {
+    let mut san_string = format!("{}", san_move);
+    if pos_after.is_checkmate() {
+        san_string.push_str("#");
+    } else if pos_after.is_check() {
+        san_string.push_str("+");
+    }
+
+    san_string
 }
 
 pub fn castle_data_from_san_move(san_move: &San) -> CastleData {

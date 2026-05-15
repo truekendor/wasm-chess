@@ -1,8 +1,12 @@
+/// tests taken from chess.js test suite for findPiece()
+///
+/// https://github.com/jhlywa/chess.js/blob/master/__tests__/get-square-by-piece.test.ts
+
 #[cfg(test)]
 pub mod find_piece_tests {
     use crate::WasmChess;
 
-    use crate::tsify_structs::{PieceSymbol, others::*, *};
+    use crate::models::{PieceSymbol, utils::*, *};
 
     #[test]
     fn find_pawns_from_str() {

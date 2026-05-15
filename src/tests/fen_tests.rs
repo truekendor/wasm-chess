@@ -2,9 +2,9 @@
 pub mod fen_tests {
     use crate::{
         WasmChess,
-        tsify_structs::{
-            SquareStr,
-            others::{ColorChar, MoveObject},
+        models::{
+            PieceObj, PieceSymbol, SquareStr,
+            utils::{ColorChar, MoveObject},
         },
     };
     use std::usize;
@@ -16,12 +16,12 @@ pub mod fen_tests {
         let fen = "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2";
         let fen_no_ep = "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2";
 
-        assert!(chess.load(fen.to_string()).is_ok());
+        assert!(chess.load(fen, None).is_ok());
         pretty_assertions::assert_eq!(chess.fen(Some(true)), fen);
         pretty_assertions::assert_eq!(chess.fen(Some(false)), fen_no_ep);
 
         // Test invalid FEN
-        let result = chess.load("invalid".to_string());
+        let result = chess.load("invalid", None);
         assert!(result.is_err());
     }
 
@@ -80,10 +80,35 @@ pub mod fen_tests {
     fn test_get_piece_at_square() {
         let chess = WasmChess::new(None).unwrap();
 
-        pretty_assertions::assert_eq!(chess.get(SquareStr::E2).unwrap(), "P");
-        pretty_assertions::assert_eq!(chess.get(SquareStr::E7).unwrap(), "p");
-        pretty_assertions::assert_eq!(chess.get(SquareStr::A1).unwrap(), "R");
-        pretty_assertions::assert_eq!(chess.get(SquareStr::H8).unwrap(), "r");
+        pretty_assertions::assert_eq!(
+            chess.get(SquareStr::E2).unwrap(),
+            PieceObj {
+                color: ColorChar::W,
+                r#type: PieceSymbol::P
+            }
+        );
+        pretty_assertions::assert_eq!(
+            chess.get(SquareStr::E7).unwrap(),
+            PieceObj {
+                color: ColorChar::B,
+                r#type: PieceSymbol::P
+            }
+        );
+        pretty_assertions::assert_eq!(
+            chess.get(SquareStr::A1).unwrap(),
+            PieceObj {
+                color: ColorChar::W,
+                r#type: PieceSymbol::R
+            }
+        );
+        pretty_assertions::assert_eq!(
+            chess.get(SquareStr::H8).unwrap(),
+            PieceObj {
+                color: ColorChar::B,
+                r#type: PieceSymbol::R
+            }
+        );
+
         assert!(chess.get(SquareStr::E4).is_none());
     }
 

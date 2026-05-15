@@ -4,7 +4,7 @@ pub mod tests {
     use std::str::FromStr;
 
     use crate::WasmChess;
-    use crate::tsify_structs::{PieceSymbol, others::*};
+    use crate::models::{PieceSymbol, utils::*};
 
     #[test]
     fn test_turn_at_after_moves() {
@@ -144,7 +144,7 @@ pub mod tests {
         assert!(chess.move_at(1).is_some());
 
         chess
-            .set_fen(Fen::from_str(&starting_fen).unwrap())
+            .load(&Fen::from_str(&starting_fen).unwrap().to_string(), None)
             .unwrap();
         pretty_assertions::assert_eq!(chess.move_at(0), None);
         pretty_assertions::assert_eq!(chess.move_at(1), None);

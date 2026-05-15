@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::tsify_structs::{SquareStr, others::ColorChar};
+use crate::models::{PieceSymbol, SquareStr, utils::ColorChar};
 
 /// A verbose representation of a chess move, exposed to TypeScript as a plain object.
 ///
@@ -45,9 +45,8 @@ pub struct MoveVerbose {
     pub after: String,
 
     pub color: ColorChar,
-    pub piece: String,
-    // TODO: return PieceSymbol not string
-    pub captured: Option<String>,
+    pub piece: PieceSymbol,
+    pub captured: Option<PieceSymbol>,
     /// Matches chess.js `isCapture()` behavior.
     ///
     /// Returns `true` for regular captures (piece moves onto opponent-occupied square).
@@ -56,7 +55,7 @@ pub struct MoveVerbose {
     /// For exact chess.js `isCapture()` compatibility, use this field.
     pub is_regular_capture: bool,
 
-    pub promotion: Option<String>,
+    pub promotion: Option<PieceSymbol>,
 
     pub san: String,
     pub lan: String,

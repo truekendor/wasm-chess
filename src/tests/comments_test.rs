@@ -1,7 +1,10 @@
+/// tests taken from chess.js test suite for comments
+///
+/// @link https://github.com/jhlywa/chess.js/blob/master/__tests__/comments.test.ts
 #[cfg(test)]
 pub mod comments_test {
     use crate::WasmChess;
-    use crate::tsify_structs::{others::*, *};
+    use crate::models::utils::*;
 
     #[test]
     fn captures_multiple_suffixes_and_comments_ok() {
@@ -94,17 +97,27 @@ pub mod comments_test {
         pretty_assertions::assert_eq!(comments, answers);
     }
 
-    // #[test]
-    // TODO: add this
-    fn handles_manually_set_suffix_for_current_fen() {
+    #[test]
+    fn handles_manually_set_suffix_only_for_current_fen() {
         let mut chess = WasmChess::new(None).unwrap();
         chess.make_move("g3").unwrap();
 
-        // chess.set
+        chess.set_suffix_annotation("?!", None).unwrap();
+
+        let comments_result = chess.get_comments();
+
+        pretty_assertions::assert_eq!(
+            comments_result[0],
+            CommentsObj {
+                fen: chess.fen(None),
+                comment: None,
+                suffix_annotation: Some("?!".to_string()),
+                nags: vec![]
+            }
+        )
     }
 
     #[cfg(test)]
-
     pub mod manipulate_comments {
         use super::*;
 
@@ -119,12 +132,14 @@ pub mod comments_test {
 
             pretty_assertions::assert_eq!(chess.get_comment(), None);
             pretty_assertions::assert_eq!(chess.get_comments().len(), 0);
+
+            pretty_assertions::assert_eq!(chess.pgn(None).ends_with("1. e4 *"), true);
         }
 
         #[test]
         fn set_comments_initial_pos() {
-            let comment_str = "Starting position";
             let mut chess = WasmChess::new(None).unwrap();
+            let comment_str = "Starting position";
 
             pretty_assertions::assert_eq!(chess.get_comment(), None);
             pretty_assertions::assert_eq!(chess.get_comments().len(), 0);
@@ -140,7 +155,14 @@ pub mod comments_test {
                     nags: vec![],
                     suffix_annotation: None
                 }]
-            )
+            );
+
+            pretty_assertions::assert_eq!(
+                chess
+                    .pgn(None)
+                    .ends_with(format!("{{{}}} *", comment_str).as_str()),
+                true
+            );
         }
 
         #[test]
@@ -177,9 +199,43 @@ pub mod comments_test {
                     nags: vec![],
                     suffix_annotation: None
                 }]
-            )
+            );
 
-            // TODO: add .pgn()
+            pretty_assertions::assert_eq!(
+                chess
+                    .pgn(None)
+                    .ends_with(format!("1. e4 {{{}}} e5 *", comment_str).as_str()),
+                true
+            );
+        }
+
+        #[test]
+        fn comment_for_last_move() {
+            let mut chess = WasmChess::new(None).unwrap();
+            chess.make_move("e4").unwrap();
+            chess.make_move("e6").unwrap();
+
+            let comment_str = "dubious move";
+            chess.set_comment(comment_str);
+
+            pretty_assertions::assert_eq!(chess.get_comment().unwrap(), comment_str);
+
+            pretty_assertions::assert_eq!(
+                chess.get_comments(),
+                vec![CommentsObj {
+                    comment: Some(comment_str.to_string()),
+                    fen: chess.fen(None),
+                    nags: vec![],
+                    suffix_annotation: None
+                }]
+            );
+
+            pretty_assertions::assert_eq!(
+                chess
+                    .pgn(None)
+                    .ends_with(format!("1. e4 e6 {{{}}} *", comment_str).as_str()),
+                true
+            );
         }
 
         #[test]
@@ -198,38 +254,47 @@ pub mod comments_test {
             let mut chess = WasmChess::new(None).unwrap();
 
             let initial_fen = chess.fen(None);
-            chess.set_comment("starting position");
+            let first_comment_str = "starting position";
+            chess.set_comment(first_comment_str);
 
-            pretty_assertions::assert_eq!(chess.get_comment().unwrap(), "starting position");
+            pretty_assertions::assert_eq!(chess.get_comment().unwrap(), first_comment_str);
             pretty_assertions::assert_eq!(
                 chess.get_comments(),
                 vec![CommentsObj {
-                    comment: Some("starting position".to_string()),
+                    comment: Some(first_comment_str.to_string()),
                     fen: initial_fen.clone(),
                     nags: vec![],
                     suffix_annotation: None
                 }]
             );
-            // TODO: insert .pgn() here
+
+            pretty_assertions::assert_eq!(
+                chess
+                    .pgn(None)
+                    .ends_with(format!("{{{}}} *", first_comment_str).as_str()),
+                true
+            );
 
             chess.make_move("e4").unwrap();
 
             let e4_fen = chess.fen(None);
-            chess.set_comment("good move");
+            let second_comment_str = "good move";
 
-            pretty_assertions::assert_eq!(chess.get_comment().unwrap(), "good move");
+            chess.set_comment(second_comment_str);
+
+            pretty_assertions::assert_eq!(chess.get_comment().unwrap(), second_comment_str);
             pretty_assertions::assert_eq!(chess.get_comments().len(), 2);
             pretty_assertions::assert_eq!(
                 chess.get_comments(),
                 vec![
                     CommentsObj {
-                        comment: Some("starting position".to_string()),
+                        comment: Some(first_comment_str.to_string()),
                         fen: initial_fen.clone(),
                         nags: vec![],
                         suffix_annotation: None
                     },
                     CommentsObj {
-                        comment: Some("good move".to_string()),
+                        comment: Some(second_comment_str.to_string()),
                         fen: e4_fen.clone(),
                         nags: vec![],
                         suffix_annotation: None
@@ -237,11 +302,24 @@ pub mod comments_test {
                 ]
             );
 
+            pretty_assertions::assert_eq!(
+                chess.pgn(None).ends_with(
+                    format!(
+                        "{{{}}} 1. e4 {{{}}} *",
+                        first_comment_str, second_comment_str
+                    )
+                    .as_str()
+                ),
+                true
+            );
+
             chess.make_move("e6").unwrap();
-            chess.set_comment("dubious move");
+            let third_comment_str = "dubious move";
+
+            chess.set_comment(third_comment_str);
             let e6_fen = chess.fen(None);
 
-            pretty_assertions::assert_eq!(chess.get_comment().unwrap(), "dubious move");
+            pretty_assertions::assert_eq!(chess.get_comment().unwrap(), third_comment_str);
             pretty_assertions::assert_eq!(chess.get_comments().len(), 3);
             pretty_assertions::assert_eq!(
                 chess.get_comments(),
@@ -259,12 +337,23 @@ pub mod comments_test {
                         suffix_annotation: None
                     },
                     CommentsObj {
-                        comment: Some("dubious move".to_string()),
+                        comment: Some(third_comment_str.to_string()),
                         fen: e6_fen,
                         nags: vec![],
                         suffix_annotation: None
                     }
                 ]
+            );
+
+            pretty_assertions::assert_eq!(
+                chess.pgn(None).ends_with(
+                    format!(
+                        "{{{}}} 1. e4 {{{}}} e6 {{{}}} *",
+                        first_comment_str, second_comment_str, third_comment_str
+                    )
+                    .as_str()
+                ),
+                true
             );
         }
 
@@ -316,6 +405,13 @@ pub mod comments_test {
                 "dubious move".to_string()
             );
 
+            pretty_assertions::assert_eq!(
+                chess
+                    .pgn(None)
+                    .ends_with("{starting position} 1. e4 {good move} e6 *",),
+                true
+            );
+
             pretty_assertions::assert_eq!(chess.remove_comment(), None);
 
             let removed = chess.remove_comments();
@@ -333,7 +429,9 @@ pub mod comments_test {
                         comment: "good move".to_string(),
                     },
                 ]
-            )
+            );
+
+            pretty_assertions::assert_eq!(chess.pgn(None).ends_with("1. e4 e6 *"), true);
         }
 
         #[test]
@@ -356,8 +454,7 @@ pub mod comments_test {
                 }]
             );
 
-            println!("PGN: {}", chess.pgn());
-            // assert !(chess.pgn().ends_with("1. d4 {positional} *"));
+            pretty_assertions::assert_eq!(chess.pgn(None).ends_with("1. d4 {positional} *"), true);
         }
 
         #[test]
@@ -376,7 +473,7 @@ pub mod comments_test {
                 }]
             );
 
-            chess.load(chess.fen(None)).unwrap();
+            chess.load(chess.fen(None).as_str(), None).unwrap();
 
             pretty_assertions::assert_eq!(chess.get_comments(), vec![]);
         }
@@ -425,6 +522,120 @@ pub mod comments_test {
         fn clear_comment_on_clear() {
             // TODO
             // chess.clear()
+        }
+    }
+
+    #[cfg(test)]
+    pub mod format_comments {
+        use crate::WasmChess;
+
+        #[test]
+        fn test_all() {
+            struct CommentsFormatTest<'a> {
+                pub name: &'a str,
+                pub input: &'a str,
+                pub output: &'a str,
+            }
+
+            let tests: Vec<CommentsFormatTest> = vec![
+                CommentsFormatTest {
+                    name: "bracket comments",
+                    input: "1. e4 {good move} e5 {classical response}",
+                    output: "1. e4 {good move} e5 {classical response}",
+                },
+                // CommentsFormatTest {
+                //     name: "semicolon comments",
+                //     input: "1. e4 e5; romantic era\n 2. Nf3 Nc6; common continuation",
+                //     output: "1. e4 e5 {romantic era} 2. Nf3 Nc6 {common continuation}",
+                // },
+                // CommentsFormatTest {
+                //     name: "bracket and semicolon comments",
+                //     input: "1. e4 {good!} e5; standard response\n 2. Nf3 Nc6 {common}",
+                //     output: "1. e4 {good!} e5 {standard response} 2. Nf3 Nc6 {common}",
+                // },
+                CommentsFormatTest {
+                    name: "bracket comments with newlines",
+                    input: "1. e4 {good\nmove} e5 {classical\nresponse}",
+                    output: "1. e4 {good move} e5 {classical response}",
+                },
+                CommentsFormatTest {
+                    name: "initial comment",
+                    input: "{ great game }\n1. e4 e5",
+                    output: "{ great game } 1. e4 e5",
+                },
+                // CommentsFormatTest {
+                //     name: "initial comment with black starting first",
+                //     input: r#"[SetUp "1"]\n[FEN "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1"]\n\n{ great game } 1. ... Nc6""#,
+                //     output: r#"[SetUp "1"]\n[FEN "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1"]\n\n{ great game } 1. ... Nc6""#,
+                // },
+                CommentsFormatTest {
+                    name: "empty bracket comment",
+                    input: "1. e4 {}",
+                    output: "1. e4 {}",
+                },
+                // CommentsFormatTest {
+                //     name: "empty semicolon comment",
+                //     input: "1. e4;\ne5",
+                //     output: "1. e4 {} e5",
+                // },
+                CommentsFormatTest {
+                    name: "unicode comment",
+                    input: "1. e4 {Δ, Й, ק ,م, ๗, あ, 叶, 葉, and 말}",
+                    output: "1. e4 {Δ, Й, ק ,م, ๗, あ, 叶, 葉, and 말}",
+                },
+                // CommentsFormatTest {
+                //     name: "semicolon in bracket comment",
+                //     input: "1. e4 { a classic; well-studied } e5",
+                //     output: "1. e4 { a classic; well-studied } e5",
+                // },
+                // CommentsFormatTest {
+                //     name: "bracket in semicolon comment",
+                //     input: "1. e4 e5 ; a classic {well-studied}",
+                //     output: "1. e4 e5 {a classic {well-studied}}",
+                // },
+                CommentsFormatTest {
+                    name: "markers in bracket comment",
+                    input: "1. e4 e5 {($1) 1. e4 is good}",
+                    output: "1. e4 e5 {($1) 1. e4 is good}",
+                },
+                // CommentsFormatTest {
+                //     name: "markers in semicolon comment",
+                //     input: "1. e4 e5; ($1) 1. e4 is good",
+                //     output: "1. e4 e5 {($1) 1. e4 is good}",
+                // },
+                // PROBLEM ? DEFAULTS ARE NOT NEEDED
+                //                 CommentsFormatTest {
+                //                     name: "comment before black to move",
+                //                     input: r#"
+                //                 [SetUp "1"]
+                //                 [FEN "r4rk1/p1nq1pp1/1p1pp2p/8/P2PR3/1QP2N2/1P3PPP/R5K1 b - - 0 16"]
+
+                //                 {test comment} 16...Rfb8"#,
+                //                     output: r#"[SetUp "1"]
+                // [FEN "r4rk1/p1nq1pp1/1p1pp2p/8/P2PR3/1QP2N2/1P3PPP/R5K1 b - - 0 16"]
+
+                // {test comment} 16. ... Rfb8"#,
+                // },
+            ];
+
+            tests.iter().for_each(|test_entry| {
+                let mut chess = WasmChess::new(None).unwrap();
+
+                chess
+                    .load_pgn(test_entry.input)
+                    .expect("Test entries are all correct");
+
+                let msg = format!("Test failed, {}", test_entry.name);
+
+                let pgn = chess.pgn(None);
+
+                pretty_assertions::assert_eq!(
+                    pgn.ends_with(format!("{} *", test_entry.output).as_str()),
+                    true,
+                    "ERROR: {}",
+                    msg,
+                );
+            });
         }
     }
 }

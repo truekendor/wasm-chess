@@ -1,11 +1,10 @@
 use ordermap::OrderMap;
 use serde::{Deserialize, Serialize};
-use shakmaty::{Color, Piece, Role};
 use strum::Display;
 
-use crate::tsify_structs::{PieceSymbol, square_str::SquareStr};
+use crate::models::{PieceSymbol, SquareStr};
 
-#[derive(tsify::Tsify, Serialize, Deserialize)]
+#[derive(tsify::Tsify, Serialize, Deserialize, PartialEq, Debug)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
 pub struct HeadersObj {
@@ -60,8 +59,8 @@ pub struct PrunedCommentsObj {
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct CastlingObj {
-    pub king: bool,
-    pub queen: bool,
+    pub king: Option<bool>,
+    pub queen: Option<bool>,
 }
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -72,11 +71,20 @@ pub enum ColorChar {
     B,
 }
 
-#[derive(tsify::Tsify, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
-pub struct PieceObj {
-    pub r#type: PieceSymbol,
-    pub color: ColorChar,
+impl ColorChar {
+    pub fn to_shakmaty_color(&self) -> shakmaty::Color {
+        match self {
+            ColorChar::W => shakmaty::Color::White,
+            ColorChar::B => shakmaty::Color::Black,
+        }
+    }
+
+    pub fn from_shakmaty_color(color: &shakmaty::Color) -> Self {
+        match color {
+            shakmaty::Color::White => ColorChar::W,
+            shakmaty::Color::Black => ColorChar::B,
+        }
+    }
 }
 
 // this is like a custom result
@@ -84,27 +92,8 @@ pub struct PieceObj {
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct OkOrError<T> {
     #[tsify(type = "T")]
-    pub ok: Option<T>,
+    pub ok: T,
     pub err: Option<String>,
-}
-
-impl PieceObj {
-    pub fn to_shakmaty_piece(&self) -> Piece {
-        Piece {
-            color: match self.color {
-                ColorChar::W => Color::White,
-                ColorChar::B => Color::Black,
-            },
-            role: match self.r#type {
-                PieceSymbol::P => shakmaty::Role::Pawn,
-                PieceSymbol::N => shakmaty::Role::Knight,
-                PieceSymbol::B => shakmaty::Role::Bishop,
-                PieceSymbol::R => shakmaty::Role::Rook,
-                PieceSymbol::Q => shakmaty::Role::Queen,
-                PieceSymbol::K => shakmaty::Role::King,
-            },
-        }
-    }
 }
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
@@ -114,4 +103,28 @@ pub struct SquareInfoObj {
     pub square: SquareStr,
     pub r#type: PieceSymbol,
     pub color: ColorChar,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub struct PreserveHeaders {
+    pub preserve_headers: bool,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+// TODO: rename
+pub struct PGNOptions {
+    pub max_width: Option<usize>,
+    pub newline: Option<String>,
+}
+
+#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub struct LegalMovesFilterOptions {
+    pub from_square: Option<SquareStr>,
+    pub piece: Option<PieceSymbol>,
 }

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::tsify_structs::others::SquareInfoObj;
-
+use crate::models::utils::SquareInfoObj;
 pub type BoardMatrixRow = Vec<Option<SquareInfoObj>>;
 pub type BoardMatrix = Vec<BoardMatrixRow>;
 

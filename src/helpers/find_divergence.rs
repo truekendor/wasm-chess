@@ -4,7 +4,10 @@ use serde::{Deserialize, Serialize};
 use shakmaty::{Chess, Move, Position, fen::Fen, zobrist::Zobrist64};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::helpers::parsing::{str_to_move, to_san};
+use crate::{
+    FenString,
+    helpers::parsing::{str_to_move, to_san},
+};
 
 pub struct InternalMovesAndHash {
     zobrist_hash: Vec<Zobrist64>,
@@ -32,7 +35,7 @@ pub struct DivergeData {
 
 #[wasm_bindgen(js_name = "findDivergence")]
 pub fn find_divergence(
-    starting_fen: String,
+    common_fen: FenString,
     move_list_current: Vec<String>,
     move_list_reverse: Vec<String>,
 ) -> Vec<TranspositionDataEntry> {
@@ -42,56 +45,79 @@ pub fn find_divergence(
         return same_positions_list;
     }
 
-    let result_current = get_hash_and_san(move_list_current, Some(starting_fen.clone()));
-    let result_reverse = get_hash_and_san(move_list_reverse, Some(starting_fen.clone()));
+    let result_current = get_hash_and_san(move_list_current, Some(common_fen.clone()));
+    let result_reverse = get_hash_and_san(move_list_reverse, Some(common_fen.clone()));
 
     let reverse_zobrist_set: HashSet<&Zobrist64> =
         HashSet::from_iter(result_reverse.zobrist_hash.iter());
 
-    let current_san_moves = result_current.san_moves;
     let reverse_san_moves = result_reverse.san_moves;
 
     let current_hash_list = result_current.zobrist_hash;
     let reverse_hash_list = &result_reverse.zobrist_hash;
 
-    let mut was_same_pos = &current_san_moves[0] == &reverse_san_moves[0];
-    let mut prev_zobrist_hash: Zobrist64 = Zobrist64::default();
+    let mut was_same_pos: bool;
+    let mut prev_zobrist_hash: Zobrist64;
 
-    current_hash_list
-        .iter()
-        .enumerate()
-        .for_each(|(index, hash)| {
-            if reverse_zobrist_set.contains(hash) {
-                same_positions_list.push(TranspositionDataEntry {
-                    diverge_data: None,
-                    move_index: index as u32,
-                });
+    // Check first position separately for immediate divergence
+    if current_hash_list.is_empty() {
+        return same_positions_list;
+    }
 
-                was_same_pos = true;
-            } else if was_same_pos {
-                let diverge_move_index = &reverse_hash_list
-                    .iter()
-                    .rposition(|el| {
-                        return el == &prev_zobrist_hash;
-                    })
-                    .unwrap_or(index);
-
-                let rev_index = diverge_move_index + 1;
-                let move_san = &reverse_san_moves[rev_index];
-
-                same_positions_list.push(TranspositionDataEntry {
-                    move_index: index as u32,
-                    diverge_data: Some(DivergeData {
-                        move_san: move_san.to_string(),
-                        move_index: rev_index as u32,
-                    }),
-                });
-
-                was_same_pos = false;
-            }
-
-            prev_zobrist_hash = *hash;
+    // For the first move, check if it matches any position in reverse
+    let first_hash = &current_hash_list[0];
+    if reverse_zobrist_set.contains(first_hash) {
+        same_positions_list.push(TranspositionDataEntry {
+            diverge_data: None,
+            move_index: 0,
         });
+        was_same_pos = true;
+    } else {
+        // Immediate divergence at first move
+        let move_san = &reverse_san_moves[0];
+        same_positions_list.push(TranspositionDataEntry {
+            move_index: 0,
+            diverge_data: Some(DivergeData {
+                move_san: move_san.to_string(),
+                move_index: 0,
+            }),
+        });
+        was_same_pos = false;
+    }
+    prev_zobrist_hash = *first_hash;
+
+    for (index, hash) in current_hash_list.iter().enumerate().skip(1) {
+        if reverse_zobrist_set.contains(hash) {
+            same_positions_list.push(TranspositionDataEntry {
+                diverge_data: None,
+                move_index: index as u32,
+            });
+            was_same_pos = true;
+        } else if was_same_pos {
+            let diverge_move_index = &reverse_hash_list
+                .iter()
+                .rposition(|el| el == &prev_zobrist_hash)
+                .unwrap_or(index);
+
+            let rev_index = diverge_move_index + 1;
+            let move_san = if rev_index < reverse_san_moves.len() {
+                &reverse_san_moves[rev_index]
+            } else {
+                // Handle edge case where we're at the end
+                &reverse_san_moves[reverse_san_moves.len() - 1]
+            };
+
+            same_positions_list.push(TranspositionDataEntry {
+                move_index: index as u32,
+                diverge_data: Some(DivergeData {
+                    move_san: move_san.to_string(),
+                    move_index: rev_index as u32,
+                }),
+            });
+            was_same_pos = false;
+        }
+        prev_zobrist_hash = *hash;
+    }
 
     same_positions_list
 }
