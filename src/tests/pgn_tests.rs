@@ -161,6 +161,40 @@ pub mod pgn_from_chess_test {
 37. Qe4 Nf6 38. Rxf6 gxf6 39. Rxf6 Kg8 40. Bc4 Kh8 41. Qf4 1-0"#,
                 new_line_char: None,
             },
+            TestingPositions {
+                starting_position: Some(
+                    "r1bqk1nr/pppp1ppp/2n5/4p3/1bB1P3/2P2N2/P2P1PPP/RNBQK2R b KQkq - 0 1",
+                ),
+                final_fen: "r1bqk1nr/ppp2ppp/2np4/b3p3/2BPP3/2P2N2/P4PPP/RNBQ1RK1 b kq - 0 3",
+                moves: "Ba5 O-O d6 d4",
+                header_tags: HashMap::from([
+                    ("Event", "?"),
+                    ("Site", "?"),
+                    ("Date", "????.??.??"),
+                    ("White", "?"),
+                    ("Black", "?"),
+                    ("Result", "*"),
+                    ("SetUp", "1"),
+                    (
+                        "FEN",
+                        "r1bqk1nr/pppp1ppp/2n5/4p3/1bB1P3/2P2N2/P2P1PPP/RNBQK2R b KQkq - 0 1",
+                    ),
+                ]),
+                max_width: 20,
+                pgn: r#"[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "?"]
+[Result "*"]
+[SetUp "1"]
+[FEN "r1bqk1nr/pppp1ppp/2n5/4p3/1bB1P3/2P2N2/P2P1PPP/RNBQK2R b KQkq - 0 1"]
+
+1. ... Ba5 2. O-O d6
+3. d4 *"#,
+                new_line_char: None,
+            },
         ];
 
         positions.iter().for_each(|position| {
