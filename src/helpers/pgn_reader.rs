@@ -224,7 +224,7 @@ pub fn parse_pgn(pgn: &str) -> Result<(PGNResult, WasmChess), String> {
 
     match reader.read_game(&mut pgn_headers) {
         Ok(chess) => {
-            let chess = chess.unwrap().unwrap();
+            let chess = chess.unwrap_or_else(|| WasmChess::new(None)).unwrap();
 
             return Ok((pgn_headers, chess));
         }
