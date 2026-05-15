@@ -4,7 +4,7 @@ pub mod tests {
     use std::str::FromStr;
 
     use crate::WasmChess;
-    use crate::tsify_structs::{PieceSymbol, others::*};
+    use crate::models::{PieceSymbol, utils::*};
 
     #[test]
     fn test_turn_at_after_moves() {

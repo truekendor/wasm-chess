@@ -9,5 +9,8 @@ mod impl_pgn;
 mod impl_queries;
 mod impl_state;
 mod impl_validation;
+mod impl_visitor;
 
 use super::*;
+
+pub use impl_pgn::PGNResult;

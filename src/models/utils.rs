@@ -2,7 +2,7 @@ use ordermap::OrderMap;
 use serde::{Deserialize, Serialize};
 use strum::Display;
 
-use crate::tsify_structs::{PieceSymbol, square_str::SquareStr};
+use crate::models::{PieceSymbol, SquareStr};
 
 #[derive(tsify::Tsify, Serialize, Deserialize, PartialEq, Debug)]
 #[tsify(into_wasm_abi, from_wasm_abi)]

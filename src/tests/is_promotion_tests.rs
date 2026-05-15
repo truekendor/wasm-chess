@@ -4,7 +4,7 @@
 /// @link https://github.com/jhlywa/chess.js/blob/master/__tests__/is-promotion.test.ts
 pub mod is_promotion_tests {
     use crate::WasmChess;
-    use crate::tsify_structs::{others::*, *};
+    use crate::models::{utils::*, *};
 
     #[test]
     fn true_for_promotion() {

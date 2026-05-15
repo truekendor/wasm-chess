@@ -5,7 +5,7 @@
 pub mod history_test_chess_js {
     use crate::WasmChess;
 
-    use crate::tsify_structs::{others::*, *};
+    use crate::models::{utils::*, *};
 
     #[test]
     fn history() {

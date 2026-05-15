@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use shakmaty::{Color, Piece};
 
-use crate::tsify_structs::{PieceSymbol, others::ColorChar};
+use crate::models::{PieceSymbol, utils::ColorChar};
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]

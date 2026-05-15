@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::tsify_structs::{PieceSymbol, SquareStr, others::ColorChar};
+use crate::models::{PieceSymbol, SquareStr, utils::ColorChar};
 
 /// A verbose representation of a chess move, exposed to TypeScript as a plain object.
 ///

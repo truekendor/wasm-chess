@@ -1,58 +1,13 @@
-use ordermap::OrderMap;
-use shakmaty::{CastlingMode, Chess, KnownOutcome, fen::Fen};
 use std::ops::ControlFlow;
 
+use ordermap::OrderMap;
 use pgn_reader::{RawTag, SanPlus, Visitor};
 
-use crate::{WasmChess, tsify_structs::others::PreserveHeaders};
+use shakmaty::{CastlingMode, Chess, fen::Fen};
 
-#[derive(Debug, Default, Clone)]
-pub struct PGNResult {
-    pub headers: OrderMap<String, String>,
-    pub starting_fen: Fen,
-
-    pub comments_map: OrderMap<String, String>,
-    pub suffix_map: OrderMap<String, String>,
-    pub nag_map: OrderMap<String, Vec<String>>,
-
-    pub known_outcome: Option<KnownOutcome>,
-}
+use crate::{WasmChess, impls::PGNResult, models::utils::PreserveHeaders};
 
 const SUFFIX_LIST: [&str; 6] = ["!", "?", "!!", "??", "!?", "?!"];
-
-const SEVEN_TAG_ROSTER: [&str; 7] = ["Event", "Site", "Date", "Round", "White", "Black", "Result"];
-const SUPPLEMENTAL_TAGS: [(&str, Option<&str>); 30] = [
-    ("WhiteTitle", None),
-    ("BlackTitle", None),
-    ("WhiteElo", None),
-    ("BlackElo", None),
-    ("WhiteUSCF", None),
-    ("BlackUSCF", None),
-    ("WhiteNA", None),
-    ("BlackNA", None),
-    ("WhiteType", None),
-    ("BlackType", None),
-    ("EventDate", None),
-    ("EventSponsor", None),
-    ("Section", None),
-    ("Stage", None),
-    ("Board", None),
-    ("Opening", None),
-    ("Variation", None),
-    ("SubVariation", None),
-    ("ECO", None),
-    ("NIC", None),
-    ("Time", None),
-    ("UTCTime", None),
-    ("UTCDate", None),
-    ("TimeControl", None),
-    ("SetUp", None),
-    ("FEN", None),
-    ("Termination", None),
-    ("Annotator", None),
-    ("Mode", None),
-    ("PlyCount", None),
-];
 
 impl Visitor for WasmChess {
     type Tags = ();
@@ -60,7 +15,9 @@ impl Visitor for WasmChess {
     type Output = Result<(), String>;
 
     fn begin_tags(&mut self) -> ControlFlow<Self::Output, Self::Tags> {
-        let pgn_result = self.pgn_result.get_or_insert_with(|| PGNResult::default());
+        let pgn_result = self
+            .pgn_result
+            .get_or_insert_with(|| super::PGNResult::default());
 
         pgn_result.comments_map = OrderMap::new();
         pgn_result.suffix_map = OrderMap::new();
@@ -248,33 +205,5 @@ impl Visitor for WasmChess {
 
     fn end_game(&mut self, _movetext: Self::Movetext) -> Self::Output {
         return Ok(());
-    }
-}
-
-impl PGNResult {
-    pub fn reorder_headers(&mut self) {
-        let mut ordered: OrderMap<String, Option<String>> = OrderMap::new();
-
-        // Seven tag roster first
-        for key in SEVEN_TAG_ROSTER {
-            ordered.insert(key.to_string(), self.headers.get(key).cloned());
-        }
-
-        // Supplemental tags second
-        for (key, _) in SUPPLEMENTAL_TAGS {
-            ordered.insert(key.to_string(), self.headers.get(key).cloned());
-        }
-
-        // Remaining custom tags last
-        for (key, val) in self.headers.iter() {
-            if !ordered.contains_key(key) {
-                ordered.insert(key.clone(), Some(val.clone()));
-            }
-        }
-
-        self.headers = ordered
-            .into_iter()
-            .filter_map(|(k, v)| v.map(|v| (k, v)))
-            .collect();
     }
 }

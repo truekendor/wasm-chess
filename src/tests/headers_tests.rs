@@ -2,7 +2,7 @@
 pub mod header_tests {
     use ordermap::OrderMap;
 
-    use crate::{WasmChess, tsify_structs::others::HeadersObj};
+    use crate::{WasmChess, models::utils::HeadersObj};
 
     #[test]
     fn set_header_should_add_or_update_header() {

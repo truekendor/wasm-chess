@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod undo_logic_test {
     use crate::WasmChess;
-    use crate::tsify_structs::{MoveVerbose, PieceSymbol, SquareStr, others::*};
+    use crate::models::{MoveVerbose, PieceSymbol, SquareStr, utils::*};
 
     #[test]
     fn test_undo_after_two_moves() {

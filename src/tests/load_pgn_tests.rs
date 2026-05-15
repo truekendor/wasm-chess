@@ -53,7 +53,7 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
 
     use crate::WasmChess;
 
-    use crate::tsify_structs::others::*;
+    use crate::models::utils::*;
 
     #[test]
     fn set_header_ok() {

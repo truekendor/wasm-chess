@@ -4,7 +4,7 @@
 #[cfg(test)]
 pub mod comments_test {
     use crate::WasmChess;
-    use crate::tsify_structs::others::*;
+    use crate::models::utils::*;
 
     #[test]
     fn captures_multiple_suffixes_and_comments_ok() {

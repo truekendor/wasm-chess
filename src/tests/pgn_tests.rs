@@ -7,7 +7,7 @@ pub mod pgn_from_chess_test {
 
     use crate::{
         WasmChess,
-        tsify_structs::others::{ColorChar, PGNOptions},
+        models::utils::{ColorChar, PGNOptions},
     };
 
     #[test]
@@ -93,8 +93,6 @@ pub mod pgn_from_chess_test {
             starting_position: Option<&'a str>,
         }
 
-        // TODO: add rest of the positions
-        // from @link https://github.com/jhlywa/chess.js/blob/master/__tests__/pgn.test.ts
         let game_zero_pgn = file_to_string("./src/tests/pgn/chessjs-0.pgn");
         let game_one_pgn = file_to_string("./src/tests/pgn/chessjs-1.pgn");
         let game_two_pgn = file_to_string("./src/tests/pgn/chessjs-2.pgn");

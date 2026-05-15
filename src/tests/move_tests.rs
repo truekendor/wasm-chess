@@ -2,7 +2,7 @@
 pub mod move_tests {
     use crate::{
         WasmChess,
-        tsify_structs::{PieceSymbol, SquareStr},
+        models::{PieceSymbol, SquareStr},
     };
 
     #[test]

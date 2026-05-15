@@ -2,22 +2,19 @@ use std::collections::HashMap;
 
 use ordermap::OrderMap;
 use shakmaty::{
-    Chess, Color, EnPassantMode, FromSetup, Move, Piece, Position, Setup, Square, fen::Fen,
-    san::San, zobrist::Zobrist64,
+    Chess, Color, EnPassantMode, FromSetup, KnownOutcome, Move, Piece, Position, Setup, Square,
+    fen::Fen, san::San, zobrist::Zobrist64,
 };
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
-    helpers::{
-        parsing::{self, san_to_san_plus, verbose_move_from_raw_move},
-        pgn::chess_to_pgn,
-        pgn_reader::PGNResult,
-    },
-    tsify_structs::{
+    helpers::parsing::{self, san_to_san_plus, verbose_move_from_raw_move},
+    impls::PGNResult,
+    models::{
         BoardMatrix, BoardMatrixReturnObj, BoardMatrixRow, MoveVerbose, PieceObj, PieceSymbol,
         SquareStr, SuffixSymbol,
-        others::{
+        utils::{
             CastlingObj, ColorChar, CommentsObj, HeadersObj, LegalMovesFilterOptions,
             MoveFromSquares, MoveObject, OkOrError, PGNOptions, PreserveHeaders, PrunedCommentsObj,
             SquareColor, SquareInfoObj,
@@ -27,8 +24,8 @@ use crate::{
 
 mod helpers;
 mod impls;
+mod models;
 mod tests;
-mod tsify_structs;
 
 /// TODOs global
 /// add helper for fen parsing

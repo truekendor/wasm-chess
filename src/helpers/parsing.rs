@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
     MoveString,
-    tsify_structs::{MoveVerbose, PieceSymbol, SquareStr, others::ColorChar},
+    models::{MoveVerbose, PieceSymbol, SquareStr, utils::ColorChar},
 };
 
 #[derive(Clone, Debug)]

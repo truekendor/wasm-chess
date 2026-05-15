@@ -1,10 +1,10 @@
 mod board_matrix;
 mod move_verbose;
-pub mod others;
 mod piece_obj;
 mod piece_symbol;
 mod square_str;
 mod suffix_symbol;
+pub mod utils;
 
 pub use board_matrix::{BoardMatrix, BoardMatrixReturnObj, BoardMatrixRow};
 pub use move_verbose::MoveVerbose;

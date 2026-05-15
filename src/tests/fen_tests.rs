@@ -2,9 +2,9 @@
 pub mod fen_tests {
     use crate::{
         WasmChess,
-        tsify_structs::{
+        models::{
             PieceObj, PieceSymbol, SquareStr,
-            others::{ColorChar, MoveObject},
+            utils::{ColorChar, MoveObject},
         },
     };
     use std::usize;

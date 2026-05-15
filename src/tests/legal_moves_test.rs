@@ -4,9 +4,9 @@
 pub mod legal_moves_test {
     use crate::{
         WasmChess,
-        tsify_structs::{
+        models::{
             MoveVerbose, PieceSymbol, SquareStr,
-            others::{ColorChar, LegalMovesFilterOptions},
+            utils::{ColorChar, LegalMovesFilterOptions},
         },
     };
 
