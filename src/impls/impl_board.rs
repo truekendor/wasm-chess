@@ -2,7 +2,9 @@ use super::*;
 
 #[wasm_bindgen]
 impl WasmChess {
-    pub(crate) fn put(&mut self, piece_obj: PieceObj, square: SquareStr) -> bool {
+    // TODO: check when it returns true
+    // it can be on valid position after put() call or on successful put
+    pub fn put(&mut self, piece_obj: PieceObj, square: SquareStr) -> bool {
         let piece = piece_obj.to_shakmaty_piece();
         let square = square.to_shakmaty_sq();
 
@@ -18,15 +20,18 @@ impl WasmChess {
         // knowing which one of the boards it is ?
         // OR we just do  `if _ {} else {}`
 
-        let editable = match self.editable.as_mut() {
-            Some(val) => val,
-            None => &mut EditablePosition {
-                setup: Chess::to_setup(&self.chess, EnPassantMode::Legal),
-                validated: None,
-            },
-        };
+        let editable = self.editable.get_or_insert_with(|| EditablePosition {
+            setup: Chess::to_setup(&self.chess, EnPassantMode::Legal),
+            validated: None,
+        });
 
         let setup = &mut editable.setup;
+
+        // TODO: check if this is always the case
+        setup.ep_square = None;
+
+        println!("EP SQUARE IS SOME {:?}", setup.ep_square.is_some());
+
         let _ = &setup.board.set_piece_at(square, piece);
 
         let pos = setup
@@ -44,16 +49,21 @@ impl WasmChess {
         let pos = match pos {
             Ok(val) => Some(val),
             Err(err) => {
-                let result = err.ignore_too_much_material();
+                let result = err
+                    .ignore_too_much_material()
+                    .or_else(|err| err.ignore_invalid_castling_rights())
+                    .or_else(|err| err.ignore_invalid_ep_square());
 
                 result.ok()
             }
         };
 
         if let Some(validated) = pos {
+            // TODO: consider changes
+            // why even bother with editable setup
+            // if we immediately replace self.chess in case of validation?
             editable.validated = Some(validated.clone());
             // TODO:
-            // why even bother with this if we immediately replace
             self.chess = validated;
             return true;
         }
@@ -83,8 +93,8 @@ impl WasmChess {
 
         editable.validated = pos.ok();
 
-        if let Some(p) = piece {
-            return Some(PieceObj::from_shakmaty_piece(&p));
+        if let Some(piece) = piece {
+            return Some(PieceObj::from_shakmaty_piece(&piece));
         }
 
         // TODO:
@@ -99,27 +109,110 @@ impl WasmChess {
         let editable = match self.editable.as_mut() {
             Some(val) => val,
             None => &mut EditablePosition {
-                setup: Chess::to_setup(&self.chess, EnPassantMode::Legal),
+                setup: Setup::empty(),
                 validated: None,
             },
         };
 
-        let empty_setup = Setup::empty();
+        editable.setup = Setup::empty();
+        editable.validated = None;
+    }
 
-        let chess = Chess::from_setup(empty_setup, shakmaty::CastlingMode::Chess960);
+    #[wasm_bindgen(js_name = "setTurn")]
+    pub fn set_turn(&mut self, color: ColorChar) -> Result<bool, String> {
+        let turn = self.turn();
 
-        match chess {
-            Ok(val) => val,
+        if color == turn {
+            return Ok(false);
+        }
+
+        let editable = self.editable.get_or_insert_with(|| EditablePosition {
+            setup: Chess::to_setup(&self.chess, EnPassantMode::Legal),
+            validated: None,
+        });
+        let setup = &mut editable.setup;
+        setup.swap_turn();
+
+        let pos = setup
+            .clone()
+            .position::<Chess>(shakmaty::CastlingMode::Chess960);
+
+        let pos = match pos {
+            Ok(val) => Ok(val),
             Err(err) => {
-                todo!()
+                let result = err
+                    .ignore_too_much_material()
+                    .or_else(|err| err.ignore_invalid_castling_rights())
+                    .or_else(|err| err.ignore_invalid_ep_square());
+
+                let res = result.map_err(|err| format!("{:#?}", err.kinds()));
+
+                res
             }
         };
 
-        todo!()
+        match pos {
+            Ok(val) => {
+                editable.validated = Some(val.clone());
+                self.chess = val;
+                return Ok(true);
+            }
+            Err(err) => {
+                return Err(format!("{:#?}", err));
+            }
+        }
     }
 
-    fn set_turn(&mut self, color: ColorChar) -> bool {
-        todo!()
+    // TODO: move to impl_moves ???
+    pub(crate) fn make_null_move(&mut self) -> Result<(), String> {
+        let editable = self.editable.get_or_insert_with(|| EditablePosition {
+            setup: Chess::to_setup(&self.chess, EnPassantMode::Legal),
+            validated: None,
+        });
+
+        let setup = &mut editable.setup;
+
+        if setup.turn == Color::Black {
+            setup.fullmoves = setup
+                .fullmoves
+                .checked_add(1)
+                // Safe: u32::MAX is ~4B moves, far beyond any possible chess game length
+                .expect("Increment caused an overflow");
+        }
+
+        setup.halfmoves += 1;
+        setup.swap_turn();
+
+        let pos = setup
+            .clone()
+            .position::<Chess>(shakmaty::CastlingMode::Chess960);
+
+        let pos = match pos {
+            Ok(val) => Ok(val),
+            Err(err) => {
+                let result = err
+                    .ignore_too_much_material()
+                    .or_else(|err| err.ignore_impossible_check())
+                    .or_else(|err| err.ignore_invalid_ep_square());
+
+                // result.ok()
+                match result {
+                    Ok(val) => Ok(val),
+                    Err(err) => Err(err.kinds()),
+                }
+            }
+        };
+
+        match pos {
+            Ok(val) => {
+                editable.validated = Some(val.clone());
+                self.chess = val;
+                return Ok(());
+            }
+            Err(err) => {
+                return Err(format!("{:#?}", err));
+            }
+        }
     }
 
     #[wasm_bindgen(js_name = "setCastlingRights")]
@@ -176,9 +269,5 @@ impl WasmChess {
             && (castling_obj.queen.is_none() || rights_final.queen == castling_obj.queen);
 
         return successfully_set;
-    }
-
-    fn set_en_passant_square() {
-        //
     }
 }
