@@ -222,4 +222,37 @@ pub mod test {
         assert!(from_shakmaty_default.is_ok());
         assert!(from_shakmaty_uppercase.is_err());
     }
+
+    // TODO: move to own module
+
+    #[cfg(test)]
+    mod null_moves_tests {
+        use crate::WasmChess;
+
+        #[test]
+        fn null_move_at_start() {
+            let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1".to_string();
+            let fen_next = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 1 1".to_string();
+            let mut chess = WasmChess::new(Some(fen)).unwrap();
+
+            let _ = chess.make_null_move().map_err(|err| {
+                println!("Err making Null move: {}", err);
+            });
+
+            pretty_assertions::assert_eq!(fen_next, chess.fen(None));
+        }
+
+        #[test]
+        fn null_move_inc_fullmoves_counter() {
+            let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 1 1".to_string();
+            let fen_next = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 2 2".to_string();
+            let mut chess = WasmChess::new(Some(fen)).unwrap();
+
+            let _ = chess.make_null_move().map_err(|err| {
+                println!("Err making Null move: {}", err);
+            });
+
+            pretty_assertions::assert_eq!(fen_next, chess.fen(None));
+        }
+    }
 }
