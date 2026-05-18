@@ -19,7 +19,8 @@ impl WasmChess {
     ///
     /// # chess.js Compatibility
     ///
-    /// Compatible with `chess.move()` string input behavior.
+    /// Compatible with `chess.move()` string input behavior with an
+    /// exception of nullmoves
     ///
     /// # Examples
     ///
@@ -30,10 +31,9 @@ impl WasmChess {
     /// ```
     #[wasm_bindgen(js_name = "move")]
     pub fn make_move(&mut self, move_str: &str) -> Result<MoveVerbose, String> {
-        let internal_move =
-            helpers::parsing::str_to_move(move_str, &self.chess).map_err(|err| {
-                return err.to_string();
-            })?;
+        let internal_move = utils::parsing::str_to_move(move_str, &self.chess).map_err(|err| {
+            return err.to_string();
+        })?;
 
         if !self.chess.is_legal(internal_move) {
             return Err(format!(
@@ -97,10 +97,9 @@ impl WasmChess {
     /// chess.simulateMove("e2e4")
     /// ```
     fn simulate_move(&self, move_str: &str) -> Result<MoveVerbose, String> {
-        let internal_move =
-            helpers::parsing::str_to_move(move_str, &self.chess).map_err(|err| {
-                return err.to_string();
-            })?;
+        let internal_move = utils::parsing::str_to_move(move_str, &self.chess).map_err(|err| {
+            return err.to_string();
+        })?;
 
         if !self.chess.is_legal(internal_move) {
             return Err(format!(
@@ -213,7 +212,7 @@ impl WasmChess {
         self.repetition_table.entry(self.hash).or_insert(1);
 
         let move_verbose: MoveVerbose =
-            helpers::parsing::verbose_move_from_raw_move(last.raw_move, &self.chess);
+            utils::parsing::verbose_move_from_raw_move(last.raw_move, &self.chess);
 
         Some(move_verbose)
     }
