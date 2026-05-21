@@ -59,6 +59,7 @@ pub struct PGNResult {
 impl WasmChess {
     #[wasm_bindgen(js_name = "loadPgn")]
     pub fn load_pgn(&mut self, pgn: &str) -> Result<(), String> {
+        self.reset();
         let mut reader = Reader::new(io::Cursor::new(pgn));
 
         reader
