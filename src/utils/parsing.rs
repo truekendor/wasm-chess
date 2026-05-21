@@ -32,8 +32,8 @@ pub struct MovesAndError {
 }
 
 /// converts Vec of moves in SAN/LAN format, into Vec of SAN moves
-#[wasm_bindgen(js_name = "toSan")]
-pub fn to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
+#[wasm_bindgen(js_name = "movesToSan")]
+pub fn moves_to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
     let starting_fen = starting_fen.unwrap_or_else(|| {
         Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
     });
@@ -101,8 +101,8 @@ pub fn to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError
 }
 
 /// converts Vec of moves in SAN/LAN format, into Vec of UCI moves
-#[wasm_bindgen(js_name = "toUci")]
-pub fn to_uci(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
+#[wasm_bindgen(js_name = "movesToUci")]
+pub fn moves_to_uci(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
     let starting_fen = starting_fen.unwrap_or_else(|| {
         Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
     });
