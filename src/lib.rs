@@ -68,6 +68,8 @@ pub struct WasmChess {
     repetition_table: HashMap<Zobrist64, i32>,
     // TODO: rename
     pgn_result: Option<PGNResult>,
+    // TODO: move away from this class to other function ?
+    // as for now this is very close to be a duplicate code
     seven_tag_roster: OrderMap<&'static str, &'static str>,
 
     editable: Option<EditablePosition>,
