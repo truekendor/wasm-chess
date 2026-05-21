@@ -57,6 +57,7 @@ impl WasmChess {
     ///
     /// ## Returns
     /// * `Some(String)` - The FEN string at the requested position
+    /// TODO: this behavior changed, update docs later
     /// * `None` - If `index` exceeds total moves played
     ///
     /// ## Example
@@ -81,6 +82,9 @@ impl WasmChess {
             idx => {
                 if idx <= self.history.len() {
                     Some(self.history[idx - 1].fen_after.to_string())
+                } else if idx == self.history.len() && idx >= 1 {
+                    // TODO: handle it better
+                    Some(self.history.last().unwrap().fen_after.to_string())
                 } else {
                     None
                 }
