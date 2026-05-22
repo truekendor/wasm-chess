@@ -2,6 +2,20 @@ use super::*;
 
 #[wasm_bindgen]
 impl WasmChess {
+    /// Places a piece on the board at the given square.
+    ///
+    /// # JavaScript Example
+    /// ```js
+    /// const success = chess.put({ kind: 'queen', color: 'white' }, 'e2');
+    /// ```
+    ///
+    /// # Returns
+    /// - `true` if the position is valid after placement
+    /// - `false` if the placement would create an invalid position (e.g., illegal castling rights)
+    ///
+    /// # Notes
+    /// - En passant square is cleared when placing pieces manually
+    /// - Invalid positions are rejected and the board remains unchanged
     pub fn put(&mut self, piece_obj: PieceObj, square: SquareStr) -> bool {
         let piece = piece_obj.to_shakmaty_piece();
         let square = square.to_shakmaty_sq();
@@ -43,6 +57,25 @@ impl WasmChess {
         return false;
     }
 
+    /// Changes which player moves next.
+    ///
+    /// # JavaScript Example
+    /// ```js
+    /// try {
+    ///   const changed = chess.setTurn('b'); // Switch to black
+    ///   console.log(changed ? "Turn changed" : "Already black's turn");
+    /// } catch (err) {
+    ///   console.error("Invalid position after turn change:", err);
+    /// }
+    /// ```
+    ///
+    /// # Parameters
+    /// - `color`: `'w'` for white, `'b'` for black
+    ///
+    /// # Returns
+    /// - `Ok(true)` - Turn was successfully changed
+    /// - `Ok(false)` - Already that player's turn (no change)
+    /// - `Err(string)` - Position became invalid after turn change (contains error details)
     #[wasm_bindgen(js_name = "setTurn")]
     pub fn set_turn(&mut self, color: ColorChar) -> Result<bool, String> {
         let turn = self.turn();
@@ -88,6 +121,33 @@ impl WasmChess {
         }
     }
 
+    /// Updates castling rights for a specific color.
+    ///
+    /// # JavaScript Example
+    /// ```js
+    /// // Disable black's kingside castling only
+    /// chess.setCastlingRights('b', { king: false });
+    ///
+    /// // Enable both kingside and queenside for white
+    /// chess.setCastlingRights('w', { king: true, queen: true });
+    ///
+    /// // Leave queenside unchanged, remove kingside
+    /// chess.setCastlingRights('w', { king: false });
+    /// ```
+    ///
+    /// # Parameters
+    /// - `color`: `'w'` or `'b'`
+    /// - `castling_obj`: Object with optional boolean fields
+    ///   - `king` - `true` to enable, `false` to disable, `undefined` to leave unchanged
+    ///   - `queen` - Same as above
+    ///
+    /// # Returns
+    /// - `true` if the requested rights were successfully applied
+    /// - `false` if the operation didn't take effect (e.g., invalid position rejected)
+    ///
+    /// # Notes
+    /// - Invalid castling configurations (e.g., rights on empty files) are automatically filtered out
+    /// - The method returns `false` if the final rights don't match the request
     #[wasm_bindgen(js_name = "setCastlingRights")]
     pub fn set_castling_rights(&mut self, color: ColorChar, castling_obj: CastlingObj) -> bool {
         let editable = match self.editable.as_mut() {
