@@ -91,7 +91,9 @@ pub fn moves_to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAn
             }
         };
 
-        san_moves_vec.push(san_move.to_string());
+        let san_move: String = san_to_san_plus(&san_move, &chess_pos);
+
+        san_moves_vec.push(san_move);
     }
 
     MovesAndError {
