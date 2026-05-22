@@ -6,7 +6,7 @@
 pub mod attackers_tests {
     use crate::{
         WasmChess,
-        models::{SquareStr, utils::ColorChar},
+        models::{ColorChar, SquareStr},
     };
 
     fn aggregate_attacks(chess: &WasmChess, color: ColorChar) -> [u8; 64] {

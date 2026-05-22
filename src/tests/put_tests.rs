@@ -3,7 +3,7 @@
 pub mod put_tests {
     use crate::{
         WasmChess,
-        models::{PieceObj, PieceSymbol, SquareStr, utils::ColorChar},
+        models::{ColorChar, PieceObj, PieceSymbol, SquareStr},
     };
 
     #[test]

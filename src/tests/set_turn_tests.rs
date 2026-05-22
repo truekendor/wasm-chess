@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod set_turn_tests {
-    use crate::{WasmChess, models::utils::ColorChar};
+    use crate::{ColorChar, WasmChess};
 
     #[test]
     fn set_turn_for_current_color_returns_false() {

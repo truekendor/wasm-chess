@@ -4,10 +4,7 @@
 
 #[cfg(test)]
 pub mod castling_rights_tests {
-    use crate::{
-        WasmChess,
-        models::utils::{CastlingObj, ColorChar},
-    };
+    use crate::{ColorChar, WasmChess, models::utils::CastlingObj};
 
     #[test]
     fn correct_rights_from_set_fen() {

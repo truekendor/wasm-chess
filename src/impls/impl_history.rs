@@ -139,33 +139,29 @@ impl WasmChess {
     ///   - `1` - Turn after first move (Black's turn for default starting position)
     ///   - `2` - Turn after second move, etc.
     ///
-    /// # Returns
-    /// * `Some(ColorChar)` - The side to move at the requested position
-    /// * `None` - If `index` exceeds total history length
+    /// # Behavior
+    /// * If `index` is within history bounds, returns the side to move at that position
+    /// * If `index` overflows the history (exceeds available moves), returns the current side to move
     #[wasm_bindgen(js_name = "sideToMoveAt")]
-    pub fn side_to_move_at(&self, index: usize) -> Option<ColorChar> {
-        match index {
-            0 => {
-                let turn = match self.history.is_empty() {
-                    false => self.history[0].turn,
-                    true => self.chess.turn(),
-                };
-                Some(match turn {
-                    Color::White => ColorChar::W,
-                    Color::Black => ColorChar::B,
-                })
+    pub fn side_to_move_at(&self, index: usize) -> ColorChar {
+        if index == 0 {
+            let turn = if self.history.is_empty() {
+                self.chess.turn()
+            } else {
+                self.history[0].turn
+            };
+            return ColorChar::from(&turn);
+        }
+
+        if index <= self.history.len() {
+            let turn = self.history[index - 1].turn;
+            match turn {
+                Color::White => ColorChar::B,
+                Color::Black => ColorChar::W,
             }
-            idx => {
-                if idx <= self.history.len() {
-                    let turn = self.history[idx - 1].turn;
-                    Some(match turn {
-                        Color::White => ColorChar::B,
-                        Color::Black => ColorChar::W,
-                    })
-                } else {
-                    None
-                }
-            }
+        } else {
+            // Index overflows history - return current side to move
+            ColorChar::from(&self.chess.turn())
         }
     }
 
