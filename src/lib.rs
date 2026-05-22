@@ -11,8 +11,8 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use crate::{
     impls::PGNResult,
     models::{
-        BoardMatrix, BoardMatrixReturnObj, BoardMatrixRow, MoveVerbose, PieceObj, PieceSymbol,
-        SquareStr, SuffixSymbol,
+        BoardMatrix, BoardObjRow, BoardState, MoveVerbose, PieceObj, PieceSymbol, SquareStr,
+        SuffixSymbol,
         utils::{
             CastlingObj, ColorChar, CommentsObj, HeadersObj, LegalMovesFilterOptions,
             MoveFromSquares, MoveObject, OkOrError, PGNOptions, PreserveHeaders, PrunedCommentsObj,

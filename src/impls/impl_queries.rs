@@ -31,13 +31,13 @@ impl WasmChess {
         self.chess.board().board_fen().to_string()
     }
 
-    pub fn board(&self) -> BoardMatrixReturnObj {
+    pub fn board(&self) -> BoardState {
         const RANK_STRINGS: [&str; 8] = ["1", "2", "3", "4", "5", "6", "7", "8"];
         let mut result: BoardMatrix = Vec::with_capacity(8);
         let mut square_str = String::with_capacity(2);
 
         for rank in (1..=8).rev() {
-            let mut row: BoardMatrixRow = Vec::with_capacity(8);
+            let mut row: BoardObjRow = Vec::with_capacity(8);
 
             for file in 'a'..='h' {
                 square_str.clear();
@@ -71,7 +71,7 @@ impl WasmChess {
             result.push(row);
         }
 
-        BoardMatrixReturnObj {
+        BoardState {
             board_matrix: result,
         }
     }
@@ -103,6 +103,19 @@ impl WasmChess {
             .unwrap_or(false)
     }
 
+    /// Gets the piece at a specific square.
+    ///
+    /// # JavaScript Example
+    /// ```js
+    /// const piece = chess.get('e2');
+    /// if (piece) {
+    ///   console.log(piece.color, piece.kind); // 'w', 'pawn'
+    /// }
+    /// ```
+    ///
+    /// # Returns
+    /// - `PieceObj` if a piece exists at the square
+    /// - `null` | `undefined` if the square is empty
     pub fn get(&self, square: SquareStr) -> Option<PieceObj> {
         let square = square.to_shakmaty_sq();
 
@@ -115,12 +128,38 @@ impl WasmChess {
         Some(piece_obj)
     }
 
+    /// Finds all squares containing a piece identified by its single-character notation.
+    ///
+    ///
+    /// # JavaScript Example
+    /// ```js
+    /// // Find all white knights
+    /// const knightSquares = chess.findPiece('N');
+    ///
+    /// // Find all black pawns
+    /// const blackPawnSquares = chess.findPiece('p');
+    /// ```
+    ///
+    /// # Parameters
+    /// - `piece`: Single character piece notation:
+    ///   - Uppercase: `K` (king), `Q` (queen), `R` (rook), `B` (bishop), `N` (knight), `P` (pawn) = white
+    ///   - Lowercase: same letters = black
+    ///
+    /// # Returns
+    /// Array of square strings (e.g., `['g1', 'b1']`)
+    ///
+    /// # Throws
+    /// If the piece string is invalid (wrong length or unknown piece character)
     #[wasm_bindgen(js_name = "findPiece")]
     pub fn find_piece_from_str(&self, piece: &str) -> Result<Vec<SquareStr>, String> {
         let piece = piece.trim();
 
         if piece.len() != 1 {
-            return Err(format!("Error: unexpected piece length: {}", piece.len()));
+            return Err(format!(
+                "Error: unexpected piece length: {}\nPiece: {}",
+                piece.len(),
+                piece
+            ));
         }
 
         let piece_char = piece
