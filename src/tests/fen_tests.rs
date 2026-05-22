@@ -2,10 +2,7 @@
 pub mod fen_tests {
     use crate::{
         WasmChess,
-        models::{
-            PieceObj, PieceSymbol, SquareStr,
-            utils::{ColorChar, MoveObject},
-        },
+        models::{ColorChar, PieceObj, PieceSymbol, SquareStr, utils::MoveObject},
     };
     use std::usize;
 

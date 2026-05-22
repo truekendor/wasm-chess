@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use shakmaty::{Chess, Color, Move, Position, Role, fen::Fen, san::San, uci::UciMove};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::models::{MoveVerbose, PieceSymbol, SquareStr, utils::ColorChar};
+use crate::models::{ColorChar, MoveVerbose, PieceSymbol, SquareStr};
 
 #[derive(Clone, Debug)]
 pub enum MoveParseError {

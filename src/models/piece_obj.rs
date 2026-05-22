@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use shakmaty::{Color, Piece};
 
-use crate::models::{PieceSymbol, utils::ColorChar};
+use crate::models::{ColorChar, PieceSymbol};
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
@@ -10,14 +10,26 @@ pub struct PieceObj {
     pub color: ColorChar,
 }
 
-impl PieceObj {
-    pub fn to_shakmaty_piece(&self) -> Piece {
+impl From<&shakmaty::Piece> for PieceObj {
+    fn from(value: &shakmaty::Piece) -> Self {
+        PieceObj {
+            color: match value.color {
+                Color::White => ColorChar::W,
+                Color::Black => ColorChar::B,
+            },
+            r#type: PieceSymbol::from_shakmaty_piece_role(&value.role),
+        }
+    }
+}
+
+impl From<&PieceObj> for shakmaty::Piece {
+    fn from(value: &PieceObj) -> Piece {
         Piece {
-            color: match self.color {
+            color: match value.color {
                 ColorChar::W => Color::White,
                 ColorChar::B => Color::Black,
             },
-            role: match self.r#type {
+            role: match value.r#type {
                 PieceSymbol::P => shakmaty::Role::Pawn,
                 PieceSymbol::N => shakmaty::Role::Knight,
                 PieceSymbol::B => shakmaty::Role::Bishop,
@@ -25,16 +37,6 @@ impl PieceObj {
                 PieceSymbol::Q => shakmaty::Role::Queen,
                 PieceSymbol::K => shakmaty::Role::King,
             },
-        }
-    }
-
-    pub fn from_shakmaty_piece(piece: &Piece) -> Self {
-        PieceObj {
-            color: match piece.color {
-                Color::White => ColorChar::W,
-                Color::Black => ColorChar::B,
-            },
-            r#type: PieceSymbol::from_shakmaty_piece_role(&piece.role),
         }
     }
 }

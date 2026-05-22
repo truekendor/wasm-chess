@@ -17,7 +17,7 @@ impl WasmChess {
     /// - En passant square is cleared when placing pieces manually
     /// - Invalid positions are rejected and the board remains unchanged
     pub fn put(&mut self, piece_obj: PieceObj, square: SquareStr) -> bool {
-        let piece = piece_obj.to_shakmaty_piece();
+        let piece = Piece::from(&piece_obj);
         let square = square.to_shakmaty_sq();
 
         let editable = self.editable.get_or_insert_with(|| EditablePosition {

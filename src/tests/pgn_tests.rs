@@ -7,7 +7,7 @@ pub mod pgn_from_chess_test {
 
     use crate::{
         WasmChess,
-        models::utils::{ColorChar, PGNOptions},
+        models::{ColorChar, utils::PGNOptions},
     };
 
     #[test]

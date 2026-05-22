@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod undo_logic_test {
     use crate::WasmChess;
-    use crate::models::{MoveVerbose, PieceSymbol, SquareStr, utils::*};
+    use crate::models::{ColorChar, MoveVerbose, PieceSymbol, SquareStr};
 
     #[test]
     fn test_undo_after_two_moves() {

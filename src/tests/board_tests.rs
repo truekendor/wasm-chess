@@ -5,7 +5,7 @@
 pub mod board_tests {
     use crate::{
         WasmChess,
-        models::{PieceSymbol, utils::*, *},
+        models::{ColorChar, PieceSymbol, SquareStr, utils::*},
     };
 
     #[test]
@@ -15,42 +15,42 @@ pub mod board_tests {
         let answer = vec![
             vec![
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::A8,
                     r#type: PieceSymbol::R,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::B8,
                     r#type: PieceSymbol::N,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::C8,
                     r#type: PieceSymbol::B,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::D8,
                     r#type: PieceSymbol::Q,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::E8,
                     r#type: PieceSymbol::K,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::F8,
                     r#type: PieceSymbol::B,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::G8,
                     r#type: PieceSymbol::N,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::H8,
                     r#type: PieceSymbol::R,
                 }),
@@ -58,42 +58,42 @@ pub mod board_tests {
             vec![
                 // pawns
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::A7,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::B7,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::C7,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::D7,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::E7,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::F7,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::G7,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::H7,
                     r#type: PieceSymbol::P,
                 }),
@@ -109,42 +109,42 @@ pub mod board_tests {
             //
             vec![
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::A2,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::B2,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::C2,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::D2,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::E2,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::F2,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::G2,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::H2,
                     r#type: PieceSymbol::P,
                 }),
@@ -152,42 +152,42 @@ pub mod board_tests {
             vec![
                 // pieces
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::A1,
                     r#type: PieceSymbol::R,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::B1,
                     r#type: PieceSymbol::N,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::C1,
                     r#type: PieceSymbol::B,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::D1,
                     r#type: PieceSymbol::Q,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::E1,
                     r#type: PieceSymbol::K,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::F1,
                     r#type: PieceSymbol::B,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::G1,
                     r#type: PieceSymbol::N,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::H1,
                     r#type: PieceSymbol::R,
                 }),
@@ -208,21 +208,21 @@ pub mod board_tests {
             vec![
                 Some(SquareInfoObj {
                     square: SquareStr::A8,
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     r#type: PieceSymbol::R,
                 }),
                 None,
                 None,
                 None,
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::E8,
                     r#type: PieceSymbol::K,
                 }),
                 None,
                 None,
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::H8,
                     r#type: PieceSymbol::R,
                 }),
@@ -230,30 +230,30 @@ pub mod board_tests {
             vec![
                 // pawns
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::A7,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::B7,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::C7,
                     r#type: PieceSymbol::P,
                 }),
                 None,
                 None,
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::F7,
                     r#type: PieceSymbol::P,
                 }),
                 None,
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::H7,
                     r#type: PieceSymbol::P,
                 }),
@@ -263,20 +263,20 @@ pub mod board_tests {
                 None,
                 None,
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     square: SquareStr::C6,
                     r#type: PieceSymbol::N,
                 }),
                 None,
                 Some(SquareInfoObj {
                     square: SquareStr::E6,
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     r#type: PieceSymbol::P,
                 }),
                 None,
                 Some(SquareInfoObj {
                     square: SquareStr::G6,
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     r#type: PieceSymbol::P,
                 }),
                 None,
@@ -289,20 +289,20 @@ pub mod board_tests {
                 None,
                 Some(SquareInfoObj {
                     square: SquareStr::C4,
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     r#type: PieceSymbol::B,
                 }),
                 None,
                 None,
                 Some(SquareInfoObj {
                     square: SquareStr::F4,
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     r#type: PieceSymbol::P,
                 }),
                 None,
                 Some(SquareInfoObj {
                     square: SquareStr::H4,
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     r#type: PieceSymbol::Q,
                 }),
             ],
@@ -312,23 +312,23 @@ pub mod board_tests {
                 None,
                 Some(SquareInfoObj {
                     square: SquareStr::C3,
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     r#type: PieceSymbol::N,
                 }),
                 Some(SquareInfoObj {
                     square: SquareStr::D3,
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
                     square: SquareStr::E3,
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     r#type: PieceSymbol::B,
                 }),
                 None,
                 Some(SquareInfoObj {
                     square: SquareStr::G3,
-                    color: utils::ColorChar::B,
+                    color: ColorChar::B,
                     r#type: PieceSymbol::N,
                 }),
                 None,
@@ -336,12 +336,12 @@ pub mod board_tests {
             //
             vec![
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::A2,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::B2,
                     r#type: PieceSymbol::P,
                 }),
@@ -350,12 +350,12 @@ pub mod board_tests {
                 None,
                 None,
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::G2,
                     r#type: PieceSymbol::P,
                 }),
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::H2,
                     r#type: PieceSymbol::P,
                 }),
@@ -363,14 +363,14 @@ pub mod board_tests {
             vec![
                 // pieces
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::A1,
                     r#type: PieceSymbol::R,
                 }),
                 None,
                 None,
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::D1,
                     r#type: PieceSymbol::Q,
                 }),
@@ -378,7 +378,7 @@ pub mod board_tests {
                 None,
                 None,
                 Some(SquareInfoObj {
-                    color: utils::ColorChar::W,
+                    color: ColorChar::W,
                     square: SquareStr::H1,
                     r#type: PieceSymbol::K,
                 }),

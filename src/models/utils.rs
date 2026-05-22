@@ -2,7 +2,7 @@ use ordermap::OrderMap;
 use serde::{Deserialize, Serialize};
 use strum::Display;
 
-use crate::models::{PieceSymbol, SquareStr};
+use crate::models::{ColorChar, PieceSymbol, SquareStr};
 
 #[derive(tsify::Tsify, Serialize, Deserialize, PartialEq, Debug)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
@@ -61,30 +61,6 @@ pub struct PrunedCommentsObj {
 pub struct CastlingObj {
     pub king: Option<bool>,
     pub queen: Option<bool>,
-}
-
-#[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq, Clone)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
-#[serde(rename_all = "camelCase")]
-pub enum ColorChar {
-    W,
-    B,
-}
-
-impl ColorChar {
-    pub fn to_shakmaty_color(&self) -> shakmaty::Color {
-        match self {
-            ColorChar::W => shakmaty::Color::White,
-            ColorChar::B => shakmaty::Color::Black,
-        }
-    }
-
-    pub fn from_shakmaty_color(color: &shakmaty::Color) -> Self {
-        match color {
-            shakmaty::Color::White => ColorChar::W,
-            shakmaty::Color::Black => ColorChar::B,
-        }
-    }
 }
 
 // this is like a custom result

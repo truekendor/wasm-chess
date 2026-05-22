@@ -4,10 +4,7 @@
 pub mod legal_moves_test {
     use crate::{
         WasmChess,
-        models::{
-            MoveVerbose, PieceSymbol, SquareStr,
-            utils::{ColorChar, LegalMovesFilterOptions},
-        },
+        models::{ColorChar, MoveVerbose, PieceSymbol, SquareStr, utils::LegalMovesFilterOptions},
     };
 
     #[test]

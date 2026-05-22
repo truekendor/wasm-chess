@@ -123,7 +123,7 @@ impl WasmChess {
             return None;
         };
 
-        let piece_obj = PieceObj::from_shakmaty_piece(&piece);
+        let piece_obj = PieceObj::from(&piece);
 
         Some(piece_obj)
     }
@@ -188,7 +188,7 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "findPieceByType")]
     pub fn find_piece_from_obj(&self, piece: PieceObj) -> Vec<SquareStr> {
-        let piece_type = piece.to_shakmaty_piece();
+        let piece_type = Piece::from(&piece);
 
         let mut squares_with_piece: Vec<SquareStr> = vec![];
 

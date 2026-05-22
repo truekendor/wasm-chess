@@ -11,12 +11,12 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use crate::{
     impls::PGNResult,
     models::{
-        BoardMatrix, BoardObjRow, BoardState, MoveVerbose, PieceObj, PieceSymbol, SquareStr,
-        SuffixSymbol,
+        BoardMatrix, BoardObjRow, BoardState, ColorChar, MoveVerbose, PieceObj, PieceSymbol,
+        SquareStr, SuffixSymbol,
         utils::{
-            CastlingObj, ColorChar, CommentsObj, HeadersObj, LegalMovesFilterOptions,
-            MoveFromSquares, MoveObject, OkOrError, PGNOptions, PreserveHeaders, PrunedCommentsObj,
-            SquareColor, SquareInfoObj,
+            CastlingObj, CommentsObj, HeadersObj, LegalMovesFilterOptions, MoveFromSquares,
+            MoveObject, OkOrError, PGNOptions, PreserveHeaders, PrunedCommentsObj, SquareColor,
+            SquareInfoObj,
         },
     },
     utils::parsing::{self, san_to_san_plus, verbose_move_from_raw_move},

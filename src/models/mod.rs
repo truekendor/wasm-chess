@@ -1,4 +1,5 @@
 mod board_matrix;
+mod color_char;
 mod move_verbose;
 mod piece_obj;
 mod piece_symbol;
@@ -6,7 +7,8 @@ mod square_str;
 mod suffix_symbol;
 pub mod utils;
 
-pub use board_matrix::{BoardMatrix, BoardState, BoardObjRow};
+pub use board_matrix::{BoardMatrix, BoardObjRow, BoardState};
+pub use color_char::ColorChar;
 pub use move_verbose::MoveVerbose;
 pub use piece_obj::PieceObj;
 pub use piece_symbol::PieceSymbol;
