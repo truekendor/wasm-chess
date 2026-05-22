@@ -39,7 +39,6 @@ impl WasmChess {
         comments.cloned()
     }
 
-    // TODO: suffix annotations not working for now (deprecated ?j)
     #[wasm_bindgen(js_name = "getComments")]
     pub fn get_comments(&mut self) -> Vec<CommentsObj> {
         let mut comments_vec: Vec<CommentsObj> = vec![];

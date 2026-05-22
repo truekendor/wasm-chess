@@ -252,11 +252,11 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
 
         chess.load_pgn(pgn).expect("Pgn ok");
 
-        chess.make_move("e5").unwrap();
-        chess.make_move("Nf3").unwrap();
-        chess.make_move("Nd6").unwrap();
-        chess.make_move("Bc4").unwrap();
-        chess.make_move("Nc6").unwrap();
+        chess.play_move("e5").unwrap();
+        chess.play_move("Nf3").unwrap();
+        chess.play_move("Nd6").unwrap();
+        chess.play_move("Bc4").unwrap();
+        chess.play_move("Nc6").unwrap();
 
         // NOTE: not supported
         // TODO: add support ?
@@ -265,15 +265,15 @@ Kf8 {-0.86/32 7.341s, tl=228.122s, latency=-0.001s, n=732199533, sd=55, nps=9972
         // chess.make_move("0-0").unwrap();
         // chess.make_move("0-0-0").unwrap();
 
-        chess.make_move("O-O").unwrap();
-        chess.make_move("O-O-O").unwrap();
+        chess.play_move("O-O").unwrap();
+        chess.play_move("O-O-O").unwrap();
 
         pretty_assertions::assert_eq!(chess.fen(None), fen_last);
         chess.undo();
         chess.undo();
 
-        chess.make_move("d1e1").unwrap();
-        chess.make_move("f8e8").unwrap();
+        chess.play_move("d1e1").unwrap();
+        chess.play_move("f8e8").unwrap();
 
         pretty_assertions::assert_eq!(chess.fen(None), fen_last);
     }

@@ -23,7 +23,7 @@ pub mod history_test_chess_js {
         ];
 
         moves.iter().for_each(|m| {
-            chess.make_move(m).unwrap();
+            chess.play_move(m).unwrap();
         });
 
         pretty_assertions::assert_eq!(chess.fen(None), final_fen.to_string());

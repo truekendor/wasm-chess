@@ -307,8 +307,6 @@ pub fn is_two_square_pawn_move(mov: &Move) -> bool {
     };
     let to = mov.to();
 
-    // TODO:  probably just check if from() rank is 2 or 7 and to() rank is 4 or 5?
-
     let rank_diff = (to.rank() as i8 - from.rank() as i8).abs();
 
     rank_diff == 2

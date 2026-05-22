@@ -30,7 +30,7 @@ impl WasmChess {
     /// chess.move("e2e4")
     /// ```
     #[wasm_bindgen(js_name = "move")]
-    pub fn make_move(&mut self, move_str: &str) -> Result<MoveVerbose, String> {
+    pub fn play_move(&mut self, move_str: &str) -> Result<MoveVerbose, String> {
         let internal_move = utils::parsing::str_to_move(move_str, &self.chess).map_err(|err| {
             return err.to_string();
         })?;
@@ -55,11 +55,6 @@ impl WasmChess {
         return Ok(verbose);
     }
 
-    // TODO:
-    // add docs about what it does
-    // make public
-    // add js_name
-    // add tests
     /// Parses and validates a move without modifying the current position.
     ///
     /// Unlike [`move`](#method.make_move), this method does **not**
@@ -96,7 +91,8 @@ impl WasmChess {
     /// chess.simulateMove("Nf3")
     /// chess.simulateMove("e2e4")
     /// ```
-    fn simulate_move(&self, move_str: &str) -> Result<MoveVerbose, String> {
+    #[wasm_bindgen(js_name = "simulateMove")]
+    pub fn simulate_move(&self, move_str: &str) -> Result<MoveVerbose, String> {
         let internal_move = utils::parsing::str_to_move(move_str, &self.chess).map_err(|err| {
             return err.to_string();
         })?;
@@ -160,13 +156,13 @@ impl WasmChess {
         moves
             .iter()
             .map(|move_str| {
-                return self.make_move(move_str);
+                return self.play_move(move_str);
             })
             .collect::<Result<Vec<MoveVerbose>, String>>()
     }
 
     #[wasm_bindgen(js_name = "moveFromObj")]
-    pub fn make_move_from_obj(&mut self, move_obj: MoveObject) -> Result<MoveVerbose, String> {
+    pub fn play_move_from_obj(&mut self, move_obj: MoveObject) -> Result<MoveVerbose, String> {
         let mut move_str = String::with_capacity(5);
         move_str.push_str(&move_obj.from.as_str());
         move_str.push_str(&move_obj.to.as_str());
@@ -175,7 +171,7 @@ impl WasmChess {
             move_str.push_str(val.as_str());
         }
 
-        self.make_move(&move_str)
+        self.play_move(&move_str)
     }
 
     /// Undoes the last move.

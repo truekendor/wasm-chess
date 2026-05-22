@@ -2,8 +2,6 @@ use super::*;
 
 #[wasm_bindgen]
 impl WasmChess {
-    // TODO: make static/move to some other mod?
-    // TODO: add js_name
     #[wasm_bindgen(js_name = "validateFen")]
     pub fn validate_fen(&self, fen: String) -> OkOrError {
         match fen.parse::<Fen>() {

@@ -27,22 +27,6 @@ mod models;
 mod tests;
 mod utils;
 
-/// TODOs global
-/// add helper for fen parsing
-/// move board(), get_comments(), load_pgn() pgn() out of WasmChess struct
-///
-/// add current_or_initial_fen() ?
-///
-/// change legalMoves(UCI/SAN/Verbose) to
-/// legalMoves(Option<Mode::Verbose/San/Uci >)
-///
-/// missing chess.js methods
-/// moves(), pgn()
-///
-/// NOTES: not supported: nullmoves, excessive material
-/// direct board manipulation: clear(), put(), remove(), (setTurn() ? may be possible rn),
-/// setCastlingRights, clear
-
 #[derive(Clone, Debug)]
 struct History {
     raw_move: Move,
@@ -174,11 +158,6 @@ impl WasmChess {
     /// ```js
     /// chess.load("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
     /// ```
-
-    //  Note:
-    // I don't even know if we can just skip fen validation
-    // {skip_validation: bool}
-    // TODO: try add it anyway?
     pub fn load(
         &mut self,
         starting_fen: &str,

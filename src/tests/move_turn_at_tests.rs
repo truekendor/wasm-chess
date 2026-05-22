@@ -11,7 +11,7 @@ pub mod tests {
         let mut chess = WasmChess::new(None).unwrap();
 
         // Make a move: e4
-        chess.make_move("e4").unwrap();
+        chess.play_move("e4").unwrap();
 
         // After 1 move, it should be Black's turn
         pretty_assertions::assert_eq!(chess.side_to_move_at(0), Some(ColorChar::W)); // Starting position
@@ -24,8 +24,8 @@ pub mod tests {
         let mut chess = WasmChess::new(None).unwrap();
 
         // Make moves: e4 e5
-        chess.make_move("e4").unwrap();
-        chess.make_move("e5").unwrap();
+        chess.play_move("e4").unwrap();
+        chess.play_move("e5").unwrap();
 
         // After 2 moves, White's turn again
         assert_eq!(chess.side_to_move_at(0), Some(ColorChar::W)); // Starting position
@@ -42,7 +42,7 @@ pub mod tests {
         assert_eq!(chess.side_to_move_at(1), None);
         assert_eq!(chess.side_to_move_at(5), None);
 
-        chess.make_move("e4").unwrap();
+        chess.play_move("e4").unwrap();
 
         // After one move
         assert_eq!(chess.side_to_move_at(2), None);
@@ -62,7 +62,7 @@ pub mod tests {
         let mut chess = WasmChess::new(None).unwrap();
 
         // Make first move: e4
-        chess.make_move("e4").unwrap();
+        chess.play_move("e4").unwrap();
 
         let move_obj = chess.move_at(1);
         assert!(move_obj.is_some());
@@ -78,8 +78,8 @@ pub mod tests {
         let mut chess = WasmChess::new(None).unwrap();
 
         // Make moves: e4 e5
-        chess.make_move("e4").unwrap();
-        chess.make_move("e5").unwrap();
+        chess.play_move("e4").unwrap();
+        chess.play_move("e5").unwrap();
 
         let first_move = chess.move_at(1);
         assert!(first_move.is_some());
@@ -96,7 +96,7 @@ pub mod tests {
         let mut chess = WasmChess::new(Some(starting_fen)).unwrap();
 
         // Make promotion move: h7h8=Q
-        chess.make_move("h7g8q").unwrap();
+        chess.play_move("h7g8q").unwrap();
 
         let move_obj = chess.move_at(1);
         assert!(move_obj.is_some());
@@ -108,7 +108,7 @@ pub mod tests {
     #[test]
     fn test_move_at_invalid_index() {
         let mut chess = WasmChess::new(None).unwrap();
-        chess.make_move("e4").unwrap();
+        chess.play_move("e4").unwrap();
 
         // Index out of bounds
         pretty_assertions::assert_eq!(chess.move_at(0), None);
@@ -122,8 +122,8 @@ pub mod tests {
     #[test]
     fn test_move_at_after_reseting() {
         let mut chess = WasmChess::new(None).unwrap();
-        chess.make_move("e4").unwrap();
-        chess.make_move("e5").unwrap();
+        chess.play_move("e4").unwrap();
+        chess.play_move("e5").unwrap();
 
         assert!(chess.move_at(0).is_none());
         assert!(chess.move_at(1).is_some());
@@ -137,8 +137,8 @@ pub mod tests {
     fn test_move_at_after_setting_fen() {
         let mut chess = WasmChess::new(None).unwrap();
         let starting_fen = chess.fen(None);
-        chess.make_move("e4").unwrap();
-        chess.make_move("e5").unwrap();
+        chess.play_move("e4").unwrap();
+        chess.play_move("e5").unwrap();
 
         assert!(chess.move_at(0).is_none());
         assert!(chess.move_at(1).is_some());
@@ -158,7 +158,7 @@ pub mod tests {
         let moves = ["e2e4", "e7e5", "g1f3", "b8c6"];
 
         for (i, move_str) in moves.iter().enumerate() {
-            chess.make_move(move_str).unwrap();
+            chess.play_move(move_str).unwrap();
 
             // Check that move_at(i+1) returns the move we just made
             let move_obj = chess.move_at(i + 1);

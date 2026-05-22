@@ -12,7 +12,7 @@ pub mod move_tests {
 
         let mut chess = WasmChess::new(Some(fen.clone())).unwrap();
 
-        let e4_move = chess.make_move("e4").unwrap();
+        let e4_move = chess.play_move("e4").unwrap();
 
         pretty_assertions::assert_eq!(e4_move.captured, None);
         pretty_assertions::assert_eq!(e4_move.promotion, None);
@@ -46,7 +46,7 @@ pub mod move_tests {
 
         let mut chess = WasmChess::new(Some(fen.clone())).unwrap();
 
-        let rook_mate_move = chess.make_move("Rd8#").unwrap();
+        let rook_mate_move = chess.play_move("Rd8#").unwrap();
 
         pretty_assertions::assert_eq!(rook_mate_move.captured, None);
         pretty_assertions::assert_eq!(rook_mate_move.promotion, None);
@@ -82,7 +82,7 @@ pub mod move_tests {
 
         let mut chess = WasmChess::new(Some(fen.clone())).unwrap();
 
-        let rook_mate_move = chess.make_move("fxe6").unwrap();
+        let rook_mate_move = chess.play_move("fxe6").unwrap();
 
         assert!(rook_mate_move.captured.is_some());
         pretty_assertions::assert_eq!(rook_mate_move.captured, Some(PieceSymbol::P));
@@ -119,7 +119,7 @@ pub mod move_tests {
 
         let mut chess = WasmChess::new(Some(fen.clone())).unwrap();
 
-        let rook_mate_move = chess.make_move("fxe3").unwrap();
+        let rook_mate_move = chess.play_move("fxe3").unwrap();
 
         assert!(rook_mate_move.captured.is_some());
         pretty_assertions::assert_eq!(rook_mate_move.captured, Some(PieceSymbol::P));
@@ -156,7 +156,7 @@ pub mod move_tests {
 
         let mut chess = WasmChess::new(Some(fen.clone())).unwrap();
 
-        let mov = chess.make_move("Ne7").unwrap();
+        let mov = chess.play_move("Ne7").unwrap();
 
         pretty_assertions::assert_eq!(mov.from, SquareStr::G8);
         pretty_assertions::assert_eq!(mov.to, SquareStr::E7);
@@ -192,7 +192,7 @@ pub mod move_tests {
 
         let mut chess = WasmChess::new(Some(fen.clone())).unwrap();
 
-        let mov = chess.make_move("Nge7").unwrap();
+        let mov = chess.play_move("Nge7").unwrap();
 
         pretty_assertions::assert_eq!(mov.from, SquareStr::G8);
         pretty_assertions::assert_eq!(mov.to, SquareStr::E7);

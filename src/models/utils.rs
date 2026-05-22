@@ -114,9 +114,10 @@ pub struct PreserveHeaders {
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
-// TODO: rename
 pub struct PGNOptions {
+    /// Maximum line width for wrapping PGN moves (default: 80)
     pub max_width: Option<usize>,
+    /// Custom newline sequence (default: "\r\n" per PGN spec)
     pub newline: Option<String>,
 }
 

@@ -100,7 +100,7 @@ pub mod comments_test {
     #[test]
     fn handles_manually_set_suffix_only_for_current_fen() {
         let mut chess = WasmChess::new(None).unwrap();
-        chess.make_move("g3").unwrap();
+        chess.play_move("g3").unwrap();
 
         chess.set_suffix_annotation("?!", None).unwrap();
 
@@ -128,7 +128,7 @@ pub mod comments_test {
             pretty_assertions::assert_eq!(chess.get_comment(), None);
             pretty_assertions::assert_eq!(chess.get_comments().len(), 0);
 
-            chess.make_move("e4").unwrap();
+            chess.play_move("e4").unwrap();
 
             pretty_assertions::assert_eq!(chess.get_comment(), None);
             pretty_assertions::assert_eq!(chess.get_comments().len(), 0);
@@ -173,7 +173,7 @@ pub mod comments_test {
             pretty_assertions::assert_eq!(chess.get_comment(), None);
             pretty_assertions::assert_eq!(chess.get_comments().len(), 0);
 
-            chess.make_move("e4").unwrap();
+            chess.play_move("e4").unwrap();
             let c4_fen = chess.fen(None);
 
             chess.set_comment(comment_str);
@@ -189,7 +189,7 @@ pub mod comments_test {
                 }]
             );
 
-            chess.make_move("e5").unwrap();
+            chess.play_move("e5").unwrap();
             pretty_assertions::assert_eq!(chess.get_comment(), None);
             pretty_assertions::assert_eq!(
                 chess.get_comments(),
@@ -212,8 +212,8 @@ pub mod comments_test {
         #[test]
         fn comment_for_last_move() {
             let mut chess = WasmChess::new(None).unwrap();
-            chess.make_move("e4").unwrap();
-            chess.make_move("e6").unwrap();
+            chess.play_move("e4").unwrap();
+            chess.play_move("e6").unwrap();
 
             let comment_str = "dubious move";
             chess.set_comment(comment_str);
@@ -275,7 +275,7 @@ pub mod comments_test {
                 true
             );
 
-            chess.make_move("e4").unwrap();
+            chess.play_move("e4").unwrap();
 
             let e4_fen = chess.fen(None);
             let second_comment_str = "good move";
@@ -313,7 +313,7 @@ pub mod comments_test {
                 true
             );
 
-            chess.make_move("e6").unwrap();
+            chess.play_move("e6").unwrap();
             let third_comment_str = "dubious move";
 
             chess.set_comment(third_comment_str);
@@ -367,12 +367,12 @@ pub mod comments_test {
             let init_fen = chess.fen(None);
 
             chess.set_comment("starting position");
-            chess.make_move("e4").unwrap();
+            chess.play_move("e4").unwrap();
 
             let e4_fen = chess.fen(None);
             chess.set_comment("good move");
 
-            chess.make_move("e6").unwrap();
+            chess.play_move("e6").unwrap();
             chess.set_comment("dubious move");
             let e6_fen = chess.fen(None);
 
@@ -437,11 +437,11 @@ pub mod comments_test {
         #[test]
         fn prune_comments() {
             let mut chess = WasmChess::new(None).unwrap();
-            chess.make_move("e4").unwrap();
+            chess.play_move("e4").unwrap();
             chess.set_comment("tactical");
 
             chess.undo();
-            chess.make_move("d4").unwrap();
+            chess.play_move("d4").unwrap();
             chess.set_comment("positional");
 
             pretty_assertions::assert_eq!(
@@ -460,7 +460,7 @@ pub mod comments_test {
         #[test]
         fn comments_clear_after_load() {
             let mut chess = WasmChess::new(None).unwrap();
-            chess.make_move("e4").unwrap();
+            chess.play_move("e4").unwrap();
             chess.set_comment("good move");
 
             pretty_assertions::assert_eq!(
@@ -481,7 +481,7 @@ pub mod comments_test {
         #[test]
         fn comments_clear_after_pgn_load() {
             let mut chess = WasmChess::new(None).unwrap();
-            chess.make_move("e4").unwrap();
+            chess.play_move("e4").unwrap();
             chess.set_comment("good move");
 
             pretty_assertions::assert_eq!(
@@ -502,7 +502,7 @@ pub mod comments_test {
         #[test]
         fn comments_clear_after_reset() {
             let mut chess = WasmChess::new(None).unwrap();
-            chess.make_move("e4").unwrap();
+            chess.play_move("e4").unwrap();
             chess.set_comment("good move");
 
             pretty_assertions::assert_eq!(

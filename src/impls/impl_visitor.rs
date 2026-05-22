@@ -105,7 +105,7 @@ impl Visitor for WasmChess {
         _movetext: &mut Self::Movetext,
         san_plus: SanPlus,
     ) -> ControlFlow<Self::Output> {
-        match self.make_move(&san_plus.san.to_string()) {
+        match self.play_move(&san_plus.san.to_string()) {
             Ok(_) => {
                 return ControlFlow::Continue(());
             }

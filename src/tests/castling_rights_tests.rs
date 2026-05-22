@@ -54,8 +54,8 @@ pub mod castling_rights_tests {
             }
         );
 
-        chess.make_move("Ra2").unwrap();
-        chess.make_move("Rh7").unwrap();
+        chess.play_move("Ra2").unwrap();
+        chess.play_move("Rh7").unwrap();
 
         pretty_assertions::assert_eq!(
             chess.get_castling_rights(ColorChar::W),
@@ -87,7 +87,7 @@ pub mod castling_rights_tests {
             }
         );
 
-        chess.make_move("Ke2").unwrap();
+        chess.play_move("Ke2").unwrap();
 
         pretty_assertions::assert_eq!(
             chess.get_castling_rights(ColorChar::W),

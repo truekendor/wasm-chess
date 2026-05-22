@@ -2,7 +2,6 @@ use super::*;
 
 #[wasm_bindgen]
 impl WasmChess {
-    // TODO: add tests for nags ?
     #[wasm_bindgen(js_name = "getNags")]
     pub fn get_nags(&self, fen: Option<String>) -> Vec<String> {
         let Some(pgn_result) = self.pgn_result.as_ref() else {
@@ -87,7 +86,6 @@ impl WasmChess {
         pgn_result.suffix_map.get(&fen_key).cloned()
     }
 
-    // TODO: add custom types like type Suffix = String to avoid confusion
     #[wasm_bindgen(js_name = "setSuffixAnnotation")]
     pub fn set_suffix_annotation(
         &mut self,

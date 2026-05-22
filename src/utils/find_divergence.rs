@@ -9,8 +9,6 @@ use crate::utils::parsing::{moves_to_san, str_to_move};
 pub struct InternalMovesAndHash {
     zobrist_hash: Vec<Zobrist64>,
     san_moves: Vec<String>,
-    // TODO:
-    // err_message: Option<String>
 }
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]

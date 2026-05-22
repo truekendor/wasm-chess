@@ -15,8 +15,18 @@ impl WasmChess {
         fen.to_string()
     }
 
-    // TODO: add inline docs
-    // add use cases ? maybe
+    /// Returns a FEN string representing only the piece placement on the board.
+    ///
+    /// ## Returns
+    /// A FEN string in the format `"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"`
+    /// describing the current piece layout.
+    ///
+    /// ## Example
+    /// ```
+    /// let board_fen = chess.board_fen();
+    /// assert_eq!(board_fen, "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    /// ```
+    #[wasm_bindgen(js_name = "boardFen")]
     pub fn board_fen(&self) -> String {
         self.chess.board().board_fen().to_string()
     }
@@ -165,11 +175,6 @@ impl WasmChess {
         })
     }
 
-    // TODO:
-    // write tests
-    // consider changing default behavior if None is provided by returning
-    // true if any side given square
-    // i don't like state coupling, but it is the way chess.js implemented it
     #[wasm_bindgen(js_name = "isAttacked")]
     pub fn is_attacked(&self, square: SquareStr, attacked_by_side: Option<ColorChar>) -> bool {
         let square = SquareStr::to_shakmaty_sq(&square);
@@ -192,10 +197,6 @@ impl WasmChess {
         }
     }
 
-    // TODO:
-    // consider changing default behavior if None is provided by returning
-    // true if any side given square
-    // i don't like state coupling, but it is the way chess.js implemented it
     pub fn attackers(
         &self,
         square: SquareStr,
@@ -291,8 +292,6 @@ impl WasmChess {
     /// |      Aspect       |           chess.js             |      This Implementation      |
     /// |-------------------|--------------------------------|-------------------------------|
     /// | En passant square | Always included when available | Only included for legal moves |
-    ///
-    /// **TODO:** Evaluate whether to align with chess.js behavior in a future release.
     #[wasm_bindgen(js_name = "legalMovesVerbose")]
     pub fn legal_moves_verbose(
         &self,

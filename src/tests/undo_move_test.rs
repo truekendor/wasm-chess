@@ -8,13 +8,13 @@ mod undo_logic_test {
         let mut wasm_chess = WasmChess::new(None).unwrap();
         let starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-        wasm_chess.make_move("e4").unwrap();
-        wasm_chess.make_move("e7e5").unwrap();
+        wasm_chess.play_move("e4").unwrap();
+        wasm_chess.play_move("e7e5").unwrap();
 
-        pretty_assertions::assert_eq!(wasm_chess.fen_at(0).unwrap(), starting_fen);
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(0), starting_fen);
 
         pretty_assertions::assert_eq!(
-            wasm_chess.fen_at(1).unwrap(),
+            wasm_chess.fen_at(1),
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
         );
 
@@ -51,9 +51,9 @@ mod undo_logic_test {
 
         pretty_assertions::assert_eq!(
             wasm_chess.fen_at(1),
-            Some("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string())
+            "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string()
         );
-        pretty_assertions::assert_eq!(wasm_chess.fen_at(0).unwrap(), starting_fen);
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(0), starting_fen);
 
         let move_str = wasm_chess.undo().unwrap();
         pretty_assertions::assert_eq!(
@@ -88,8 +88,8 @@ mod undo_logic_test {
     fn test_undo() {
         let mut chess = WasmChess::new(None).unwrap();
 
-        chess.make_move("e2e4").unwrap();
-        chess.make_move("e7e5").unwrap();
+        chess.play_move("e2e4").unwrap();
+        chess.play_move("e7e5").unwrap();
 
         pretty_assertions::assert_eq!(chess.history.len(), 2);
         pretty_assertions::assert_eq!(chess.repetition_table.len(), 3);
