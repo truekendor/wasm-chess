@@ -27,7 +27,7 @@ pub mod test {
         let mut chess = WasmChess::new(None).unwrap();
 
         // Valid moves
-        assert!(chess.make_move("e2e4").is_ok());
+        assert!(chess.play_move("e2e4").is_ok());
         pretty_assertions::assert_eq!(
             chess.fen(None),
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
@@ -40,12 +40,12 @@ pub mod test {
         pretty_assertions::assert_eq!(chess.fullmoves(), 1);
         pretty_assertions::assert_eq!(chess.halfmoves(), 0);
 
-        assert!(chess.make_move("e7e5").is_ok());
+        assert!(chess.play_move("e7e5").is_ok());
         pretty_assertions::assert_eq!(chess.turn(), ColorChar::W);
         pretty_assertions::assert_eq!(chess.fullmoves(), 2);
 
         // Invalid move
-        let result = chess.make_move("e2e4");
+        let result = chess.play_move("e2e4");
         assert!(result.is_err());
         assert!(result.unwrap_err().contains("Illegal move"));
     }
@@ -57,23 +57,14 @@ pub mod test {
         assert!(!chess.is_game_over());
 
         // Fool's mate
-        chess.make_move("f2f3").unwrap();
-        chess.make_move("e7e5").unwrap();
-        chess.make_move("g2g4").unwrap();
-        chess.make_move("d8h4").unwrap();
+        chess.play_move("f2f3").unwrap();
+        chess.play_move("e7e5").unwrap();
+        chess.play_move("g2g4").unwrap();
+        chess.play_move("d8h4").unwrap();
 
         assert!(chess.is_game_over());
         assert!(chess.is_checkmate());
         assert!(chess.is_check());
-    }
-
-    // #[test]
-    fn test_make_move_from_object() {
-        todo!()
-    }
-
-    fn test_make_move_with_promotion() {
-        todo!()
     }
 
     #[test]
@@ -82,9 +73,9 @@ pub mod test {
 
         assert_eq!(chess.history_san().len(), 0);
 
-        chess.make_move("e2e4").unwrap();
-        chess.make_move("e7e5").unwrap();
-        chess.make_move("g1f3").unwrap();
+        chess.play_move("e2e4").unwrap();
+        chess.play_move("e7e5").unwrap();
+        chess.play_move("g1f3").unwrap();
 
         let history = chess.history_san();
 
@@ -104,9 +95,9 @@ pub mod test {
 
         assert_eq!(chess.history_san().len(), 0);
 
-        chess.make_move("e2e4").unwrap();
-        chess.make_move("e7e5").unwrap();
-        chess.make_move("g1f3").unwrap();
+        chess.play_move("e2e4").unwrap();
+        chess.play_move("e7e5").unwrap();
+        chess.play_move("g1f3").unwrap();
 
         let history = chess.history_uci();
 
@@ -128,18 +119,18 @@ pub mod test {
         assert!(!chess.is_threefold_repetition());
 
         // Repeat same position twice more
-        chess.make_move("g1f3").unwrap();
-        chess.make_move("g8f6").unwrap();
-        chess.make_move("f3g1").unwrap();
-        chess.make_move("f6g8").unwrap();
+        chess.play_move("g1f3").unwrap();
+        chess.play_move("g8f6").unwrap();
+        chess.play_move("f3g1").unwrap();
+        chess.play_move("f6g8").unwrap();
 
         // After 2nd repetition, should still be false (needs 3)
         assert!(!chess.is_threefold_repetition());
 
-        chess.make_move("g1f3").unwrap();
-        chess.make_move("g8f6").unwrap();
-        chess.make_move("f3g1").unwrap();
-        chess.make_move("f6g8").unwrap();
+        chess.play_move("g1f3").unwrap();
+        chess.play_move("g8f6").unwrap();
+        chess.play_move("f3g1").unwrap();
+        chess.play_move("f6g8").unwrap();
 
         // After 3rd repetition, should be true
         assert!(chess.is_threefold_repetition());
@@ -150,14 +141,14 @@ pub mod test {
         let mut chess = WasmChess::new(None).unwrap();
 
         pretty_assertions::assert_eq!(chess.halfmoves(), 0);
-        chess.make_move("e2e4").unwrap();
+        chess.play_move("e2e4").unwrap();
         pretty_assertions::assert_eq!(chess.halfmoves(), 0); // Pawn move resets counter
-        chess.make_move("e7e5").unwrap();
+        chess.play_move("e7e5").unwrap();
         pretty_assertions::assert_eq!(chess.halfmoves(), 0); // Pawn move resets counter
 
-        chess.make_move("g1f3").unwrap();
+        chess.play_move("g1f3").unwrap();
         pretty_assertions::assert_eq!(chess.halfmoves(), 1);
-        chess.make_move("g8f6").unwrap();
+        chess.play_move("g8f6").unwrap();
         pretty_assertions::assert_eq!(chess.halfmoves(), 2);
     }
 
@@ -167,7 +158,7 @@ pub mod test {
             "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1".to_string(),
         ))
         .unwrap();
-        chess.make_move("a2a3").unwrap();
+        chess.play_move("a2a3").unwrap();
 
         chess.reset();
 
@@ -183,7 +174,7 @@ pub mod test {
         let fen_str = String::from("8/1Q2bk2/P2p2p1/2pPp3/2P1P3/2N2n2/2KN1q2/8 w - - 1 61");
         let mut chess = WasmChess::new(Some(fen_str)).unwrap();
 
-        chess.make_move("Nb1").unwrap();
+        chess.play_move("Nb1").unwrap();
     }
 
     #[test]
@@ -191,7 +182,7 @@ pub mod test {
         let fen_str = String::from("8/1Q2bk2/P2p2p1/2pPp3/2P1P3/2N2n2/2KN1q2/8 w - - 1 61");
         let mut chess = WasmChess::new(Some(fen_str)).unwrap();
 
-        let result = chess.make_move("Ndb1");
+        let result = chess.play_move("Ndb1");
 
         assert!(result.is_err())
     }
@@ -201,7 +192,7 @@ pub mod test {
         let fen_str = String::from("8/1Q2bk2/P2p2p1/2pPp3/2P1P3/2N2n2/2KN4/8 w - - 1 61");
         let mut chess = WasmChess::new(Some(fen_str)).unwrap();
 
-        let result = chess.make_move("Nb1");
+        let result = chess.play_move("Nb1");
 
         assert!(result.is_err());
     }

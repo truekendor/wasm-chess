@@ -4,7 +4,7 @@ use super::*;
 
 #[wasm_bindgen]
 impl WasmChess {
-    pub fn fen(&self, force_en_passant_square: Option<bool>) -> FenString {
+    pub fn fen(&self, force_en_passant_square: Option<bool>) -> String {
         let en_passant_mode = match force_en_passant_square {
             Some(true) => shakmaty::EnPassantMode::Always,
             Some(false) => shakmaty::EnPassantMode::Legal,
@@ -15,19 +15,29 @@ impl WasmChess {
         fen.to_string()
     }
 
-    // TODO: add inline docs
-    // add use cases ? maybe
+    /// Returns a FEN string representing only the piece placement on the board.
+    ///
+    /// ## Returns
+    /// A FEN string in the format `"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"`
+    /// describing the current piece layout.
+    ///
+    /// ## Example
+    /// ```
+    /// let board_fen = chess.board_fen();
+    /// assert_eq!(board_fen, "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    /// ```
+    #[wasm_bindgen(js_name = "boardFen")]
     pub fn board_fen(&self) -> String {
         self.chess.board().board_fen().to_string()
     }
 
-    pub fn board(&self) -> BoardMatrixReturnObj {
+    pub fn board(&self) -> BoardState {
         const RANK_STRINGS: [&str; 8] = ["1", "2", "3", "4", "5", "6", "7", "8"];
         let mut result: BoardMatrix = Vec::with_capacity(8);
         let mut square_str = String::with_capacity(2);
 
         for rank in (1..=8).rev() {
-            let mut row: BoardMatrixRow = Vec::with_capacity(8);
+            let mut row: BoardObjRow = Vec::with_capacity(8);
 
             for file in 'a'..='h' {
                 square_str.clear();
@@ -61,7 +71,7 @@ impl WasmChess {
             result.push(row);
         }
 
-        BoardMatrixReturnObj {
+        BoardState {
             board_matrix: result,
         }
     }
@@ -93,6 +103,19 @@ impl WasmChess {
             .unwrap_or(false)
     }
 
+    /// Gets the piece at a specific square.
+    ///
+    /// # JavaScript Example
+    /// ```js
+    /// const piece = chess.get('e2');
+    /// if (piece) {
+    ///   console.log(piece.color, piece.kind); // 'w', 'pawn'
+    /// }
+    /// ```
+    ///
+    /// # Returns
+    /// - `PieceObj` if a piece exists at the square
+    /// - `null` | `undefined` if the square is empty
     pub fn get(&self, square: SquareStr) -> Option<PieceObj> {
         let square = square.to_shakmaty_sq();
 
@@ -105,12 +128,38 @@ impl WasmChess {
         Some(piece_obj)
     }
 
+    /// Finds all squares containing a piece identified by its single-character notation.
+    ///
+    ///
+    /// # JavaScript Example
+    /// ```js
+    /// // Find all white knights
+    /// const knightSquares = chess.findPiece('N');
+    ///
+    /// // Find all black pawns
+    /// const blackPawnSquares = chess.findPiece('p');
+    /// ```
+    ///
+    /// # Parameters
+    /// - `piece`: Single character piece notation:
+    ///   - Uppercase: `K` (king), `Q` (queen), `R` (rook), `B` (bishop), `N` (knight), `P` (pawn) = white
+    ///   - Lowercase: same letters = black
+    ///
+    /// # Returns
+    /// Array of square strings (e.g., `['g1', 'b1']`)
+    ///
+    /// # Throws
+    /// If the piece string is invalid (wrong length or unknown piece character)
     #[wasm_bindgen(js_name = "findPiece")]
     pub fn find_piece_from_str(&self, piece: &str) -> Result<Vec<SquareStr>, String> {
         let piece = piece.trim();
 
         if piece.len() != 1 {
-            return Err(format!("Error: unexpected piece length: {}", piece.len()));
+            return Err(format!(
+                "Error: unexpected piece length: {}\nPiece: {}",
+                piece.len(),
+                piece
+            ));
         }
 
         let piece_char = piece
@@ -165,11 +214,6 @@ impl WasmChess {
         })
     }
 
-    // TODO:
-    // write tests
-    // consider changing default behavior if None is provided by returning
-    // true if any side given square
-    // i don't like state coupling, but it is the way chess.js implemented it
     #[wasm_bindgen(js_name = "isAttacked")]
     pub fn is_attacked(&self, square: SquareStr, attacked_by_side: Option<ColorChar>) -> bool {
         let square = SquareStr::to_shakmaty_sq(&square);
@@ -192,10 +236,6 @@ impl WasmChess {
         }
     }
 
-    // TODO:
-    // consider changing default behavior if None is provided by returning
-    // true if any side given square
-    // i don't like state coupling, but it is the way chess.js implemented it
     pub fn attackers(
         &self,
         square: SquareStr,
@@ -234,10 +274,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "legalMovesUci")]
-    pub fn legal_moves_uci(
-        &self,
-        filter_options: Option<LegalMovesFilterOptions>,
-    ) -> Vec<MoveString> {
+    pub fn legal_moves_uci(&self, filter_options: Option<LegalMovesFilterOptions>) -> Vec<String> {
         let filter_options = unwrap_filter_options(&filter_options);
 
         let legal_moves: Vec<String> = self
@@ -259,10 +296,7 @@ impl WasmChess {
     }
 
     #[wasm_bindgen(js_name = "legalMovesSan")]
-    pub fn legal_moves_san(
-        &self,
-        filter_options: Option<LegalMovesFilterOptions>,
-    ) -> Vec<MoveString> {
+    pub fn legal_moves_san(&self, filter_options: Option<LegalMovesFilterOptions>) -> Vec<String> {
         let filter_options = unwrap_filter_options(&filter_options);
 
         let legal_moves: Vec<String> = self
@@ -297,8 +331,6 @@ impl WasmChess {
     /// |      Aspect       |           chess.js             |      This Implementation      |
     /// |-------------------|--------------------------------|-------------------------------|
     /// | En passant square | Always included when available | Only included for legal moves |
-    ///
-    /// **TODO:** Evaluate whether to align with chess.js behavior in a future release.
     #[wasm_bindgen(js_name = "legalMovesVerbose")]
     pub fn legal_moves_verbose(
         &self,

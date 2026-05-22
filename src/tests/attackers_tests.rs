@@ -149,7 +149,7 @@ pub mod attackers_tests {
         );
         pretty_assertions::assert_eq!(chess.attackers(SquareStr::C6, None), vec![],);
 
-        chess.make_move("e4").unwrap();
+        chess.play_move("e4").unwrap();
 
         pretty_assertions::assert_eq!(chess.attackers(SquareStr::C3, None), vec![],);
         pretty_assertions::assert_eq!(
@@ -157,7 +157,7 @@ pub mod attackers_tests {
             vec![SquareStr::B7, SquareStr::D7, SquareStr::B8,],
         );
 
-        chess.make_move("e5").unwrap();
+        chess.play_move("e5").unwrap();
 
         pretty_assertions::assert_eq!(
             chess.attackers(SquareStr::C3, None),
@@ -280,7 +280,7 @@ pub mod attackers_tests {
         );
         pretty_assertions::assert_eq!(chess.attackers(SquareStr::F6, None), vec![]);
 
-        chess.make_move("e4").unwrap();
+        chess.play_move("e4").unwrap();
 
         pretty_assertions::assert_eq!(
             chess.attackers(SquareStr::F6, None),

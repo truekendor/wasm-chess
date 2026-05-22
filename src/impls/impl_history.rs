@@ -46,8 +46,7 @@ impl WasmChess {
         moves_verbose
     }
 
-    // more docs because this method not present in chess.js
-    /// ## Returns the FEN string at a specific move index.
+    /// Returns the FEN string at a specific move index.
     ///
     /// ## Parameters
     /// * `index` - The move index (0-based):
@@ -56,35 +55,40 @@ impl WasmChess {
     ///   - `2` - Position after second move, etc.
     ///
     /// ## Returns
-    /// * `Some(String)` - The FEN string at the requested position
-    /// * `None` - If `index` exceeds total moves played
+    /// The FEN string at the requested position:
+    ///   - For valid indices (0 through history length), returns the position at that index
+    ///   - For indices beyond the history length, returns the last available position
+    ///
+    /// ## Note
+    /// This method never fails - out-of-bounds indices return the final position.
+    /// This is useful for UCI-style interfaces where move indices might exceed the game length.
     ///
     /// ## Example
     /// ```
-    /// assert!(chess.fen_at(0).is_some());  // Starting position always available
-    /// assert_eq!(chess.fen_at(0), Some("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1".to_string())); // starting position
+    /// assert_eq!(chess.fen_at(0), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     ///
     /// // After 1.e4
-    /// assert_eq!(chess.fen_at(1), Some("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1".to_string()));
+    /// assert_eq!(chess.fen_at(1), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1");
+    ///
+    /// // Index beyond game length returns the final position
+    /// assert_eq!(chess.fen_at(999), final_position_fen);
     /// ```
     #[wasm_bindgen(js_name = "fenAt")]
-    pub fn fen_at(&self, index: usize) -> Option<String> {
-        match index {
-            0 => {
-                let starting_fen = match self.history.len() > 0 {
-                    false => self.fen(None),
-                    true => self.history[0].fen_before.to_string(),
-                };
-
-                Some(starting_fen)
+    pub fn fen_at(&self, index: usize) -> String {
+        if index == 0 {
+            if self.history.is_empty() {
+                self.fen(None)
+            } else {
+                self.history[0].fen_before.to_string()
             }
-            idx => {
-                if idx <= self.history.len() {
-                    Some(self.history[idx - 1].fen_after.to_string())
-                } else {
-                    None
-                }
-            }
+        } else if index <= self.history.len() {
+            self.history[index - 1].fen_after.to_string()
+        } else {
+            // Index beyond history - return last position
+            self.history
+                .last()
+                .map(|last| last.fen_after.to_string())
+                .unwrap_or_else(|| self.fen(None))
         }
     }
 
@@ -127,7 +131,6 @@ impl WasmChess {
         }
     }
 
-    // TODO: write tests for it
     /// Returns which side to move at a specific index.
     ///
     /// # Parameters
@@ -168,7 +171,7 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "moveNumber")]
     pub fn move_number(&self) -> u32 {
-        return self.history.len() as u32;
+        return self.chess.fullmoves().get();
     }
 
     pub fn length(&self) -> u32 {

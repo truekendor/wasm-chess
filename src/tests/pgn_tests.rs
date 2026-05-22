@@ -79,8 +79,6 @@ pub mod pgn_from_chess_test {
         pretty_assertions::assert_eq!(exists, false);
     }
 
-    // TODO:
-    // fix the formatting to be 100% compatible with chess.js
     #[test]
     fn list_of_positions_ok() {
         struct TestingPositions<'a> {
@@ -174,13 +172,13 @@ pub mod pgn_from_chess_test {
             }
 
             let moves = position.moves.split_whitespace();
-            let moves_count = &moves.clone().count();
+            let moves_count = &moves.clone().count() / 2 + 1;
 
             moves.for_each(|move_str| {
-                chess.make_move(move_str).unwrap();
+                chess.play_move(move_str).unwrap();
             });
 
-            pretty_assertions::assert_eq!(*moves_count as u32, chess.move_number());
+            pretty_assertions::assert_eq!(moves_count as u32, chess.move_number());
             pretty_assertions::assert_eq!(chess.fen(None), position.final_fen);
 
             position.header_tags.iter().for_each(|(key, value)| {
@@ -196,10 +194,6 @@ pub mod pgn_from_chess_test {
             };
 
             let pgn = chess.pgn(Some(options));
-            // TODO:
-            // delete
-            // println!("pgn() output: {:#?}", pgn);
-            // println!("expected    : {:#?}", position.pgn);
 
             pretty_assertions::assert_eq!(position.pgn.trim(), pgn);
         });

@@ -41,7 +41,7 @@ pub mod fen_tests {
         let mut chess = WasmChess::new(Some("6bk/R7/7K/8/8/8/8/8 w - - 0 1".to_string())).unwrap();
 
         assert!(!chess.is_draw());
-        chess.make_move("a7a8").unwrap();
+        chess.play_move("a7a8").unwrap();
         // King has no legal moves but not in check = stalemate
         assert!(chess.is_draw());
         assert!(!chess.is_checkmate());
@@ -67,7 +67,7 @@ pub mod fen_tests {
 
         for _ in 0..3 {
             for mv in moves.iter() {
-                chess.make_move(mv).unwrap();
+                chess.play_move(mv).unwrap();
             }
         }
 
@@ -116,9 +116,9 @@ pub mod fen_tests {
     fn test_fen_at_index_before_any_moves() {
         let wasm_chess = WasmChess::new(None).unwrap();
 
-        pretty_assertions::assert_eq!(wasm_chess.fen_at(0).unwrap(), wasm_chess.fen(None));
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(0), wasm_chess.fen(None));
 
-        assert!(wasm_chess.fen_at(100).is_none());
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(100), wasm_chess.fen(None));
     }
 
     #[test]
@@ -127,39 +127,38 @@ pub mod fen_tests {
 
         let starting_fen = wasm_chess.fen(None);
 
-        wasm_chess.make_move("e4").unwrap();
-        wasm_chess.make_move("e7e5").unwrap();
-        wasm_chess.make_move("Nf3").unwrap();
+        wasm_chess.play_move("e4").unwrap();
+        wasm_chess.play_move("e7e5").unwrap();
+        wasm_chess.play_move("Nf3").unwrap();
         wasm_chess
-            .make_move_from_obj(MoveObject {
+            .play_move_from_obj(MoveObject {
                 from: SquareStr::H7,
                 to: SquareStr::H6,
                 promotion: None,
             })
             .unwrap();
 
-        pretty_assertions::assert_eq!(wasm_chess.fen_at(0).unwrap(), starting_fen);
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(0), starting_fen);
         pretty_assertions::assert_eq!(
-            wasm_chess.fen_at(1).unwrap(),
+            wasm_chess.fen_at(1),
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
         );
         pretty_assertions::assert_eq!(
-            wasm_chess.fen_at(2).unwrap(),
+            wasm_chess.fen_at(2),
             "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
         );
         pretty_assertions::assert_eq!(
-            wasm_chess.fen_at(3).unwrap(),
+            wasm_chess.fen_at(3),
             "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
         );
         pretty_assertions::assert_eq!(
-            wasm_chess.fen_at(4).unwrap(),
+            wasm_chess.fen_at(4),
             "rnbqkbnr/pppp1pp1/7p/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3"
         );
 
-        assert!(wasm_chess.fen_at(4).is_some());
-        assert!(wasm_chess.fen_at(5).is_none());
-        assert!(wasm_chess.fen_at(10000).is_none());
-        assert!(wasm_chess.fen_at(usize::MAX).is_none());
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(5), wasm_chess.fen(None));
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(10000), wasm_chess.fen(None));
+        pretty_assertions::assert_eq!(wasm_chess.fen_at(usize::MAX), wasm_chess.fen(None));
     }
 
     /// tests from this module are taken from chess.js test suite for fen()
@@ -174,7 +173,7 @@ pub mod fen_tests {
             let mut wasm_chess =
                 WasmChess::new(Some("4k3/8/8/8/5p2/8/4P3/4K3 w - - 0 1".to_string())).unwrap();
 
-            wasm_chess.make_move("e4").unwrap();
+            wasm_chess.play_move("e4").unwrap();
 
             pretty_assertions::assert_eq!(
                 wasm_chess.fen(None),
@@ -187,7 +186,7 @@ pub mod fen_tests {
             let mut wasm_chess =
                 WasmChess::new(Some("5k2/8/8/8/5p2/8/4P3/4KR2 w - - 0 1".to_string())).unwrap();
 
-            wasm_chess.make_move("e4").unwrap();
+            wasm_chess.play_move("e4").unwrap();
 
             pretty_assertions::assert_eq!(
                 wasm_chess.fen(None),
@@ -202,7 +201,7 @@ pub mod fen_tests {
             ))
             .unwrap();
 
-            wasm_chess.make_move("e5").unwrap();
+            wasm_chess.play_move("e5").unwrap();
 
             pretty_assertions::assert_eq!(
                 wasm_chess.fen(None),
@@ -217,7 +216,7 @@ pub mod fen_tests {
             ))
             .unwrap();
 
-            wasm_chess.make_move("e5").unwrap();
+            wasm_chess.play_move("e5").unwrap();
 
             pretty_assertions::assert_eq!(
                 wasm_chess.fen(Some(true)),
@@ -229,7 +228,7 @@ pub mod fen_tests {
         fn force_en_passant_square_by_option() {
             let mut wasm_chess = WasmChess::new(None).unwrap();
 
-            wasm_chess.make_move("e4").unwrap();
+            wasm_chess.play_move("e4").unwrap();
             let fen_with_ep = wasm_chess.fen(Some(true));
             let fen_with_without_ep = wasm_chess.fen(Some(false));
             let fen_with_without_ep_none = wasm_chess.fen(None);

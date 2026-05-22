@@ -4,10 +4,7 @@ use serde::{Deserialize, Serialize};
 use shakmaty::{Chess, Color, Move, Position, Role, fen::Fen, san::San, uci::UciMove};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::{
-    MoveString,
-    models::{MoveVerbose, PieceSymbol, SquareStr, utils::ColorChar},
-};
+use crate::models::{MoveVerbose, PieceSymbol, SquareStr, utils::ColorChar};
 
 #[derive(Clone, Debug)]
 pub enum MoveParseError {
@@ -30,13 +27,13 @@ impl std::error::Error for MoveParseError {}
 #[derive(tsify::Tsify, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct MovesAndError {
-    pub moves: Vec<MoveString>,
+    pub moves: Vec<String>,
     pub message: Option<String>,
 }
 
 /// converts Vec of moves in SAN/LAN format, into Vec of SAN moves
-#[wasm_bindgen(js_name = "toSan")]
-pub fn to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
+#[wasm_bindgen(js_name = "movesToSan")]
+pub fn moves_to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
     let starting_fen = starting_fen.unwrap_or_else(|| {
         Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
     });
@@ -104,8 +101,8 @@ pub fn to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError
 }
 
 /// converts Vec of moves in SAN/LAN format, into Vec of UCI moves
-#[wasm_bindgen(js_name = "toUci")]
-pub fn to_uci(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
+#[wasm_bindgen(js_name = "movesToUci")]
+pub fn moves_to_uci(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
     let starting_fen = starting_fen.unwrap_or_else(|| {
         Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
     });
@@ -309,8 +306,6 @@ pub fn is_two_square_pawn_move(mov: &Move) -> bool {
         None => return false,
     };
     let to = mov.to();
-
-    // TODO:  probably just check if from() rank is 2 or 7 and to() rank is 4 or 5?
 
     let rank_diff = (to.rank() as i8 - from.rank() as i8).abs();
 

@@ -90,9 +90,8 @@ impl ColorChar {
 // this is like a custom result
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
-pub struct OkOrError<T> {
-    #[tsify(type = "T")]
-    pub ok: T,
+pub struct OkOrError {
+    pub ok: bool,
     pub err: Option<String>,
 }
 
@@ -115,9 +114,10 @@ pub struct PreserveHeaders {
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
-// TODO: rename
 pub struct PGNOptions {
+    /// Maximum line width for wrapping PGN moves (default: 80)
     pub max_width: Option<usize>,
+    /// Custom newline sequence (default: "\r\n" per PGN spec)
     pub newline: Option<String>,
 }
 

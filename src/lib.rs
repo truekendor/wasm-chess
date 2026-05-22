@@ -9,39 +9,23 @@ use shakmaty::{
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
-    helpers::parsing::{self, san_to_san_plus, verbose_move_from_raw_move},
     impls::PGNResult,
     models::{
-        BoardMatrix, BoardMatrixReturnObj, BoardMatrixRow, MoveVerbose, PieceObj, PieceSymbol,
-        SquareStr, SuffixSymbol,
+        BoardMatrix, BoardObjRow, BoardState, MoveVerbose, PieceObj, PieceSymbol, SquareStr,
+        SuffixSymbol,
         utils::{
             CastlingObj, ColorChar, CommentsObj, HeadersObj, LegalMovesFilterOptions,
             MoveFromSquares, MoveObject, OkOrError, PGNOptions, PreserveHeaders, PrunedCommentsObj,
             SquareColor, SquareInfoObj,
         },
     },
+    utils::parsing::{self, san_to_san_plus, verbose_move_from_raw_move},
 };
 
-mod helpers;
 mod impls;
 mod models;
 mod tests;
-
-/// TODOs global
-/// add helper for fen parsing
-/// move board(), get_comments(), load_pgn() pgn() out of WasmChess struct
-///
-/// add current_or_initial_fen() ?
-///
-/// change legalMoves(UCI/SAN/Verbose) to
-/// legalMoves(Option<Mode::Verbose/San/Uci >)
-///
-/// missing chess.js methods
-/// moves(), pgn()
-///
-/// NOTES: not supported: nullmoves, excessive material
-/// direct board manipulation: clear(), put(), remove(), (setTurn() ? may be possible rn),
-/// setCastlingRights, clear
+mod utils;
 
 #[derive(Clone, Debug)]
 struct History {
@@ -68,37 +52,20 @@ pub struct WasmChess {
     repetition_table: HashMap<Zobrist64, i32>,
     // TODO: rename
     pgn_result: Option<PGNResult>,
+    // TODO: move away from this class to other function ?
+    // as for now this is very close to be a duplicate code
     seven_tag_roster: OrderMap<&'static str, &'static str>,
 
-    // TODO: implement board manip methods using this
-    // NOTES:
-    // i think any manip operation should make this
-    // field to be Some and any attempt at make_move
-    // will try and re-assemble chess position from this setup
-    // and make it None on success
-    // TODO: related
-    // update this setup after pgn_load, and other such methods
-    // TODO: make these two one struct since they are coupled
     editable: Option<EditablePosition>,
-    // TODO: delete later
-    // editable_setup: Option<Setup>,
-    // editable_chess_pos: Option<Chess>,
 }
-
-pub type FenString = String;
-pub type SuffixString = String;
-
-// todo: make nag and suffix u8/u16/u32 number ??
-pub type NAGString = String;
-pub type MoveString = String;
 
 #[wasm_bindgen]
 impl WasmChess {
     #[wasm_bindgen(constructor)]
     pub fn new(fen: Option<String>) -> Result<WasmChess, String> {
-        let starting_fen: String = fen.unwrap_or(
-            Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string(),
-        );
+        let starting_fen: String = fen.unwrap_or_else(|| {
+            Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
+        });
 
         let fen: Fen = match starting_fen.parse() {
             Ok(val) => val,
@@ -113,11 +80,15 @@ impl WasmChess {
         let chess: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
             Ok(val) => val,
             Err(err) => {
-                return Err(format!(
-                    "Error converting FEN into chess position\nError message: {}\nFEN: {}",
-                    err,
-                    fen.to_string()
-                ));
+                let result = err
+                    .ignore_too_much_material()
+                    .or_else(|err| err.ignore_invalid_castling_rights())
+                    .or_else(|err| err.ignore_invalid_ep_square())
+                    .map_err(|err| {
+                        return format!("Invalid position: {:#?}", err);
+                    })?;
+
+                result
             }
         };
 
@@ -187,11 +158,6 @@ impl WasmChess {
     /// ```js
     /// chess.load("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
     /// ```
-
-    //  Note:
-    // I don't even know if we can just skip fen validation
-    // {skip_validation: bool}
-    // TODO: try add it anyway?
     pub fn load(
         &mut self,
         starting_fen: &str,
