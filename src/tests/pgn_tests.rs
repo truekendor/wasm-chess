@@ -172,13 +172,13 @@ pub mod pgn_from_chess_test {
             }
 
             let moves = position.moves.split_whitespace();
-            let moves_count = &moves.clone().count();
+            let moves_count = &moves.clone().count() / 2 + 1;
 
             moves.for_each(|move_str| {
                 chess.play_move(move_str).unwrap();
             });
 
-            pretty_assertions::assert_eq!(*moves_count as u32, chess.move_number());
+            pretty_assertions::assert_eq!(moves_count as u32, chess.move_number());
             pretty_assertions::assert_eq!(chess.fen(None), position.final_fen);
 
             position.header_tags.iter().for_each(|(key, value)| {

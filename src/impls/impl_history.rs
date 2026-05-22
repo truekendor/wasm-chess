@@ -171,7 +171,7 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "moveNumber")]
     pub fn move_number(&self) -> u32 {
-        return self.history.len() as u32;
+        return self.chess.fullmoves().get();
     }
 
     pub fn length(&self) -> u32 {
