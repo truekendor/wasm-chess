@@ -9,9 +9,7 @@ impl WasmChess {
 
         pgn_result.reorder_headers();
 
-        HeadersObj {
-            headers_data: pgn_result.headers.clone(),
-        }
+        HeadersObj(pgn_result.headers.clone())
     }
 
     #[wasm_bindgen(js_name = "setHeader")]

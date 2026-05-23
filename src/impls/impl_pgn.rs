@@ -88,7 +88,7 @@ impl WasmChess {
             self.history[0].fen_before.clone().to_string()
         };
 
-        let headers = self.get_headers().headers_data;
+        let headers = self.get_headers().0;
 
         let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
 
