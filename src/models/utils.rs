@@ -7,7 +7,7 @@ use crate::models::{ColorChar, PieceSymbol, SquareStr};
 #[derive(tsify::Tsify, Serialize, Deserialize, PartialEq, Debug)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(transparent)]
-pub struct HeadersObj(pub OrderMap<String, String>);
+pub struct HeadersObj(#[tsify(type = "Map<String, String>")] pub OrderMap<String, String>);
 
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq, Display)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
