@@ -208,7 +208,6 @@ impl WasmChess {
                 current_line_width += token_len;
             }
         }
-        result_string.push_str("\r\n");
 
         result_string
     }
