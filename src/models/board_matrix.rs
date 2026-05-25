@@ -8,5 +8,5 @@ pub type BoardMatrix = Vec<BoardObjRow>;
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(transparent)]
 pub struct BoardState(
-    #[tsify(type = "Array<Array<SquareInfoObj | null | undefined>>")] pub BoardMatrix,
+    #[tsify(type = "Array<Array<SquareInfo | null | undefined>>")] pub BoardMatrix,
 );
