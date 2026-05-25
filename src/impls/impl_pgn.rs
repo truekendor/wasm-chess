@@ -179,9 +179,7 @@ impl WasmChess {
 
         // No wrapping
         if max_line_width == 0 {
-            return format!("{header_string}{}", move_chunks.join(" "))
-                .trim()
-                .to_string();
+            return format!("{header_string}{}", move_chunks.join(" ")).to_string();
         }
 
         let mut result_string = header_string;
@@ -210,6 +208,7 @@ impl WasmChess {
                 current_line_width += token_len;
             }
         }
+        result_string.push_str("\r\n");
 
         result_string
     }

@@ -195,7 +195,7 @@ pub mod pgn_from_chess_test {
 
             let pgn = chess.pgn(Some(options));
 
-            pretty_assertions::assert_eq!(position.pgn.trim(), pgn);
+            pretty_assertions::assert_eq!(position.pgn, pgn);
         });
     }
 
