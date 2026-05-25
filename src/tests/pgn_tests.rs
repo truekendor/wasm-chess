@@ -199,6 +199,20 @@ pub mod pgn_from_chess_test {
         });
     }
 
+    #[test]
+    fn ccc_pgn_test() {
+        let mut chess = WasmChess::new(None).unwrap();
+
+        let input_pgn = file_to_string("./src/tests/pgn/ccc-pgn-input-0.pgn");
+        let output_pgn = file_to_string("./src/tests/pgn/ccc-pgn-output-0.pgn");
+
+        chess.load_pgn(&input_pgn).unwrap();
+
+        chess.pgn(None);
+
+        pretty_assertions::assert_eq!(chess.pgn(None), output_pgn);
+    }
+
     fn file_to_string(path: &str) -> String {
         let vec = fs::read(path).unwrap();
 
