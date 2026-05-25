@@ -16,7 +16,7 @@ use crate::{
         utils::{
             CastlingObj, CommentsObj, HeadersObj, LegalMovesFilterOptions, MoveFromSquares,
             MoveObject, OkOrError, PGNOptions, PreserveHeaders, PrunedCommentsObj, SquareColor,
-            SquareInfoObj,
+            SquareInfo,
         },
     },
     utils::parsing::{self, san_to_san_plus, verbose_move_from_raw_move},

@@ -56,7 +56,7 @@ impl WasmChess {
                             Color::Black => ColorChar::B,
                         };
 
-                        Some(SquareInfoObj {
+                        Some(SquareInfo {
                             color,
                             square,
                             r#type: PieceSymbol::from_shakmaty_piece(&p),
@@ -71,9 +71,7 @@ impl WasmChess {
             result.push(row);
         }
 
-        BoardState {
-            board_matrix: result,
-        }
+        BoardState(result)
     }
 
     pub fn turn(&self) -> ColorChar {
