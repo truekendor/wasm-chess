@@ -3,7 +3,7 @@
 ---
 ## Build
 
-To build project from sourve run
+To build project from source run
 
 `wasm-pack build --target web`
 
