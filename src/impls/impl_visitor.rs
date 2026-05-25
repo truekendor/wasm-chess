@@ -167,14 +167,48 @@ impl Visitor for WasmChess {
         let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
 
         let raw_comment = comment;
+
         let comment = str::from_utf8(&raw_comment.as_bytes());
 
         if let Ok(val) = comment {
             let fen_key =
                 Fen::from_position(&self.chess, shakmaty::EnPassantMode::Legal).to_string();
 
-            pgn_result.comments_map.insert(fen_key, val.to_string());
+            pgn_result
+                .comments_map
+                .entry(fen_key)
+                .and_modify(|existing| existing.push_str(&val.to_string()))
+                .or_insert_with(|| val.to_string());
 
+            return ControlFlow::Continue(());
+        }
+
+        ControlFlow::Break(Err(format!(
+            "Error parsing comment from PGN: {:?}",
+            raw_comment
+        )))
+    }
+
+    fn partial_comment(
+        &mut self,
+        movetext: &mut Self::Movetext,
+        comment: pgn_reader::RawComment<'_>,
+    ) -> ControlFlow<Self::Output> {
+        let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
+
+        let raw_comment = comment;
+
+        let comment = str::from_utf8(&raw_comment.as_bytes());
+
+        if let Ok(val) = comment {
+            let fen_key =
+                Fen::from_position(&self.chess, shakmaty::EnPassantMode::Legal).to_string();
+
+            pgn_result
+                .comments_map
+                .entry(fen_key)
+                .and_modify(|existing| existing.push_str(&val.to_string()))
+                .or_insert_with(|| val.to_string());
             return ControlFlow::Continue(());
         }
 
