@@ -71,7 +71,7 @@ pub struct OkOrError {
 #[derive(tsify::Tsify, Serialize, Deserialize, Debug, PartialEq)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 #[serde(rename_all = "camelCase")]
-pub struct SquareInfoObj {
+pub struct SquareInfo {
     pub square: SquareStr,
     pub r#type: PieceSymbol,
     pub color: ColorChar,
