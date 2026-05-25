@@ -1,4 +1,11 @@
-todo
+# todo
+
+---
+## Build
+
+To build project from sourve run
+
+`wasm-pack build --target web`
 
 ---
 
