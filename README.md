@@ -10,10 +10,11 @@ This project was heavily inspired by
 
 * chess.js API design
 * developer experience of chess.js
+* tests
 
-Also, most of the tests in this repo are directly taken from chess.js test suite
+Most of the tests in this repo are directly taken from chess.js test suite
 
-Thnaks to all chess.js contributors for creating and maintaining one of the most approachable and reliable libraries in the JS ecosystem
+Thanks to all chess.js contributors for creating and maintaining one of the most approachable and reliable libraries in the JS ecosystem
 
 Repository:
 
