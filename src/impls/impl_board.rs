@@ -18,7 +18,7 @@ impl WasmChess {
     /// - Invalid positions are rejected and the board remains unchanged
     pub fn put(&mut self, piece_obj: PieceObj, square: SquareStr) -> bool {
         let piece = Piece::from(&piece_obj);
-        let square = square.to_shakmaty_sq();
+        let square = (&square).into();
 
         let editable = self.editable.get_or_insert_with(|| EditablePosition {
             setup: Chess::to_setup(&self.chess, EnPassantMode::Legal),

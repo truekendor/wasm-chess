@@ -118,8 +118,8 @@ impl WasmChess {
                 let from = internal_move.from()?;
                 let to = internal_move.to();
 
-                let from = SquareStr::from_shakmaty_sq(&from);
-                let to = SquareStr::from_shakmaty_sq(&to);
+                let from = SquareStr::from(&from);
+                let to = SquareStr::from(&to);
 
                 Some(MoveObject {
                     from,

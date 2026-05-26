@@ -265,8 +265,8 @@ pub fn verbose_move_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerb
 
     let san_string = san_to_san_plus(&san_move, &chess_pos);
 
-    let from = SquareStr::from_shakmaty_sq(&from_sq);
-    let to = SquareStr::from_shakmaty_sq(&raw_move.to());
+    let from = SquareStr::from(&from_sq);
+    let to = SquareStr::from(&raw_move.to());
 
     let is_big_pawn = is_two_square_pawn_move(&raw_move);
 

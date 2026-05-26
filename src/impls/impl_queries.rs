@@ -46,7 +46,7 @@ impl WasmChess {
 
                 let square = square_str.parse::<SquareStr>().unwrap(); // Safe because format is correct
 
-                let shakmaty_square = SquareStr::to_shakmaty_sq(&square);
+                let shakmaty_square: Square = (&square).into();
                 let piece = self.chess.board().piece_at(shakmaty_square);
 
                 let square_info = match piece {
@@ -115,7 +115,7 @@ impl WasmChess {
     /// - `PieceObj` if a piece exists at the square
     /// - `null` | `undefined` if the square is empty
     pub fn get(&self, square: SquareStr) -> Option<PieceObj> {
-        let square = square.to_shakmaty_sq();
+        let square = (&square).into();
 
         let Some(piece) = self.chess.board().piece_at(square) else {
             return None;
@@ -176,7 +176,7 @@ impl WasmChess {
 
         for (sq, p) in self.chess.board().iter() {
             if p == piece_type {
-                let square = SquareStr::from_shakmaty_sq(&sq);
+                let square = SquareStr::from(&sq);
                 squares_with_piece.push(square);
             }
         }
@@ -192,7 +192,7 @@ impl WasmChess {
 
         for (sq, p) in self.chess.board().iter() {
             if p == piece_type {
-                let square = SquareStr::from_shakmaty_sq(&sq);
+                let square = SquareStr::from(&sq);
 
                 squares_with_piece.push(square);
             }
@@ -203,7 +203,7 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "squareColor")]
     pub fn square_color(&self, square: SquareStr) -> Option<SquareColor> {
-        let square = SquareStr::to_shakmaty_sq(&square);
+        let square: Square = (&square).into();
 
         Some(if square.is_light() {
             SquareColor::Light
@@ -214,7 +214,7 @@ impl WasmChess {
 
     #[wasm_bindgen(js_name = "isAttacked")]
     pub fn is_attacked(&self, square: SquareStr, attacked_by_side: Option<ColorChar>) -> bool {
-        let square = SquareStr::to_shakmaty_sq(&square);
+        let square = (&square).into();
 
         let get_attackers = |color: Color| -> Vec<Square> {
             self.chess
@@ -239,7 +239,7 @@ impl WasmChess {
         square: SquareStr,
         attacked_by_side: Option<ColorChar>,
     ) -> Vec<SquareStr> {
-        let square = square.to_shakmaty_sq();
+        let square = (&square).into();
 
         let get_attackers = |color: Color| -> Vec<Square> {
             self.chess
@@ -265,10 +265,7 @@ impl WasmChess {
             Some(ColorChar::B) => b_attackers,
         };
 
-        squares
-            .into_iter()
-            .map(|sq| SquareStr::from_shakmaty_sq(&sq))
-            .collect()
+        squares.into_iter().map(|sq| SquareStr::from(&sq)).collect()
     }
 
     #[wasm_bindgen(js_name = "legalMovesUci")]
@@ -396,7 +393,7 @@ fn unwrap_filter_options(options: &Option<LegalMovesFilterOptions>) -> FilterOpt
     let filter_square_option: Option<Square> = match options.as_ref() {
         Some(val) => {
             if let Some(square) = &val.from_square {
-                Some(square.to_shakmaty_sq())
+                Some(square.into())
             } else {
                 None
             }
