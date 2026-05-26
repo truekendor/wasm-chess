@@ -5,7 +5,7 @@
 
 To build project from source run
 
-`wasm-pack build --target web`
+`wasm-pack build --target web` or for bundlers `wasm-pack build --target bundler --out-dir builds`
 
 ---
 
