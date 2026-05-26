@@ -1,12 +1,9 @@
-name: Build WASM
+name: Build WASM (tag release)
 
 on:
   push:
-    branches:
-      - main
-
-permissions:
-  contents: write
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -22,13 +19,11 @@ jobs:
       - name: Install wasm-pack
         run: cargo install wasm-pack
 
-      - name: Build
-        run: wasm-pack build --target bundler --out-dir builds
+      - name: Build WASM
+        run: wasm-pack build --release --target bundler --out-dir builds
 
-      - name: Deploy to dist branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./builds
-          publish_branch: dist
-          force_orphan: true
+      - name: Fix package metadata
+        run: |
+          cd builds
+          npm pkg set name="@truekendor/wasm-chess"
+          npm pkg set type="module"
