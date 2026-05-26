@@ -113,7 +113,7 @@ impl WasmChess {
                 let internal_move = history_entry.raw_move;
                 let promotion = internal_move
                     .promotion()
-                    .map(|role| PieceSymbol::from_shakmaty_piece_role(&role));
+                    .map(|role| PieceSymbol::from(&role));
 
                 let from = internal_move.from()?;
                 let to = internal_move.to();

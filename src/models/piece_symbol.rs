@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
 use shakmaty::Role;
 
@@ -14,7 +16,20 @@ pub enum PieceSymbol {
 }
 
 impl PieceSymbol {
-    pub fn from_shakmaty_piece(piece: &shakmaty::Piece) -> Self {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            PieceSymbol::P => "p",
+            PieceSymbol::N => "n",
+            PieceSymbol::B => "b",
+            PieceSymbol::R => "r",
+            PieceSymbol::Q => "q",
+            PieceSymbol::K => "k",
+        }
+    }
+}
+
+impl From<&shakmaty::Piece> for PieceSymbol {
+    fn from(piece: &shakmaty::Piece) -> Self {
         match piece.role {
             shakmaty::Role::Pawn => PieceSymbol::P,
             shakmaty::Role::Knight => PieceSymbol::N,
@@ -24,8 +39,10 @@ impl PieceSymbol {
             shakmaty::Role::King => PieceSymbol::K,
         }
     }
+}
 
-    pub fn from_shakmaty_piece_role(role: &Role) -> Self {
+impl From<&shakmaty::Role> for PieceSymbol {
+    fn from(role: &shakmaty::Role) -> Self {
         match role {
             Role::Pawn => PieceSymbol::P,
             Role::Knight => PieceSymbol::N,
@@ -35,9 +52,11 @@ impl PieceSymbol {
             Role::King => PieceSymbol::K,
         }
     }
+}
 
-    pub fn to_shakmaty_piece_role(&self) -> shakmaty::Role {
-        match self {
+impl From<&PieceSymbol> for shakmaty::Role {
+    fn from(val: &PieceSymbol) -> Self {
+        match val {
             PieceSymbol::P => Role::Pawn,
             PieceSymbol::N => Role::Knight,
             PieceSymbol::B => Role::Bishop,
@@ -46,27 +65,20 @@ impl PieceSymbol {
             PieceSymbol::K => Role::King,
         }
     }
+}
 
-    pub fn from_str(str: &str) -> Option<Self> {
+impl FromStr for PieceSymbol {
+    type Err = String;
+
+    fn from_str(str: &str) -> Result<PieceSymbol, Self::Err> {
         match str {
-            "p" => Some(PieceSymbol::P),
-            "n" => Some(PieceSymbol::N),
-            "b" => Some(PieceSymbol::B),
-            "r" => Some(PieceSymbol::R),
-            "q" => Some(PieceSymbol::Q),
-            "k" => Some(PieceSymbol::K),
-            _ => None,
-        }
-    }
-
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            PieceSymbol::P => "p",
-            PieceSymbol::N => "n",
-            PieceSymbol::B => "b",
-            PieceSymbol::R => "r",
-            PieceSymbol::Q => "q",
-            PieceSymbol::K => "k",
+            "p" | "P" => Ok(PieceSymbol::P),
+            "n" | "N" => Ok(PieceSymbol::N),
+            "b" | "B" => Ok(PieceSymbol::B),
+            "r" | "R" => Ok(PieceSymbol::R),
+            "q" | "Q" => Ok(PieceSymbol::Q),
+            "k" | "K" => Ok(PieceSymbol::K),
+            _ => Err(format!("Unable to parse string \"{}\" as PieceSymbol", str)),
         }
     }
 }

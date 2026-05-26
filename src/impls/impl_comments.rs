@@ -47,12 +47,12 @@ impl WasmChess {
             return comments_vec;
         };
 
-        let initial_fen_dev = match self.history.len() {
+        let starting_fen = match self.history.len() {
             0 => self.fen(None),
             _ => self.history[0].fen_before.to_string(),
         };
 
-        let comment_obj = self.get_comment_object(initial_fen_dev, pgn_result);
+        let comment_obj = self.get_comment_object(starting_fen, pgn_result);
 
         if let Some(comment_obj) = comment_obj {
             comments_vec.push(comment_obj);

@@ -59,7 +59,7 @@ impl WasmChess {
                         Some(SquareInfo {
                             color,
                             square,
-                            r#type: PieceSymbol::from_shakmaty_piece(&p),
+                            r#type: PieceSymbol::from(&p),
                         })
                     }
                     None => None,
@@ -408,8 +408,8 @@ fn unwrap_filter_options(options: &Option<LegalMovesFilterOptions>) -> FilterOpt
         Some(val) => {
             let p = val.piece.as_ref();
 
-            if let Some(oo) = p {
-                Some(oo.to_shakmaty_piece_role())
+            if let Some(piece_symbol) = p {
+                Some(piece_symbol.into())
             } else {
                 None
             }

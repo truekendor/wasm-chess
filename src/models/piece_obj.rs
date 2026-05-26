@@ -17,7 +17,7 @@ impl From<&shakmaty::Piece> for PieceObj {
                 Color::White => ColorChar::W,
                 Color::Black => ColorChar::B,
             },
-            r#type: PieceSymbol::from_shakmaty_piece_role(&value.role),
+            r#type: PieceSymbol::from(&value.role),
         }
     }
 }

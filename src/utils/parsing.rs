@@ -239,12 +239,9 @@ pub fn verbose_move_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerb
 
     let fen_before = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
 
-    let promotion: Option<PieceSymbol> = raw_move
-        .promotion()
-        .map(|role| PieceSymbol::from_shakmaty_piece_role(&role));
-    let captured_piece: Option<PieceSymbol> = raw_move
-        .capture()
-        .map(|role| PieceSymbol::from_shakmaty_piece_role(&role));
+    let promotion: Option<PieceSymbol> = raw_move.promotion().map(|role| PieceSymbol::from(&role));
+    let captured_piece: Option<PieceSymbol> =
+        raw_move.capture().map(|role| PieceSymbol::from(&role));
     let from_sq = raw_move
         .from()
         .expect("Only standard chess and chess960 is supported, from() should always return Some");
@@ -254,7 +251,7 @@ pub fn verbose_move_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerb
         Color::Black => ColorChar::B,
     };
 
-    let piece = PieceSymbol::from_shakmaty_piece_role(&raw_move.role());
+    let piece = PieceSymbol::from(&raw_move.role());
     let san_move = San::from_move(&chess_pos, raw_move);
 
     let CastleData {
