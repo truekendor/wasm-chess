@@ -3,6 +3,9 @@ name = "chess-wasm"
 version = "0.1.0"
 edition = "2024"
 
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = true
+
 [lib]
 crate-type = ["cdylib"]
 
@@ -22,10 +25,6 @@ strum = { version = "0.28", features = ["derive"] }
 [dev-dependencies]
 wasm-bindgen-test = { version = "*" }
 pretty_assertions = { version = "1.4" }
-
-
-[package.metadata.wasm-pack.profile.release]
-wasm-opt = true
 
 [profile.release]
 opt-level = 3
