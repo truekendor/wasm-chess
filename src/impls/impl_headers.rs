@@ -28,11 +28,13 @@ impl WasmChess {
         self.pgn_result
             .as_mut()
             .map(|pgn| {
-                if let Some(val) = self.seven_tag_roster.get(&key.clone().as_str()) {
+                // insert default value if the key is a part of seven tag roster
+                if let Some(val) = self.seven_tag_roster.get(key.as_str()) {
                     pgn.headers.insert(key, val.to_string());
 
                     return true;
                 }
+
                 pgn.headers.remove(&key).is_some()
             })
             .unwrap_or(false)
