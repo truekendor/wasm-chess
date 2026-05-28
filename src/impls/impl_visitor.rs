@@ -81,7 +81,7 @@ impl Visitor for WasmChess {
 
     fn begin_movetext(&mut self, _tags: Self::Tags) -> ControlFlow<Self::Output, Self::Movetext> {
         let starting_fen_str = {
-            let pgn_result: &mut PGNResult = self.pgn_result.get_or_insert_with(PGNResult::default);
+            let pgn_result: &mut PGNResult = self.pgn_result.get_or_insert_default();
             pgn_result.reorder_headers();
 
             &pgn_result.starting_fen.to_string()
@@ -120,7 +120,7 @@ impl Visitor for WasmChess {
         _movetext: &mut Self::Movetext,
         nag: pgn_reader::Nag,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
+        let pgn_result = self.pgn_result.get_or_insert_default();
 
         let nag = nag.to_string();
 
@@ -164,7 +164,7 @@ impl Visitor for WasmChess {
         _movetext: &mut Self::Movetext,
         comment: pgn_reader::RawComment<'_>,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
+        let pgn_result = self.pgn_result.get_or_insert_default();
 
         let raw_comment = comment;
 
@@ -193,7 +193,7 @@ impl Visitor for WasmChess {
         _movetext: &mut Self::Movetext,
         comment: pgn_reader::RawComment<'_>,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
+        let pgn_result = self.pgn_result.get_or_insert_default();
 
         let raw_comment = comment;
 
@@ -223,7 +223,7 @@ impl Visitor for WasmChess {
         _movetext: &mut Self::Movetext,
         outcome: shakmaty::Outcome,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = self.pgn_result.get_or_insert_with(PGNResult::default);
+        let pgn_result = self.pgn_result.get_or_insert_default();
 
         match outcome {
             shakmaty::Outcome::Known(known_outcome) => {
