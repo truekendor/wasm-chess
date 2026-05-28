@@ -41,7 +41,10 @@ impl Visitor for WasmChess {
             let fen = match Fen::from_ascii(tag_val.as_bytes()) {
                 Ok(fen) => fen,
                 Err(err) => {
-                    return ControlFlow::Break(Err(format!("Error parsing fen from PGN: {}", err)));
+                    return ControlFlow::Break(Err(format!(
+                        "Error parsing fen from PGN: {}\nFEN: {}",
+                        err, tag_val
+                    )));
                 }
             };
 
@@ -60,7 +63,7 @@ impl Visitor for WasmChess {
                 }
                 Err(err) => {
                     return ControlFlow::Break(Err(format!(
-                        "Position error: {} for FEN: {}",
+                        "Position error: {}\nFEN: {}",
                         err, tag_val
                     )));
                 }
