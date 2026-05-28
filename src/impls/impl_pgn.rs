@@ -85,7 +85,7 @@ impl WasmChess {
         let initial_fen = if self.history.is_empty() {
             self.fen(None)
         } else {
-            self.history[0].fen_before.clone().to_string()
+            self.history[0].fen_before.to_string()
         };
 
         let headers = self.get_headers().0;
@@ -216,7 +216,7 @@ impl WasmChess {
 }
 
 impl PGNResult {
-    pub fn reorder_headers(&mut self) {
+    pub(crate) fn reorder_headers(&mut self) {
         let mut ordered: OrderMap<String, Option<String>> = OrderMap::new();
 
         // Seven tag roster first
