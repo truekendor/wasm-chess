@@ -1,6 +1,5 @@
 use std::ops::ControlFlow::{self};
 
-use ordermap::OrderMap;
 use pgn_reader::{RawTag, SanPlus, Visitor};
 
 use shakmaty::{CastlingMode, Chess, fen::Fen};
@@ -10,29 +9,23 @@ use crate::{WasmChess, impls::PGNResult, models::utils::PreserveHeaders};
 const SUFFIX_LIST: [&str; 6] = ["!", "?", "!!", "??", "!?", "?!"];
 
 impl Visitor for WasmChess {
-    type Tags = ();
-    type Movetext = ();
+    type Tags = PGNResult;
+    type Movetext = PGNResult;
     type Output = Result<(), String>;
 
     fn begin_tags(&mut self) -> ControlFlow<Self::Output, Self::Tags> {
-        let pgn_result = self
-            .pgn_result
-            .get_or_insert_with(|| super::PGNResult::default());
+        let pgn_result = PGNResult::default();
 
-        pgn_result.comments_map = OrderMap::new();
-        pgn_result.suffix_map = OrderMap::new();
-        pgn_result.nag_map = OrderMap::new();
-
-        ControlFlow::Continue(())
+        ControlFlow::Continue(pgn_result)
     }
 
     fn tag(
         &mut self,
-        _tags: &mut Self::Tags,
+        tags: &mut Self::Tags,
         name: &[u8],
         value: RawTag<'_>,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = self.pgn_result.get_or_insert_with(|| PGNResult::default());
+        let pgn_result = tags;
 
         let tag_key: String = name.iter().map(|b| *b as char).collect();
         let tag_val = str::from_utf8(value.as_bytes());
@@ -79,13 +72,11 @@ impl Visitor for WasmChess {
         return ControlFlow::Continue(());
     }
 
-    fn begin_movetext(&mut self, _tags: Self::Tags) -> ControlFlow<Self::Output, Self::Movetext> {
-        let starting_fen_str = {
-            let pgn_result: &mut PGNResult = self.pgn_result.get_or_insert_default();
-            pgn_result.reorder_headers();
+    fn begin_movetext(&mut self, tags: Self::Tags) -> ControlFlow<Self::Output, Self::Movetext> {
+        let mut pgn_result = tags;
+        pgn_result.reorder_headers();
 
-            &pgn_result.starting_fen.to_string()
-        };
+        let starting_fen_str = &pgn_result.starting_fen.to_string();
 
         match self.load_inner(
             &starting_fen_str,
@@ -99,7 +90,7 @@ impl Visitor for WasmChess {
             }
         }
 
-        ControlFlow::Continue(())
+        ControlFlow::Continue(pgn_result)
     }
 
     fn san(
@@ -117,10 +108,10 @@ impl Visitor for WasmChess {
 
     fn nag(
         &mut self,
-        _movetext: &mut Self::Movetext,
+        movetext: &mut Self::Movetext,
         nag: pgn_reader::Nag,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = self.pgn_result.get_or_insert_default();
+        let pgn_result = movetext;
 
         let nag = nag.to_string();
 
@@ -161,10 +152,10 @@ impl Visitor for WasmChess {
 
     fn partial_comment(
         &mut self,
-        _movetext: &mut Self::Movetext,
+        movetext: &mut Self::Movetext,
         comment: pgn_reader::RawComment<'_>,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = self.pgn_result.get_or_insert_default();
+        let pgn_result = movetext;
 
         let raw_comment = comment;
 
@@ -190,10 +181,10 @@ impl Visitor for WasmChess {
 
     fn comment(
         &mut self,
-        _movetext: &mut Self::Movetext,
+        movetext: &mut Self::Movetext,
         comment: pgn_reader::RawComment<'_>,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = self.pgn_result.get_or_insert_default();
+        let pgn_result = movetext;
 
         let raw_comment = comment;
 
@@ -220,10 +211,10 @@ impl Visitor for WasmChess {
 
     fn outcome(
         &mut self,
-        _movetext: &mut Self::Movetext,
+        movetext: &mut Self::Movetext,
         outcome: shakmaty::Outcome,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = self.pgn_result.get_or_insert_default();
+        let pgn_result = movetext;
 
         match outcome {
             shakmaty::Outcome::Known(known_outcome) => {
@@ -237,7 +228,8 @@ impl Visitor for WasmChess {
         }
     }
 
-    fn end_game(&mut self, _movetext: Self::Movetext) -> Self::Output {
+    fn end_game(&mut self, movetext: Self::Movetext) -> Self::Output {
+        self.pgn_result = Some(movetext);
         return Ok(());
     }
 }
