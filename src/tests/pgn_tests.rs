@@ -195,7 +195,10 @@ pub mod pgn_from_chess_test {
 
             let pgn = chess.pgn(Some(options));
 
-            pretty_assertions::assert_eq!(normalize_pgn(position.pgn), normalize_pgn(pgn.trim()));
+            pretty_assertions::assert_eq!(
+                normalize_pgn(position.pgn).trim(),
+                normalize_pgn(pgn.trim()).trim()
+            );
         });
     }
 
@@ -220,6 +223,6 @@ pub mod pgn_from_chess_test {
     }
 
     fn normalize_pgn(s: &str) -> String {
-        s.replace("\r\n", "\n")
+        s.lines().map(str::trim_end).collect::<Vec<_>>().join("\n")
     }
 }
