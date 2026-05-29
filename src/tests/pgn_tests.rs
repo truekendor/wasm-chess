@@ -195,7 +195,10 @@ pub mod pgn_from_chess_test {
 
             let pgn = chess.pgn(Some(options));
 
-            pretty_assertions::assert_eq!(normalize_pgn(position.pgn), normalize_pgn(pgn.trim()));
+            pretty_assertions::assert_eq!(
+                String::from(normalize_pgn(position.pgn)),
+                String::from(normalize_pgn(pgn.trim()))
+            );
         });
     }
 
