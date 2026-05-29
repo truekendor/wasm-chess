@@ -169,6 +169,7 @@ impl Visitor for WasmChess {
                 .entry(fen_key)
                 .and_modify(|existing| existing.push_str(&val.to_string()))
                 .or_insert_with(|| val.to_string());
+
             return ControlFlow::Continue(());
         }
 
@@ -183,29 +184,7 @@ impl Visitor for WasmChess {
         movetext: &mut Self::Movetext,
         comment: pgn_reader::RawComment<'_>,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = movetext;
-
-        let raw_comment = comment;
-
-        let comment = str::from_utf8(&raw_comment.as_bytes());
-
-        if let Ok(val) = comment {
-            let fen_key =
-                Fen::from_position(&self.chess, shakmaty::EnPassantMode::Legal).to_string();
-
-            pgn_result
-                .comments_map
-                .entry(fen_key)
-                .and_modify(|existing| existing.push_str(&val.to_string()))
-                .or_insert_with(|| val.to_string());
-
-            return ControlFlow::Continue(());
-        }
-
-        ControlFlow::Break(Err(format!(
-            "Error parsing comment from PGN: {:?}",
-            raw_comment
-        )))
+        self.partial_comment(movetext, comment)
     }
 
     fn outcome(
