@@ -118,32 +118,32 @@ pub mod put_tests {
 
     // TODO: uncomment on fix
     // #[test]
-    fn replacing_white_king_loses_castling_rights() {
-        let fen = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1".to_string();
-        let mut chess = WasmChess::new(Some(fen)).unwrap();
+    // fn replacing_white_king_loses_castling_rights() {
+    //     let fen = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1".to_string();
+    //     let mut chess = WasmChess::new(Some(fen)).unwrap();
 
-        let _ = chess.put(
-            PieceObj {
-                color: ColorChar::W,
-                r#type: PieceSymbol::K,
-            },
-            SquareStr::E1,
-        );
+    //     let _ = chess.put(
+    //         PieceObj {
+    //             color: ColorChar::W,
+    //             r#type: PieceSymbol::K,
+    //         },
+    //         SquareStr::E1,
+    //     );
 
-        let legal_moves = chess.legal_moves_san(None);
+    //     let legal_moves = chess.legal_moves_san(None);
 
-        legal_moves.iter().for_each(|mov| {
-            pretty_assertions::assert_ne!(mov, "O-O-O");
-            pretty_assertions::assert_ne!(mov, "O-O");
-        });
+    //     legal_moves.iter().for_each(|mov| {
+    //         pretty_assertions::assert_ne!(mov, "O-O-O");
+    //         pretty_assertions::assert_ne!(mov, "O-O");
+    //     });
 
-        pretty_assertions::assert_eq!(
-            chess.zobrist_hash(),
-            WasmChess::new(Some(chess.fen(None)))
-                .unwrap()
-                .zobrist_hash()
-        );
-    }
+    //     pretty_assertions::assert_eq!(
+    //         chess.zobrist_hash(),
+    //         WasmChess::new(Some(chess.fen(None)))
+    //             .unwrap()
+    //             .zobrist_hash()
+    //     );
+    // }
 
     #[test]
     fn replacing_white_pawn_clears_en_passant_square() {

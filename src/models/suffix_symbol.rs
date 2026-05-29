@@ -13,16 +13,16 @@ pub enum SuffixSymbol {
 }
 
 impl SuffixSymbol {
-    fn as_str(&self) -> &'static str {
-        match self {
-            SuffixSymbol::Exclam => "!",
-            SuffixSymbol::Question => "?",
-            SuffixSymbol::DoubleExclam => "!!",
-            SuffixSymbol::ExclamQuestion => "!?",
-            SuffixSymbol::QuestionExclam => "?!",
-            SuffixSymbol::DoubleQuestion => "??",
-        }
-    }
+    // fn as_str(&self) -> &'static str {
+    //     match self {
+    //         SuffixSymbol::Exclam => "!",
+    //         SuffixSymbol::Question => "?",
+    //         SuffixSymbol::DoubleExclam => "!!",
+    //         SuffixSymbol::ExclamQuestion => "!?",
+    //         SuffixSymbol::QuestionExclam => "?!",
+    //         SuffixSymbol::DoubleQuestion => "??",
+    //     }
+    // }
 
     pub fn from_str(str: &str) -> Option<SuffixSymbol> {
         match str {
