@@ -9,8 +9,8 @@ use crate::WasmChess;
 
 use super::*;
 
-const SEVEN_TAG_ROSTER: [&str; 7] = ["Event", "Site", "Date", "Round", "White", "Black", "Result"];
-const SUPPLEMENTAL_TAGS: [(&str, Option<&str>); 30] = [
+static SEVEN_TAG_ROSTER: [&str; 7] = ["Event", "Site", "Date", "Round", "White", "Black", "Result"];
+static SUPPLEMENTAL_TAGS: [(&str, Option<&str>); 30] = [
     ("WhiteTitle", None),
     ("BlackTitle", None),
     ("WhiteElo", None),
@@ -85,7 +85,7 @@ impl WasmChess {
         let initial_fen = if self.history.is_empty() {
             self.fen(None)
         } else {
-            self.history[0].fen_before.clone().to_string()
+            self.history[0].fen_before.to_string()
         };
 
         let headers = self.get_headers().0;
@@ -216,7 +216,7 @@ impl WasmChess {
 }
 
 impl PGNResult {
-    pub fn reorder_headers(&mut self) {
+    pub(crate) fn reorder_headers(&mut self) {
         let mut ordered: OrderMap<String, Option<String>> = OrderMap::new();
 
         // Seven tag roster first
