@@ -223,6 +223,6 @@ pub mod pgn_from_chess_test {
     }
 
     fn normalize_pgn(s: &str) -> String {
-        s.replace("\r\n", "\n").trim().to_string()
+        s.lines().map(str::trim_end).collect::<Vec<_>>().join("\n")
     }
 }
