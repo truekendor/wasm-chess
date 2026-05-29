@@ -6,7 +6,7 @@ use shakmaty::{CastlingMode, Chess, fen::Fen};
 
 use crate::{WasmChess, impls::PGNResult, models::utils::PreserveHeaders};
 
-const SUFFIX_LIST: [&str; 6] = ["!", "?", "!!", "??", "!?", "?!"];
+static SUFFIX_LIST: [&str; 6] = ["!", "?", "!!", "??", "!?", "?!"];
 
 impl Visitor for WasmChess {
     type Tags = PGNResult;

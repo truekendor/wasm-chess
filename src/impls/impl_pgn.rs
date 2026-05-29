@@ -9,8 +9,8 @@ use crate::WasmChess;
 
 use super::*;
 
-const SEVEN_TAG_ROSTER: [&str; 7] = ["Event", "Site", "Date", "Round", "White", "Black", "Result"];
-const SUPPLEMENTAL_TAGS: [(&str, Option<&str>); 30] = [
+static SEVEN_TAG_ROSTER: [&str; 7] = ["Event", "Site", "Date", "Round", "White", "Black", "Result"];
+static SUPPLEMENTAL_TAGS: [(&str, Option<&str>); 30] = [
     ("WhiteTitle", None),
     ("BlackTitle", None),
     ("WhiteElo", None),
