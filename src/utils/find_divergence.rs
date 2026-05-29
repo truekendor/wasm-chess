@@ -4,9 +4,12 @@ use serde::{Deserialize, Serialize};
 use shakmaty::{Chess, Move, Position, fen::Fen, zobrist::Zobrist64};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::utils::{
-    parsing::{moves_to_san, str_to_move},
-    pos_from_fen_with_recovery,
+use crate::{
+    DEFAULT_FEN,
+    utils::{
+        parsing::{moves_to_san, str_to_move},
+        pos_from_fen_with_recovery,
+    },
 };
 
 pub struct InternalMovesAndHash {
@@ -121,9 +124,7 @@ pub fn find_divergence(
 }
 
 fn get_hash_and_san(moves: Vec<String>, starting_fen: Option<String>) -> InternalMovesAndHash {
-    let starting_fen = starting_fen.unwrap_or_else(|| {
-        Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
-    });
+    let starting_fen = starting_fen.unwrap_or(DEFAULT_FEN.to_string());
 
     let mut zobrist_hash_list: Vec<Zobrist64> = vec![];
     let result = moves_to_san(moves.clone(), Some(starting_fen.clone()));

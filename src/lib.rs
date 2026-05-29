@@ -47,6 +47,8 @@ struct EditablePosition {
     validated: Option<Chess>,
 }
 
+static DEFAULT_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 #[wasm_bindgen]
 pub struct WasmChess {
     chess: Chess,
@@ -64,9 +66,7 @@ pub struct WasmChess {
 impl WasmChess {
     #[wasm_bindgen(constructor)]
     pub fn new(fen: Option<String>) -> Result<WasmChess, String> {
-        let starting_fen: String = fen.unwrap_or_else(|| {
-            Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
-        });
+        let starting_fen: String = fen.unwrap_or(DEFAULT_FEN.to_string());
 
         let fen: Fen = match starting_fen.parse() {
             Ok(val) => val,

@@ -5,6 +5,7 @@ use shakmaty::{Chess, Color, Move, Position, Role, fen::Fen, san::San, uci::UciM
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
+    DEFAULT_FEN,
     models::{ColorChar, MoveVerbose, PieceSymbol, SquareStr},
     utils::pos_from_fen_with_recovery,
 };
@@ -37,9 +38,7 @@ pub struct MovesAndError {
 /// converts Vec of moves in SAN/LAN format, into Vec of SAN moves
 #[wasm_bindgen(js_name = "movesToSan")]
 pub fn moves_to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
-    let starting_fen = starting_fen.unwrap_or_else(|| {
-        Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
-    });
+    let starting_fen = starting_fen.unwrap_or(DEFAULT_FEN.to_string());
 
     let mut san_moves_vec: Vec<String> = vec![];
 
@@ -108,9 +107,7 @@ pub fn moves_to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAn
 /// converts Vec of moves in SAN/LAN format, into Vec of UCI moves
 #[wasm_bindgen(js_name = "movesToUci")]
 pub fn moves_to_uci(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
-    let starting_fen = starting_fen.unwrap_or_else(|| {
-        Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
-    });
+    let starting_fen = starting_fen.unwrap_or(DEFAULT_FEN.to_string());
 
     let mut uci_moves_vec: Vec<String> = vec![];
 
