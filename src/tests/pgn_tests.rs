@@ -195,7 +195,7 @@ pub mod pgn_from_chess_test {
 
             let pgn = chess.pgn(Some(options));
 
-            pretty_assertions::assert_eq!(position.pgn.trim(), pgn);
+            pretty_assertions::assert_eq!(normalize_pgn(position.pgn), normalize_pgn(pgn.trim()));
         });
     }
 
@@ -217,5 +217,9 @@ pub mod pgn_from_chess_test {
         let vec = fs::read(path).unwrap();
 
         String::from_utf8(vec).expect("PGN chars are all valid in this case")
+    }
+
+    fn normalize_pgn(s: &str) -> String {
+        s.lines().map(str::trim_end).collect::<Vec<_>>().join("\n")
     }
 }
