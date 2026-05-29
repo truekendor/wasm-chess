@@ -518,11 +518,6 @@ pub mod comments_test {
             chess.reset();
             pretty_assertions::assert_eq!(chess.get_comments(), vec![]);
         }
-
-        fn clear_comment_on_clear() {
-            // TODO
-            // chess.clear()
-        }
     }
 
     #[cfg(test)]

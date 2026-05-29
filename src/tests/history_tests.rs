@@ -5,7 +5,7 @@
 pub mod history_test_chess_js {
     use crate::WasmChess;
 
-    use crate::models::{utils::*, *};
+    use crate::models::*;
 
     #[test]
     fn history() {

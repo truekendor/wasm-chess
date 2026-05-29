@@ -3,7 +3,7 @@
 #[cfg(test)]
 pub mod test {
     use crate::WasmChess;
-    use crate::models::{utils::*, *};
+    use crate::models::*;
     use shakmaty::Square;
 
     #[test]

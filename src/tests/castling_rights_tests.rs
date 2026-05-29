@@ -307,11 +307,4 @@ pub mod castling_rights_tests {
         pretty_assertions::assert_eq!(castling_rights.king, Some(true));
         pretty_assertions::assert_eq!(castling_rights.queen, Some(false));
     }
-
-    // TODO:
-    // add eventually ?
-    // #[test]
-    fn fail_to_set_white_kingside() {
-        // chess.clear()
-    }
 }

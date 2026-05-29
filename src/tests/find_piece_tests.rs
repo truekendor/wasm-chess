@@ -6,7 +6,7 @@
 pub mod find_piece_tests {
     use crate::WasmChess;
 
-    use crate::models::{PieceSymbol, utils::*, *};
+    use crate::models::{PieceSymbol, *};
 
     #[test]
     fn find_pawns_from_str() {

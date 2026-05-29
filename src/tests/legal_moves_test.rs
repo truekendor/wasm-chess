@@ -501,8 +501,4 @@ pub mod legal_moves_test {
             pretty_assertions::assert_eq!(m.len(), san_move.len());
         });
     }
-
-    fn moves_no_king_moves() {
-        // TODO:
-    }
 }

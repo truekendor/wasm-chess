@@ -173,14 +173,4 @@ pub mod tests {
             pretty_assertions::assert_eq!(move_uci, *move_str);
         }
     }
-
-    // #[test]
-    fn test_move_at_castling() {
-        // TODO:
-    }
-
-    // #[test]
-    fn test_move_at_en_passant() {
-        //
-    }
 }
