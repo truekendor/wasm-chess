@@ -4,7 +4,10 @@ use serde::{Deserialize, Serialize};
 use shakmaty::{Chess, Move, Position, fen::Fen, zobrist::Zobrist64};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::utils::parsing::{moves_to_san, str_to_move};
+use crate::utils::{
+    parsing::{moves_to_san, str_to_move},
+    pos_from_fen_with_recovery,
+};
 
 pub struct InternalMovesAndHash {
     zobrist_hash: Vec<Zobrist64>,
@@ -136,15 +139,7 @@ fn get_hash_and_san(moves: Vec<String>, starting_fen: Option<String>) -> Interna
         }
     };
 
-    let mut chess_pos: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
-        Ok(val) => val,
-        Err(_err) => {
-            return InternalMovesAndHash {
-                zobrist_hash: zobrist_hash_list,
-                san_moves,
-            };
-        }
-    };
+    let mut chess_pos: Chess = pos_from_fen_with_recovery(&fen).unwrap_or_default();
 
     for move_str in moves {
         let internal_move: Move = match str_to_move(&move_str, &chess_pos) {

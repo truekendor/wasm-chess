@@ -4,7 +4,10 @@ use serde::{Deserialize, Serialize};
 use shakmaty::{Chess, Color, Move, Position, Role, fen::Fen, san::San, uci::UciMove};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::models::{ColorChar, MoveVerbose, PieceSymbol, SquareStr};
+use crate::{
+    models::{ColorChar, MoveVerbose, PieceSymbol, SquareStr},
+    utils::pos_from_fen_with_recovery,
+};
 
 #[derive(Clone, Debug)]
 pub enum MoveParseError {
@@ -50,7 +53,7 @@ pub fn moves_to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAn
         }
     };
 
-    let mut chess_pos: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
+    let mut chess_pos: Chess = match pos_from_fen_with_recovery(&fen) {
         Ok(val) => val,
         Err(err) => {
             return MovesAndError {
@@ -121,7 +124,7 @@ pub fn moves_to_uci(moves: Vec<String>, starting_fen: Option<String>) -> MovesAn
         }
     };
 
-    let mut chess_pos: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
+    let mut chess_pos: Chess = match pos_from_fen_with_recovery(&fen) {
         Ok(val) => val,
         Err(err) => {
             return MovesAndError {

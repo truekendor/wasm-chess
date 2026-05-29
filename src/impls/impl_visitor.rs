@@ -2,9 +2,11 @@ use std::ops::ControlFlow::{self};
 
 use pgn_reader::{RawTag, SanPlus, Visitor};
 
-use shakmaty::{CastlingMode, Chess, fen::Fen};
+use shakmaty::fen::Fen;
 
-use crate::{WasmChess, impls::PGNResult, models::utils::PreserveHeaders};
+use crate::{
+    WasmChess, impls::PGNResult, models::utils::PreserveHeaders, utils::pos_from_fen_with_recovery,
+};
 
 static SUFFIX_LIST: [&str; 6] = ["!", "?", "!!", "??", "!?", "?!"];
 
@@ -48,13 +50,7 @@ impl Visitor for WasmChess {
                 }
             };
 
-            let chess_pos = fen
-                .into_position::<Chess>(CastlingMode::Chess960)
-                .or_else(|err| {
-                    err.ignore_too_much_material()
-                        .or_else(|err| err.ignore_invalid_castling_rights())
-                        .or_else(|err| err.ignore_invalid_ep_square())
-                });
+            let chess_pos = pos_from_fen_with_recovery(&fen);
 
             match chess_pos {
                 Ok(chess) => {
