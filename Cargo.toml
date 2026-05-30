@@ -27,6 +27,6 @@ wasm-bindgen-test = { version = "*" }
 pretty_assertions = { version = "1.4" }
 
 [profile.release]
-opt-level = 3
+opt-level = "s"
 lto = true
 codegen-units = 1
