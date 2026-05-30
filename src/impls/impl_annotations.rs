@@ -25,10 +25,11 @@ impl WasmChess {
             return ();
         };
 
-        let nags = pgn_result.nag_map.entry(fen_key.clone()).or_insert(vec![]);
+        let nags = pgn_result.nag_map.entry(fen_key).or_insert(vec![]);
+        let nag_str = nag.to_string();
 
-        if !nags.contains(&fen_key) {
-            nags.push(nag.to_string());
+        if !nags.contains(&nag_str) {
+            nags.push(nag_str);
         }
     }
 
