@@ -9,7 +9,7 @@ pub mod utils;
 
 pub use board_matrix::{BoardMatrix, BoardObjRow, BoardState};
 pub use color_char::ColorChar;
-pub use move_verbose::MoveVerbose;
+pub use move_verbose::{MoveVerbose, MoveVerboseParts};
 pub use piece_obj::PieceObj;
 pub use piece_symbol::PieceSymbol;
 pub use square_str::SquareStr;

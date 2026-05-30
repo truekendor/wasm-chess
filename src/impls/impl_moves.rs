@@ -1,3 +1,5 @@
+use crate::utils::parsing::move_parts_from_raw_move;
+
 use super::*;
 
 #[wasm_bindgen]
@@ -44,15 +46,24 @@ impl WasmChess {
         }
 
         let pos_before = self.chess.clone();
-        let verbose = verbose_move_from_raw_move(internal_move, &pos_before);
+        let move_verbose = self.play_internal_move_unchecked(internal_move);
 
-        self.chess.play_unchecked(internal_move);
         self.push_history_entry(internal_move, pos_before);
 
         self.hash = self.chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
         *self.repetition_table.entry(self.hash).or_insert(0) += 1;
 
-        return Ok(verbose);
+        return Ok(move_verbose);
+    }
+
+    fn play_internal_move_unchecked(&mut self, raw_move: Move) -> MoveVerbose {
+        let move_parts = move_parts_from_raw_move(raw_move, &self.chess);
+
+        self.chess.play_unchecked(raw_move);
+
+        let move_verbose = move_parts.upcast_to_verbose(&self.chess);
+
+        return move_verbose;
     }
 
     /// Parses and validates a move without modifying the current position.
@@ -105,7 +116,7 @@ impl WasmChess {
             ));
         }
 
-        let verbose_move = verbose_move_from_raw_move(internal_move, &self.chess);
+        let verbose_move = verbose_move_from_raw_move(internal_move, &self.chess, None);
 
         return Ok(verbose_move);
     }
@@ -208,7 +219,7 @@ impl WasmChess {
         self.repetition_table.entry(self.hash).or_insert(1);
 
         let move_verbose: MoveVerbose =
-            utils::parsing::verbose_move_from_raw_move(last.raw_move, &self.chess);
+            verbose_move_from_raw_move(last.raw_move, &self.chess, Some(&last.position_after));
 
         Some(move_verbose)
     }

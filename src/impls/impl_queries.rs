@@ -343,7 +343,7 @@ impl WasmChess {
                     return None;
                 }
 
-                let move_verbose = verbose_move_from_raw_move(*raw_move, &self.chess);
+                let move_verbose = verbose_move_from_raw_move(*raw_move, &self.chess, None);
 
                 Some(move_verbose)
             })

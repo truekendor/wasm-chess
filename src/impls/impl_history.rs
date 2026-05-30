@@ -37,6 +37,7 @@ impl WasmChess {
                 let move_verbose = parsing::verbose_move_from_raw_move(
                     internal_move,
                     &history_entry.position_before,
+                    Some(&history_entry.position_after),
                 );
 
                 move_verbose
