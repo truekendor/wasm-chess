@@ -4,7 +4,13 @@ use serde::{Deserialize, Serialize};
 use shakmaty::{Chess, Move, Position, fen::Fen, zobrist::Zobrist64};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::utils::parsing::{moves_to_san, str_to_move};
+use crate::{
+    DEFAULT_FEN,
+    utils::{
+        parsing::{moves_to_san, str_to_move},
+        pos_from_fen_with_recovery,
+    },
+};
 
 pub struct InternalMovesAndHash {
     zobrist_hash: Vec<Zobrist64>,
@@ -118,9 +124,7 @@ pub fn find_divergence(
 }
 
 fn get_hash_and_san(moves: Vec<String>, starting_fen: Option<String>) -> InternalMovesAndHash {
-    let starting_fen = starting_fen.unwrap_or_else(|| {
-        Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
-    });
+    let starting_fen = starting_fen.unwrap_or(DEFAULT_FEN.to_string());
 
     let mut zobrist_hash_list: Vec<Zobrist64> = vec![];
     let result = moves_to_san(moves.clone(), Some(starting_fen.clone()));
@@ -136,15 +140,7 @@ fn get_hash_and_san(moves: Vec<String>, starting_fen: Option<String>) -> Interna
         }
     };
 
-    let mut chess_pos: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
-        Ok(val) => val,
-        Err(_err) => {
-            return InternalMovesAndHash {
-                zobrist_hash: zobrist_hash_list,
-                san_moves,
-            };
-        }
-    };
+    let mut chess_pos: Chess = pos_from_fen_with_recovery(&fen).unwrap_or_default();
 
     for move_str in moves {
         let internal_move: Move = match str_to_move(&move_str, &chess_pos) {

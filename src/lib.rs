@@ -19,7 +19,10 @@ use crate::{
             SquareInfo,
         },
     },
-    utils::parsing::{self, san_to_san_plus, verbose_move_from_raw_move},
+    utils::{
+        parsing::{self, san_to_san_plus, verbose_move_from_raw_move},
+        pos_from_fen_with_recovery,
+    },
 };
 
 mod impls;
@@ -44,6 +47,8 @@ struct EditablePosition {
     validated: Option<Chess>,
 }
 
+static DEFAULT_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 #[wasm_bindgen]
 pub struct WasmChess {
     chess: Chess,
@@ -52,8 +57,6 @@ pub struct WasmChess {
     repetition_table: HashMap<Zobrist64, i32>,
     // TODO: rename
     pgn_result: Option<PGNResult>,
-    // TODO: move away from this class to other function ?
-    // as for now this is very close to be a duplicate code
     seven_tag_roster: OrderMap<&'static str, &'static str>,
 
     editable: Option<EditablePosition>,
@@ -63,9 +66,7 @@ pub struct WasmChess {
 impl WasmChess {
     #[wasm_bindgen(constructor)]
     pub fn new(fen: Option<String>) -> Result<WasmChess, String> {
-        let starting_fen: String = fen.unwrap_or_else(|| {
-            Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
-        });
+        let starting_fen: String = fen.unwrap_or(DEFAULT_FEN.to_string());
 
         let fen: Fen = match starting_fen.parse() {
             Ok(val) => val,
@@ -77,20 +78,7 @@ impl WasmChess {
             }
         };
 
-        let chess: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
-            Ok(val) => val,
-            Err(err) => {
-                let result = err
-                    .ignore_too_much_material()
-                    .or_else(|err| err.ignore_invalid_castling_rights())
-                    .or_else(|err| err.ignore_invalid_ep_square())
-                    .map_err(|err| {
-                        return format!("Invalid position: {:#?}", err);
-                    })?;
-
-                result
-            }
-        };
+        let chess: Chess = pos_from_fen_with_recovery(&fen)?;
 
         let zobrist_hash: Zobrist64 = chess.zobrist_hash(shakmaty::EnPassantMode::Legal);
 
@@ -195,12 +183,7 @@ impl WasmChess {
 
     // TODO: add Optional<PreserveHeaders> ??
     fn set_fen(&mut self, fen: Fen) -> Result<(), String> {
-        self.chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
-            Ok(val) => val,
-            Err(err) => {
-                return Err(format!("Error {err}\nFEN: {fen}"));
-            }
-        };
+        self.chess = pos_from_fen_with_recovery(&fen)?;
 
         Ok(())
     }

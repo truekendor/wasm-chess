@@ -4,7 +4,18 @@ use serde::{Deserialize, Serialize};
 use shakmaty::{Chess, Color, Move, Position, Role, fen::Fen, san::San, uci::UciMove};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::models::{ColorChar, MoveVerbose, PieceSymbol, SquareStr};
+use crate::{
+    DEFAULT_FEN,
+    models::{ColorChar, MoveVerbose, MoveVerboseParts, PieceSymbol, SquareStr},
+    utils::pos_from_fen_with_recovery,
+};
+
+#[derive(Default, Debug, PartialEq, Serialize, Deserialize)]
+pub struct CastleData {
+    pub is_castle: bool,
+    pub is_queenside_castle: bool,
+    pub is_kingside_castle: bool,
+}
 
 #[derive(Clone, Debug)]
 pub enum MoveParseError {
@@ -34,9 +45,7 @@ pub struct MovesAndError {
 /// converts Vec of moves in SAN/LAN format, into Vec of SAN moves
 #[wasm_bindgen(js_name = "movesToSan")]
 pub fn moves_to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
-    let starting_fen = starting_fen.unwrap_or_else(|| {
-        Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
-    });
+    let starting_fen = starting_fen.unwrap_or(DEFAULT_FEN.to_string());
 
     let mut san_moves_vec: Vec<String> = vec![];
 
@@ -50,7 +59,7 @@ pub fn moves_to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAn
         }
     };
 
-    let mut chess_pos: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
+    let mut chess_pos: Chess = match pos_from_fen_with_recovery(&fen) {
         Ok(val) => val,
         Err(err) => {
             return MovesAndError {
@@ -105,9 +114,7 @@ pub fn moves_to_san(moves: Vec<String>, starting_fen: Option<String>) -> MovesAn
 /// converts Vec of moves in SAN/LAN format, into Vec of UCI moves
 #[wasm_bindgen(js_name = "movesToUci")]
 pub fn moves_to_uci(moves: Vec<String>, starting_fen: Option<String>) -> MovesAndError {
-    let starting_fen = starting_fen.unwrap_or_else(|| {
-        Fen::from_position(&Chess::default(), shakmaty::EnPassantMode::Legal).to_string()
-    });
+    let starting_fen = starting_fen.unwrap_or(DEFAULT_FEN.to_string());
 
     let mut uci_moves_vec: Vec<String> = vec![];
 
@@ -121,7 +128,7 @@ pub fn moves_to_uci(moves: Vec<String>, starting_fen: Option<String>) -> MovesAn
         }
     };
 
-    let mut chess_pos: Chess = match fen.clone().into_position(shakmaty::CastlingMode::Chess960) {
+    let mut chess_pos: Chess = match pos_from_fen_with_recovery(&fen) {
         Ok(val) => val,
         Err(err) => {
             return MovesAndError {
@@ -208,9 +215,10 @@ pub fn str_to_move(move_str: &str, chess: &Chess) -> Result<Move, MoveParseError
 /// **Converts a raw chess move into a verbose move object containing comprehensive move metadata.**
 ///
 /// ## Important Safety Note
-/// **Move validation is the caller's responsibility.** This function plays the move unchecked
-/// using `play_unchecked()`, assuming the move is already validated as legal by the caller.
-/// Passing an illegal move may result in an invalid board state or panics.
+/// **Move validation is the caller's responsibility.** This function plays the move
+/// using `play_unchecked()`, if chess_pos_after is None
+///
+/// Passing an illegal move in that case may result in an invalid board state or panics.
 ///
 /// ## Mutation Note
 /// This function does not mutate the original `WasmChess` struct or the provided `chess_pos`
@@ -234,10 +242,28 @@ pub fn str_to_move(move_str: &str, chess: &Chess) -> Result<Move, MoveParseError
 /// ## Note
 /// Only standard chess and Chess960 positions are supported. The function will panic if
 /// `raw_move.from()` returns `None`, which shouldn't happen for standard chess variants.
-pub fn verbose_move_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerbose {
-    let mut chess_pos = chess_pos.clone();
+pub fn verbose_move_from_raw_move(
+    raw_move: Move,
+    chess_pos_before: &Chess,
+    chess_pos_after: Option<&Chess>,
+) -> MoveVerbose {
+    let chess_pos = chess_pos_before;
 
-    let fen_before = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
+    let move_parts = move_parts_from_raw_move(raw_move, &chess_pos);
+
+    match chess_pos_after {
+        Some(chess) => move_parts.upcast_to_verbose(&chess),
+        None => {
+            let mut temp_chess = chess_pos.clone();
+            temp_chess.play_unchecked(raw_move);
+
+            move_parts.upcast_to_verbose(&temp_chess)
+        }
+    }
+}
+
+pub fn move_parts_from_raw_move(raw_move: Move, chess_pos_before: &Chess) -> MoveVerboseParts {
+    let fen_before = Fen::from_position(chess_pos_before, shakmaty::EnPassantMode::Legal);
 
     let promotion: Option<PieceSymbol> = raw_move.promotion().map(|role| PieceSymbol::from(&role));
     let captured_piece: Option<PieceSymbol> =
@@ -246,52 +272,43 @@ pub fn verbose_move_from_raw_move(raw_move: Move, chess_pos: &Chess) -> MoveVerb
         .from()
         .expect("Only standard chess and chess960 is supported, from() should always return Some");
 
-    let color_shorthand = match chess_pos.turn() {
+    let color_shorthand = match chess_pos_before.turn() {
         Color::White => ColorChar::W,
         Color::Black => ColorChar::B,
     };
 
     let piece = PieceSymbol::from(&raw_move.role());
-    let san_move = San::from_move(&chess_pos, raw_move);
+    let san_move = San::from_move(chess_pos_before, raw_move);
 
-    let CastleData {
-        is_castle,
-        is_kingside_castle,
-        is_queenside_castle,
-    } = castle_data_from_san_move(&san_move);
-
-    chess_pos.play_unchecked(raw_move);
-    let fen_after = Fen::from_position(&chess_pos, shakmaty::EnPassantMode::Legal);
-
-    let san_string = san_to_san_plus(&san_move, &chess_pos);
+    let castle_data = castle_data_from_san_move(&san_move);
 
     let from = SquareStr::from(&from_sq);
     let to = SquareStr::from(&raw_move.to());
 
     let is_big_pawn = is_two_square_pawn_move(&raw_move);
 
-    MoveVerbose {
+    return MoveVerboseParts {
         from,
         to,
+
+        before: fen_before,
+
+        color: color_shorthand,
+        piece,
+        captured: captured_piece,
+        is_regular_capture: move_is_regular_capture(&raw_move),
         promotion,
+
+        san: san_move,
         lan: raw_move
             .to_uci(shakmaty::CastlingMode::Chess960)
             .to_string(),
-        san: san_string,
-        piece,
-        captured: captured_piece,
-        is_regular_capture: raw_move.is_capture() && !raw_move.is_en_passant(),
-
-        color: color_shorthand,
-        before: fen_before.to_string(),
-        after: fen_after.to_string(),
 
         is_en_passant: raw_move.is_en_passant(),
-        is_castle,
         is_big_pawn,
-        is_kingside_castle,
-        is_queenside_castle,
-    }
+
+        castle_data,
+    };
 }
 
 pub fn is_two_square_pawn_move(mov: &Move) -> bool {
@@ -344,9 +361,6 @@ pub fn castle_data_from_san_move(san_move: &San) -> CastleData {
     }
 }
 
-#[derive(Default)]
-pub struct CastleData {
-    pub is_castle: bool,
-    pub is_queenside_castle: bool,
-    pub is_kingside_castle: bool,
+fn move_is_regular_capture(raw_move: &Move) -> bool {
+    raw_move.is_capture() && !raw_move.is_en_passant()
 }

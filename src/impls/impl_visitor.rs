@@ -2,9 +2,11 @@ use std::ops::ControlFlow::{self};
 
 use pgn_reader::{RawTag, SanPlus, Visitor};
 
-use shakmaty::{CastlingMode, Chess, fen::Fen};
+use shakmaty::fen::Fen;
 
-use crate::{WasmChess, impls::PGNResult, models::utils::PreserveHeaders};
+use crate::{
+    WasmChess, impls::PGNResult, models::utils::PreserveHeaders, utils::pos_from_fen_with_recovery,
+};
 
 static SUFFIX_LIST: [&str; 6] = ["!", "?", "!!", "??", "!?", "?!"];
 
@@ -48,13 +50,7 @@ impl Visitor for WasmChess {
                 }
             };
 
-            let chess_pos = fen
-                .into_position::<Chess>(CastlingMode::Chess960)
-                .or_else(|err| {
-                    err.ignore_too_much_material()
-                        .or_else(|err| err.ignore_invalid_castling_rights())
-                        .or_else(|err| err.ignore_invalid_ep_square())
-                });
+            let chess_pos = pos_from_fen_with_recovery(&fen);
 
             match chess_pos {
                 Ok(chess) => {
@@ -173,6 +169,7 @@ impl Visitor for WasmChess {
                 .entry(fen_key)
                 .and_modify(|existing| existing.push_str(&val.to_string()))
                 .or_insert_with(|| val.to_string());
+
             return ControlFlow::Continue(());
         }
 
@@ -187,29 +184,7 @@ impl Visitor for WasmChess {
         movetext: &mut Self::Movetext,
         comment: pgn_reader::RawComment<'_>,
     ) -> ControlFlow<Self::Output> {
-        let pgn_result = movetext;
-
-        let raw_comment = comment;
-
-        let comment = str::from_utf8(&raw_comment.as_bytes());
-
-        if let Ok(val) = comment {
-            let fen_key =
-                Fen::from_position(&self.chess, shakmaty::EnPassantMode::Legal).to_string();
-
-            pgn_result
-                .comments_map
-                .entry(fen_key)
-                .and_modify(|existing| existing.push_str(&val.to_string()))
-                .or_insert_with(|| val.to_string());
-
-            return ControlFlow::Continue(());
-        }
-
-        ControlFlow::Break(Err(format!(
-            "Error parsing comment from PGN: {:?}",
-            raw_comment
-        )))
+        self.partial_comment(movetext, comment)
     }
 
     fn outcome(
